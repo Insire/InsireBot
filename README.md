@@ -1,9 +1,4 @@
-# InsireBot
-InsireBot is a desktop application designed to connect to a given irc network and accept youtube 
-links which then can be played locally on a specified audio-outputdevice. 
-This works especially well in twitch.tv environment where the chat is a based on the irc protocol.
-
-## Features
+# Features
 
 - select the audiodevice to play requests on
 - select the irc/twitch channel to join in
@@ -13,8 +8,8 @@ This works especially well in twitch.tv environment where the chat is a based on
 - take requests via irc/ twitch chat (works for single videos and whole playlists)
 - paste your playlist to pastebin
 
-## Commands
-### User
+# Commands
+## User
 
 - !request (youtube url of a song or playlist)
 - !playlist
@@ -24,7 +19,7 @@ This works especially well in twitch.tv environment where the chat is a based on
 - !checkkeyword (keyword)
 - !voteskip 
 
-### Moderator only
+## Moderator only
 
 - !removesong (keyword/url)
 - !banuser (user)
@@ -35,7 +30,7 @@ This works especially well in twitch.tv environment where the chat is a based on
 - !unbankeyword (keyword>
 - !skip 
 
-### Operator only
+## Operator only
 
 - !forceplay (url) or !force (url)
 - !banuser (user, mod)
