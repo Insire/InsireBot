@@ -1,5 +1,4 @@
 # InsireBot
-## Describtion
 InsireBot is a desktop application designed to connect to a given irc network and accept youtube 
 links which then can be played locally on a specified audio-outputdevice. 
 This works especially well in twitch.tv environment where the chat is a based on the irc protocol.
