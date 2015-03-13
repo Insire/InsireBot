@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireBot", "InsireBot\InsireBot.csproj", "{F2510D46-D8F6-4851-BE3A-06E6DCB6B368}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B804011-7C6B-495B-96B0-B57D6F8752A3}"
+	ProjectSection(SolutionItems) = preProject
+		TODO.txt = TODO.txt
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchTest", "TwitchTest\TwitchTest.csproj", "{F3B6F470-1542-4AF6-9F62-8080B80808B3}"
+EndProject
+Global
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 3
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://vietense.visualstudio.com/defaultcollection
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = InsireBot\\InsireBot.csproj
+		SccProjectName1 = InsireBot
+		SccLocalPath1 = InsireBot
+		SccProjectUniqueName2 = TwitchTest\\TwitchTest.csproj
+		SccProjectName2 = TwitchTest
+		SccLocalPath2 = TwitchTest
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2510D46-D8F6-4851-BE3A-06E6DCB6B368}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2510D46-D8F6-4851-BE3A-06E6DCB6B368}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2510D46-D8F6-4851-BE3A-06E6DCB6B368}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2510D46-D8F6-4851-BE3A-06E6DCB6B368}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
