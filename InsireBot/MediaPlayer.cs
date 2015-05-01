@@ -93,7 +93,7 @@ namespace InsireBot
 
 					if (_FollowerAudioDevices == null)
 					{
-						MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+						Controller.Instance.Log(_ErrorDeviceListMessage);
 						return;
 					}
 
@@ -106,7 +106,7 @@ namespace InsireBot
 								_audioDevice = _FollowerAudioDevices[_FollowerAudioDevices.SelectedIndex].ToString();
 						else
 						{
-							MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+							Controller.Instance.Log(_ErrorDeviceListMessage);
 							return;
 						}
 					}
@@ -122,7 +122,7 @@ namespace InsireBot
 
 					if (_MediaPlayerAudioDevices == null)
 					{
-						MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+						Controller.Instance.Log(_ErrorDeviceListMessage);
 						return;
 					}
 
@@ -135,7 +135,7 @@ namespace InsireBot
 								_audioDevice = _MediaPlayerAudioDevices[_MediaPlayerAudioDevices.SelectedIndex].ToString();
 						else
 						{
-							MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+							Controller.Instance.Log(_ErrorDeviceListMessage);
 							return;
 						}
 					}
@@ -152,7 +152,7 @@ namespace InsireBot
 					SoundboardAudioDeviceViewModel _SoundBoardAudioDevices = new SoundboardAudioDeviceViewModel();
 					if (_SoundBoardAudioDevices == null)
 					{
-						MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+						Controller.Instance.Log(_ErrorDeviceListMessage);
 						return;
 					}
 
@@ -165,7 +165,7 @@ namespace InsireBot
 								_audioDevice = _SoundBoardAudioDevices[_SoundBoardAudioDevices.SelectedIndex].ToString();
 						else
 						{
-							MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+							Controller.Instance.Log(_ErrorDeviceListMessage);
 							return;
 						}
 					}
@@ -182,7 +182,7 @@ namespace InsireBot
 					SubscriberAudioDeviceViewModel _SubscriberAudioDevices = new SubscriberAudioDeviceViewModel();
 					if (_SubscriberAudioDevices == null)
 					{
-						MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+						Controller.Instance.Log(_ErrorDeviceListMessage);
 						return;
 					}
 
@@ -195,7 +195,7 @@ namespace InsireBot
 								_audioDevice = _SubscriberAudioDevices[_SubscriberAudioDevices.SelectedIndex].ToString();
 						else
 						{
-							MessageController.Instance.LogMessages.Enqueue(_ErrorDeviceListMessage);
+							Controller.Instance.Log(_ErrorDeviceListMessage);
 							return;
 						}
 					}
@@ -234,7 +234,7 @@ namespace InsireBot
 			}
 			catch (Exception ex)
 			{
-				MessageController.Instance.LogMessages.Enqueue(new ErrorLogItem(ex));
+				Controller.Instance.Log(new ErrorLogItem(ex));
 			}
 			if (_VlcPlayer == null) return;
 			///events
@@ -256,7 +256,7 @@ namespace InsireBot
 
 					#region AudioDeviceType.FollowerAlert
 
-					MessageController.Instance.LogMessages.Enqueue(new SystemLogItem("FollowerAlert initialized"));
+					Controller.Instance.Log(new SystemLogItem("FollowerAlert initialized"));
 					break;
 
 					#endregion AudioDeviceType.FollowerAlert
@@ -265,7 +265,7 @@ namespace InsireBot
 
 					#region AudioDeviceType.MediaPlayer
 
-					MessageController.Instance.LogMessages.Enqueue(new SystemLogItem("Mediaplayer initialized"));
+					Controller.Instance.Log(new SystemLogItem("Mediaplayer initialized"));
 					break;
 
 					#endregion AudioDeviceType.MediaPlayer
@@ -274,7 +274,7 @@ namespace InsireBot
 
 					#region AudioDeviceType.Soundboard
 
-					MessageController.Instance.LogMessages.Enqueue(new SystemLogItem("Soundboard initialized"));
+					Controller.Instance.Log(new SystemLogItem("Soundboard initialized"));
 					break;
 
 					#endregion AudioDeviceType.Soundboard
@@ -283,7 +283,7 @@ namespace InsireBot
 
 					#region AudioDeviceType.Soundboard
 
-					MessageController.Instance.LogMessages.Enqueue(new SystemLogItem("SubscriberAlert initialized"));
+					Controller.Instance.Log(new SystemLogItem("SubscriberAlert initialized"));
 					break;
 
 					#endregion AudioDeviceType.Soundboard
@@ -447,7 +447,7 @@ namespace InsireBot
 						this.play();
 					}
 					else
-						MessageController.Instance.ChatMessages.Enqueue(new ChatReply("End of PlayList reached. No previous Song available"));
+						Controller.Instance.SendToChat(new ChatReply("End of PlayList reached. No previous Song available"));
 				}
 		}
 
@@ -486,7 +486,7 @@ namespace InsireBot
 						this.play();
 					}
 					else
-						MessageController.Instance.ChatMessages.Enqueue(new ChatReply("End of PlayList reached. No next Song available"));
+						Controller.Instance.SendToChat(new ChatReply("End of PlayList reached. No next Song available"));
 				}
 		}
 
@@ -526,7 +526,7 @@ namespace InsireBot
 						this.play();
 					}
 					else
-						MessageController.Instance.ChatMessages.Enqueue(new ChatReply("Selection of Random Playlistitem failed.(Out of bounds)"));
+						Controller.Instance.SendToChat(new ChatReply("Selection of Random Playlistitem failed.(Out of bounds)"));
 				}
 		}
 
@@ -574,7 +574,7 @@ namespace InsireBot
 						play();
 					}
 					else
-						MessageController.Instance.ChatMessages.Enqueue(new ChatReply("End of PlayList reached. No next Song available"));
+						Controller.Instance.SendToChat(new ChatReply("End of PlayList reached. No next Song available"));
 				}
 		}
 
@@ -604,7 +604,7 @@ namespace InsireBot
 		private void _skipPreventionTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (Settings.Instance.DebugMode)
-				MessageController.Instance.ChatMessages.Enqueue(new ChatReply("skip available now"));
+				Controller.Instance.SendToChat(new ChatReply("skip available now"));
 			_SkipPreventionTimer.Stop();
 			_ExcuteSongSkip = true;
 		}
@@ -612,7 +612,7 @@ namespace InsireBot
 		private void _maxSongDurationTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			if (Settings.Instance.DebugMode)
-				MessageController.Instance.ChatMessages.Enqueue(new ChatReply("Playing next Song. Requested song was too long."));
+				Controller.Instance.SendToChat(new ChatReply("Playing next Song. Requested song was too long."));
 			_MaxSongDurationTimer.Stop();
 			Next();
 		}
@@ -626,7 +626,7 @@ namespace InsireBot
 			_VoteSkipCounter = 0;
 			if (!_Buffering)
 			{
-				MessageController.Instance.ChatMessages.Enqueue(new ChatReply(String.Format("End reached: {0}", _NowPlaying)));
+				Controller.Instance.SendToChat(new ChatReply(String.Format("End reached: {0}", _NowPlaying)));
 				_NowPlaying = String.Empty;
 				UpdateSettings();
 				Next();
@@ -654,7 +654,7 @@ namespace InsireBot
 				UpdateSettings();
 				// _player is now buffering the song 
 				_NowPlaying = sender.Media.MRL;
-				MessageController.Instance.ChatMessages.Enqueue(new ChatReply(String.Format("now playing: {0}", sender.Media.MRL)));
+				Controller.Instance.SendToChat(new ChatReply(String.Format("now playing: {0}", sender.Media.MRL)));
 				_Buffering = true;
 			}
 		}
@@ -667,7 +667,7 @@ namespace InsireBot
 		{
 			if (_VlcPlayer.State.Equals(Vlc.DotNet.Core.Interops.Signatures.LibVlc.Media.States.Error))
 			{
-				MessageController.Instance.ChatMessages.Enqueue(new ChatReply(String.Format("Skip because broken: {0}", _VlcPlayer.Media.Metadatas.Title)));
+				Controller.Instance.SendToChat(new ChatReply(String.Format("Skip because broken: {0}", _VlcPlayer.Media.Metadatas.Title)));
 
 				_Playlist.Remove(_Playlist[_Playlist.SelectedIndex]);
 				Next();

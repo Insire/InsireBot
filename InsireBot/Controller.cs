@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using InsireBot.ViewModel;
 using InsireBot.Enums;
+using InsireBot.Objects;
 using InsireBot.Util.Collections;
 using System;
 using System.Text.RegularExpressions;
@@ -219,6 +220,7 @@ namespace InsireBot
 		{
 			throw new NotImplementedException();
 		}
+
 		/// <summary>
 		/// parses par for valid youtubeurls and calls the fitting add method
 		/// </summary>
@@ -230,6 +232,24 @@ namespace InsireBot
 			// iterate that list
 			// check if item is playlist, call addplaylist
 			// check if item is plylistitem, call addplaylistitem
+		}
+
+		public void SendToChat(String par)
+		{
+			if (_Bot.IsConnected)
+				_Bot.Send(par);
+		}
+
+		public void SendToChat(ChatItem par)
+		{
+			if (_Bot.IsConnected)
+				_Bot.Send(par.Value);
+		}
+
+
+		public void Log(LogItem par)
+		{
+			_Log.Add(par);
 		}
 
 

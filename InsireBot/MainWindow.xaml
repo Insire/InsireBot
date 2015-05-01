@@ -8,9 +8,9 @@
             xmlns:System="clr-namespace:System;assembly=mscorlib"
     
             xmlns:Enums="clr-namespace:InsireBot.Enums"
-            xmlns:object="clr-namespace:InsireBot.Objects"
+            xmlns:Objects="clr-namespace:InsireBot.Objects"
             xmlns:Util="clr-namespace:InsireBot.Util"
-            xmlns:viewmodel="clr-namespace:InsireBot.ViewModel"
+            xmlns:Viewmodel="clr-namespace:InsireBot.ViewModel"
             xmlns:InsireBot="clr-namespace:InsireBot" x:Class="InsireBot.MainWindow"
     
             x:Name="window" Title="InsireBot" 
@@ -555,7 +555,7 @@
                             <CollectionViewSource x:Key="cvsTasks" Filter="Blacklist_KeywordFilter" Source="{Binding Items, NotifyOnTargetUpdated=True}" />
                             <ObjectDataProvider x:Key="BlackListItemType" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
                                 <ObjectDataProvider.MethodParameters>
-                                    <x:Type TypeName="enums:BlackListItemType" />
+                                    <x:Type TypeName="Enums:BlackListItemType" />
                                 </ObjectDataProvider.MethodParameters>
                             </ObjectDataProvider>
                         </ScrollViewer.Resources>

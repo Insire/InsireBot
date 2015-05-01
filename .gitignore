@@ -198,3 +198,4 @@ FakesAssemblies/
 *.pdb
 */bin/
 *.zip
+*.g.i.cs

@@ -55,7 +55,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleIRCClient.cs" />
-    <Compile Include="ThreadSafeObservableCollection.cs" />
     <Compile Include="TokenContext.cs" />
     <Compile Include="TokenUser.cs" />
     <Compile Include="TokenUserDatabaseInitializer.cs" />

@@ -16,14 +16,25 @@ namespace InsireBot.ViewModel
 	{
 		[XmlIgnore]
 		public ICommand CopyURLsCommand { get; set; }
-
 		private BlackListViewModel<BlackListItem> _Blacklist;
+
+		public BlackListViewModel<BlackListItem> Blacklist
+		{
+			get
+			{
+				if (_Blacklist == null)
+				{
+					ViewModelLocator v = (ViewModelLocator)App.Current.FindResource("Locator");
+					_Blacklist = v.BlackList;
+				}
+				return _Blacklist;
+			}
+			set { _Blacklist = value; }
+		}
 
 		public PlayListViewModel()
 		{
-			ViewModelLocator v = (ViewModelLocator)App.Current.FindResource("Locator");
 
-			_Blacklist = v.BlackList;
 
 			Name = "PlaylistLibrary";
 			Items = new ThreadSafeObservableCollection<PlayList>();
