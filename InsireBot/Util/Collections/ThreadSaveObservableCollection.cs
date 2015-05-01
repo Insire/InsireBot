@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Threading;
@@ -61,36 +65,36 @@ namespace InsireBot.Util.Collections
 		protected override void ClearItems()
 		{
 			_dispatcher.InvokeIfRequired(() =>
-			   {
-				   _lock.EnterWriteLock();
-				   try
-				   {
-					   base.ClearItems();
-				   }
-				   finally
-				   {
-					   _lock.ExitWriteLock();
-				   }
-			   }, DispatcherPriority.DataBind);
+			{
+				_lock.EnterWriteLock();
+				try
+				{
+					base.ClearItems();
+				}
+				finally
+				{
+					_lock.ExitWriteLock();
+				}
+			}, DispatcherPriority.DataBind);
 		}
 
 		protected override void InsertItem(int index, T item)
 		{
 			_dispatcher.InvokeIfRequired(() =>
-			  {
-				  if (index > this.Count)
-					  return;
+			{
+				if (index > this.Count)
+					return;
 
-				  _lock.EnterWriteLock();
-				  try
-				  {
-					  base.InsertItem(index, item);
-				  }
-				  finally
-				  {
-					  _lock.ExitWriteLock();
-				  }
-			  }, DispatcherPriority.DataBind);
+				_lock.EnterWriteLock();
+				try
+				{
+					base.InsertItem(index, item);
+				}
+				finally
+				{
+					_lock.ExitWriteLock();
+				}
+			}, DispatcherPriority.DataBind);
 		}
 
 		protected override void MoveItem(int oldIndex, int newIndex)
@@ -178,5 +182,31 @@ namespace InsireBot.Util.Collections
 		}
 
 		#endregion Public Methods
+	}
+	/// <summary />
+	/// WPF Threading extension methods
+	/// </summary />
+	public static class WPFControlThreadingExtensions
+	{
+		#region Public Methods
+		/// <summary />
+		/// A simple WPF threading extension method, to invoke a delegate
+		/// on the correct thread if it is not currently on the correct thread
+		/// Which can be used with DispatcherObject types
+		/// </summary />
+		/// <param name="”disp”" />The Dispatcher object on which to do the Invoke</param />
+		/// <param name="”dotIt”" />The delegate to run</param />
+		/// <param name="”priority”" />The DispatcherPriority</param />
+		public static void InvokeIfRequired(this Dispatcher disp,
+			Action dotIt, DispatcherPriority priority)
+		{
+			if (disp.Thread != Thread.CurrentThread)
+			{
+				disp.Invoke(priority, dotIt);
+			}
+			else
+				dotIt();
+		}
+		#endregion
 	}
 }

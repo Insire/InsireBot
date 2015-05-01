@@ -19,15 +19,22 @@ namespace InsireBot.ViewModel
 			return false;
 		}
 
-		new public void Update()
+		public void Update()
 		{
+			int i = 0;
 			Items = new Util.Collections.ThreadSafeObservableCollection<Accent>();
 			foreach (Accent at in ThemeManager.Accents)
 			{
 				Items.Add(at);
 				if (Settings.Instance.MetroAccent == at.Name)
-					SelectedItem = at;
+					SelectedIndex = i;
+				i++;
 			}
+		}
+
+		protected override void FillMessageCompressor(string _Key, string _Value)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

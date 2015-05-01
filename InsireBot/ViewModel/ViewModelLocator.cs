@@ -16,6 +16,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using InsireBot.Util;
 using Microsoft.Practices.ServiceLocation;
+using InsireBot.Objects;
 
 namespace InsireBot.ViewModel
 {
@@ -44,9 +45,9 @@ namespace InsireBot.ViewModel
 			//}
 			SimpleIoc.Default.Register<PlayListViewModel>(true);
 
-			SimpleIoc.Default.Register<MessageViewModel>(true);
+			SimpleIoc.Default.Register<ChatViewModel>(true);
 			SimpleIoc.Default.Register<LogViewModel>(true);
-			SimpleIoc.Default.Register<BlacklistViewModel>(true);
+			SimpleIoc.Default.Register<BlackListViewModel<BlackListItem>>(true);
 			SimpleIoc.Default.Register<CustomCommandViewModel>(true);
 			SimpleIoc.Default.Register<PlayListViewModel>(true);
 			SimpleIoc.Default.Register<BlackListTypeViewModel>(true);
@@ -129,11 +130,11 @@ namespace InsireBot.ViewModel
 			}
 		}
 
-		public BlacklistViewModel BlackList
+		public BlackListViewModel<BlackListItem> BlackList
 		{
 			get
 			{
-				return ServiceLocator.Current.GetInstance<BlacklistViewModel>();
+				return ServiceLocator.Current.GetInstance<BlackListViewModel<BlackListItem>>();
 			}
 		}
 
@@ -161,11 +162,11 @@ namespace InsireBot.ViewModel
 			}
 		}
 
-		public MessageViewModel Messages
+		public ChatViewModel ChatMessages
 		{
 			get
 			{
-				return ServiceLocator.Current.GetInstance<MessageViewModel>();
+				return ServiceLocator.Current.GetInstance<ChatViewModel>();
 			}
 		}
 

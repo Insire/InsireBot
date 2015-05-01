@@ -32,8 +32,6 @@ namespace InsireBot.Util
 						_Instance.LoadConfig();
 
 					}
-					if (Instance.Loaded)
-						MessageController.Instance.LogMessages.Enqueue(new SystemLogItem("Settings initialized"));
 				}
 				return _Instance;
 			}
@@ -304,7 +302,6 @@ namespace InsireBot.Util
 				string s = Settings.Instance.BackupDirectory + "\\" + Path.GetFileName(files[i]);
 				File.Copy(files[i], s, true);
 			}
-			MessageController.Instance.LogMessages.Enqueue(new SystemLogItem(String.Format("Backup created @ {0}", configFilePath)));
 		}
 
 		public bool LoadConfig()

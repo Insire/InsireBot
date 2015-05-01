@@ -1,0 +1,850 @@
+﻿<Controls:MetroWindow
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:System="clr-namespace:System;assembly=mscorlib"
+    
+            xmlns:Enums="clr-namespace:InsireBot.Enums"
+            xmlns:object="clr-namespace:InsireBot.Objects"
+            xmlns:Util="clr-namespace:InsireBot.Util"
+            xmlns:viewmodel="clr-namespace:InsireBot.ViewModel"
+            xmlns:InsireBot="clr-namespace:InsireBot" x:Class="InsireBot.MainWindow"
+    
+            x:Name="window" Title="InsireBot" 
+            mc:Ignorable="d" WindowStartupLocation="Manual" MinWidth="700" MinHeight="500" 
+            GlowBrush="{DynamicResource AccentColorBrush}"
+            SizeToContent="Width" SaveWindowPosition="True" 
+            Loaded="window_Loaded" ResizeMode="CanResizeWithGrip">
+    <Controls:MetroWindow.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Red.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Green.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Blue.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Orange.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Lime.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Emerald.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Teal.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Cyan.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Cobalt.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Indigo.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Violet.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Pink.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Magenta.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Crimson.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Amber.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Yellow.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Brown.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Olive.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Steel.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Mauve.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Taupe.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Sienna.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseDark.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Util:DateConverter x:Key="DateConverter" />
+            <Util:VisibilityConverter x:Key="VisibilityConverter" />
+            <Util:DurationConverter x:Key="DurationConverter" />
+            <Util:ValidationConverter x:Key="EmailValidatorConverter" />
+            <Style TargetType="Rectangle" x:Key="DefaultRectangle">
+                <Setter Property="Width" Value="20" />
+                <Setter Property="Height" Value="20" />
+                <Setter Property="Fill" Value="{DynamicResource LabelTextBrush}" />
+            </Style>
+            <Style TargetType="Rectangle" x:Key="ButtonStyle" BasedOn="{StaticResource DefaultRectangle}">
+                <Setter Property="Fill" Value="{DynamicResource AccentColorBrush}" />
+            </Style>
+            <Style TargetType="WrapPanel" x:Key="ButtonWrap">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+            <Style x:Key="bPlay" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Mode=Self}}" Value="True">
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <Rectangle Margin="5,0,0,0" Style="{Binding Source={StaticResource ButtonStyle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_control_pause}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Setter.Value>
+                        </Setter>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </ResourceDictionary>
+    </Controls:MetroWindow.Resources>
+    <Controls:MetroWindow.Effect>
+        <DropShadowEffect />
+    </Controls:MetroWindow.Effect>
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>
+            <Button Command="{Binding SettingsFlyoutCommand, ElementName=window}" >
+                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{DynamicResource appbar_settings}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Command="{Binding IRCFlyoutCommand, ElementName=window}">
+                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{DynamicResource appbar_social_twitter_hashtag}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Command="{Binding AccountsFlyoutCommand, ElementName=window}" >
+                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{DynamicResource appbar_user}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button Command="{Binding AudioFlyoutCommand, ElementName=window, Mode=OneWay}"  >
+                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{DynamicResource appbar_sound_0}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <Controls:MetroWindow.LeftWindowCommands>
+        <Controls:WindowCommands>
+            <Button  Command="{Binding ColorsFlyoutCommand, ElementName=window}" >
+                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{DynamicResource appbar_draw_paintbrush}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>
+    <Controls:MetroWindow.Flyouts>
+        <Controls:FlyoutsControl DataContext="{Binding Source={StaticResource Locator}}">
+            <Controls:Flyout Header="Options" Position="Right" Theme="Accent" Width="300" >
+                <StackPanel Margin="10,0">
+                    <Controls:ToggleSwitch x:Name="checkBox" Header="Debug" IsChecked="{Binding DebugMode, Source={x:Static Util:Settings.Instance}}" />
+                    <Controls:ToggleSwitch Header="AutoConnect" IsChecked="{Binding IRC_AutoConnect, Source={x:Static Util:Settings.Instance}}" />
+                    <Controls:ToggleSwitch Header="Save Chat" IsChecked="{Binding SaveChat, Source={x:Static Util:Settings.Instance}}" />
+                    <Controls:ToggleSwitch Header="Save Log" IsChecked="{Binding SaveLog, Source={x:Static Util:Settings.Instance}}" />
+                    <Controls:ToggleSwitch Header="Reply to chat" IsChecked="{Binding ReplyToChat, Source={x:Static Util:Settings.Instance}}" />
+                </StackPanel>
+            </Controls:Flyout>
+            <Controls:Flyout Header="Colors" Position="Left" Theme="Accent" Width="300" >
+                <StackPanel Margin="10,0" >
+                    <Label>Themes</Label>
+                    <Grid DataContext="{Binding Themes}">
+                        <ComboBox Name="ComboBThemes" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto"  />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Margin="5,2" Text="{Binding Name}" />
+                                        </Grid>
+                                    </VirtualizingStackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+                    <Label>Accents</Label>
+                    <Grid DataContext="{Binding Accents}">
+                        <ComboBox Name="ComboBAccents" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" >
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Margin="5,2" Text="{Binding Name}" />
+                                        </Grid>
+                                    </VirtualizingStackPanel>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+                </StackPanel>
+            </Controls:Flyout>
+            <Controls:Flyout  Header="IRC" Position="Right" Theme="Accent" Width="300" >
+                <StackPanel Margin="10,0">
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" 
+                                            Controls:TextBoxHelper.Watermark="Username"
+                                            Text="{Binding IRC_Username, Source={x:Static Util:Settings.Instance}}" />
+
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True"
+                                            Controls:TextBoxHelper.Watermark="Password"
+                                            Text="{Binding IRC_Password, Source={x:Static Util:Settings.Instance}}" />
+
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True"
+                                            Controls:TextBoxHelper.Watermark="Server"
+                                            Text="{Binding IRC_Serveradress, Source={x:Static Util:Settings.Instance}}" />
+
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True"
+                                            Controls:TextBoxHelper.Watermark="Port"
+                                            Text="{Binding IRC_Serverport, Source={x:Static Util:Settings.Instance}}" />
+
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True"
+                                            Controls:TextBoxHelper.Watermark="Quit Message"
+                                            Text="{Binding IRC_QuitMessage, Source={x:Static Util:Settings.Instance}}" />
+
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True"
+                                            Controls:TextBoxHelper.Watermark="Channel Name"
+                                            Text="{Binding IRC_TargetChannel, Source={x:Static Util:Settings.Instance}}" />
+                    <Grid DataContext="{Binding Controller, ElementName=window}">
+                        <Button Command="{Binding Connect}">
+                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_connect}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                    </Grid>
+                </StackPanel>
+            </Controls:Flyout>
+            <Controls:Flyout Header="Accounts" Position="Right" Theme="Accent" Width="300" >
+                <StackPanel Margin="10,0">
+                    <Label Content="Pastebin Development Key" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_DevKey, Source={x:Static Util:Settings.Instance}}" />
+
+                    <Label Content="Pastebin Mail Address" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_Mail, Source={x:Static Util:Settings.Instance}}" />
+
+                    <Label Content="PasteBin Password" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_Password, Source={x:Static Util:Settings.Instance}}" />
+
+                    <Label Content="Youtube Mail" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Youtube_Mail, Source={x:Static Util:Settings.Instance}}" />
+
+                    <Label Content="Twitch API Token" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
+
+                    <Label Content="CLientID" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
+
+                    <Label Content="Redirect URI" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
+                </StackPanel>
+            </Controls:Flyout>
+            <Controls:Flyout Header="Audio" Position="Bottom" Theme="Accent">
+                <StackPanel Margin="0,10" Orientation="Horizontal">
+                    <Grid Margin="5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="cbMediaPlayerSilent" 
+                                    VerticalAlignment="Center" 
+                                    Checked="cbMediaPlayerSilent_Checked"								
+                                    IsChecked="{Binding VLC_MediaPlayerSilent, Source={x:Static Util:Settings.Instance}}"
+                                    Unchecked="cbMediaPlayerSilent_Unchecked" />
+                            <Label Content="Mediaplayer" />
+                        </StackPanel>
+                        <Slider x:Name="slider_Mediaplayer" 
+                                Grid.Row="1" 
+                                Width="10"
+                                Height="300"
+                                HorizontalAlignment="Center" 
+                                HorizontalContentAlignment="Stretch" 
+                                Interval="1" IsSnapToTickEnabled="True"
+                                LargeChange="10" 
+                                Maximum="100" 
+                                Orientation="Vertical" 
+                                SmallChange="1"
+                                Style="{DynamicResource FlatSlider}" 
+                                ValueChanged="slider_Mediaplayer_ValueChanged"
+                                Value="{Binding VLC_MediaPlayerVolume, Source={x:Static Util:Settings.Instance}}" />
+                        <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Mediaplayer}" />
+                    </Grid>
+                    <Grid Margin="5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="cbSilentFollower" 
+                                    VerticalAlignment="Center" 
+                                    Checked="cbSilentFollower_Checked"
+                                    IsChecked="{Binding VLC_FollowerSilent, Source={x:Static Util:Settings.Instance}}"
+                                    Unchecked="cbSilentFollower_Unchecked" />
+                            <Label Content="Follower" />
+                        </StackPanel>
+                        <Slider x:Name="slider_Follower" 
+                                Grid.Row="1" 
+                                Width="10"
+                                Height="300"
+                                HorizontalAlignment="Center" 
+                                HorizontalContentAlignment="Stretch" 
+                                Interval="1" IsSnapToTickEnabled="True"
+                                LargeChange="10" 
+                                Maximum="100" 
+                                Orientation="Vertical" 
+                                SmallChange="1"
+                                Style="{DynamicResource FlatSlider}" 
+                                ValueChanged="slider_Follower_ValueChanged"
+                                Value="{Binding VLC_FollowerVolume, Source={x:Static Util:Settings.Instance}}" />
+                        <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Follower}" />
+                    </Grid>
+                    <Grid Margin="5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="cbSubscriber" 
+                                        VerticalAlignment="Center" 
+                                        Checked="cbSubscriber_Checked"
+                                        IsChecked="{Binding VLC_SubScriberSilent, Source={x:Static Util:Settings.Instance}}"
+                                        Unchecked="cbSubscriber_Unchecked" />
+                            <Label Content="Subscriber" />
+                        </StackPanel>
+                        <Slider x:Name="slider_Subscriber" 
+                                Grid.Row="1" 
+                                Width="10"
+                                Height="300"
+                                HorizontalAlignment="Center" 
+                                HorizontalContentAlignment="Stretch" 
+                                Interval="1" IsSnapToTickEnabled="True"
+                                LargeChange="10" 
+                                Maximum="100" 
+                                Orientation="Vertical" 
+                                SmallChange="1"
+                                Style="{DynamicResource FlatSlider}" 
+                                ValueChanged="slider_Subscriber_ValueChanged"
+                                Value="{Binding VLC_SubScriberVolume, Source={x:Static Util:Settings.Instance}}" />
+                        <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Subscriber}" />
+                    </Grid>
+                    <Grid Margin="5,0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <CheckBox x:Name="cbSoundboard" 
+                                    VerticalAlignment="Center" 
+                                    Checked="cbSoundboard_Checked"
+                                    IsChecked="{Binding VLC_SoundboardSilent, Source={x:Static Util:Settings.Instance}}"
+                                    Unchecked="cbSoundboard_Unchecked" />
+                            <Label Content="Soundboard" />
+                        </StackPanel>
+                        <Slider x:Name="slider_Soundboard" 
+                                Grid.Row="1" 
+                                Width="10"
+                                Height="300"
+                                HorizontalAlignment="Center" 
+                                HorizontalContentAlignment="Stretch" 
+                                Interval="1" IsSnapToTickEnabled="True"
+                                LargeChange="10" 
+                                Maximum="100" 
+                                Orientation="Vertical" 
+                                SmallChange="1"
+                                Style="{DynamicResource FlatSlider}" 
+                                ValueChanged="slider_Soundboard_ValueChanged"
+                                Value="{Binding VLC_SoundboardVolume, Source={x:Static Util:Settings.Instance}}" />
+                        <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Soundboard}" />
+                    </Grid>
+                </StackPanel>
+            </Controls:Flyout>
+        </Controls:FlyoutsControl>
+    </Controls:MetroWindow.Flyouts>
+    <Grid x:Name="grid" DataContext="{Binding Source={StaticResource Locator}}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TabControl Grid.Row="0" IsSynchronizedWithCurrentItem="True" Grid.ColumnSpan="2">
+            <TabItem x:Name="Playlist" Header="Playlist" >
+                <Grid >
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="100" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid DataContext="{Binding PlayList}" x:Name="PlaylistGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <ListView x:Name="Playlists"
+                            ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" 
+                            SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True, NotifyOnValidationError=True}"
+                            SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
+                            <ListView.ContextMenu>
+                                <ContextMenu >
+                                    <MenuItem Header="CopyToClipboard" />
+                                    <MenuItem Header="Remove" />
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto"  />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock Text="{Binding Name}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Count}" />
+                                        </Grid>
+                                    </VirtualizingStackPanel>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <WrapPanel Grid.Row="1" Style="{Binding Source={StaticResource ButtonWrap}}" >
+                            <Button x:Name="bAddPlayList" Margin="5" Click="bAddPlaylist_Click" ToolTip="Add Playlist">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                            <Button x:Name="bRemovePlaylist" Margin="5" Command="{Binding RemoveItem}" ToolTip="Remove Playlist">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                        </WrapPanel>
+                    </Grid>
+                    <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" Grid.RowSpan="2"/>
+                    <Grid Grid.Column="2" DataContext="{Binding PlayList.SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" x:Name="PlaylistItemsGrid" >
+                        <Grid.RowDefinitions>
+                            <RowDefinition />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <ListView x:Name="PlaylistItems"
+                            Grid.Column="2" ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" SelectedIndex="{Binding SelectedIndex}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" />
+                                    <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Duration, Converter={StaticResource DurationConverter}}" />
+                                    <GridViewColumn Header="Requester" DisplayMemberBinding="{Binding Requester}" />
+                                </GridView>
+                            </ListView.View>
+                            <ListView.Resources>
+                                <Util:BindingProxy x:Key="DataContextProxy" Data="{Binding}"/>
+                            </ListView.Resources>
+                            <ListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
+                                    <MenuItem Header="Open in Browser" />
+                                </ContextMenu>
+                            </ListView.ContextMenu>
+                        </ListView>
+                        <WrapPanel Grid.Row="1" Style="{Binding Source={StaticResource ButtonWrap}}" DataContext="{Binding PlayList, Mode=OneWay, Source={StaticResource Locator}}">
+                            <Button x:Name="bAddPlayListItem" Margin="5" Click="bAddPlayListItem_Click" ToolTip="Add Playlistitem">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                            <Button x:Name="bRemove" Margin="5" Command="{Binding RemoveItem, Mode=OneWay}" ToolTip="Remove Playlistitem">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                            <Button x:Name="bClear" Margin="5" ToolTip="Clear Playlist" Command="{Binding ClearItems, Mode=OneWay}">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_delete}" />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                            <Button x:Name="bLoadFromFile" Margin="5" Click="bLoadFromFile_Click" ToolTip="Load from File">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add_multiple}"  />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                            <Button x:Name="bCopyToClipboard" Margin="5" ToolTip="Copy URLs to Clipboard" Command="{Binding CopyURLsCommand}">
+                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                    <Rectangle.OpacityMask>
+                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_clipboard}"  />
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Button>
+                        </WrapPanel>
+                    </Grid>
+
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="Chat" Header="Chat" DataContext="{Binding Messages}">
+                <ScrollViewer>
+                    <ListView AlternationCount="2" BorderThickness="0" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" x:Name="ChatListView" >
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="0.75*"  />
+                                            <ColumnDefinition Width="2*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Margin="5,2" Text="{Binding Time, StringFormat=\{0:g\}}" />
+                                        <TextBlock Grid.Column="1" Margin="5,2" Text="{Binding User}" TextAlignment="Right" />
+                                        <TextBlock Grid.Column="2" Margin="5,2" Text="{Binding Value}" />
+                                    </Grid>
+                                </VirtualizingStackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem  x:Name="Blacklist" Header="Blacklist" DataContext="{Binding BlackList, NotifyOnTargetUpdated=True}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <RadioButton x:Name="rbPlaylistItem" Margin="5" Checked="BlacklistFilter_Changed"
+                        Content="Filter by PlaylistItem" Unchecked="BlacklistFilter_Changed" />
+                    <RadioButton x:Name="rbUser" Grid.Column="1" Margin="5"
+                        Checked="BlacklistFilter_Changed" Content="Filter by User" Unchecked="BlacklistFilter_Changed" />
+                    <RadioButton x:Name="rbKeyword" Grid.Column="2" Margin="5"
+                        Checked="BlacklistFilter_Changed" Content="Filter by Keyword" Unchecked="BlacklistFilter_Changed" />
+                    <RadioButton x:Name="rbAll" Grid.Column="3" Margin="5"
+                        Checked="BlacklistFilter_Changed" Content="disable Filter" Unchecked="BlacklistFilter_Changed" />
+
+                    <ScrollViewer x:Name="BlacklistFilter" Grid.Row="1" Grid.ColumnSpan="5">
+                        <ScrollViewer.Resources>
+                            <CollectionViewSource x:Key="cvsTasks" Filter="Blacklist_KeywordFilter" Source="{Binding Items, NotifyOnTargetUpdated=True}" />
+                            <ObjectDataProvider x:Key="BlackListItemType" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+                                <ObjectDataProvider.MethodParameters>
+                                    <x:Type TypeName="enums:BlackListItemType" />
+                                </ObjectDataProvider.MethodParameters>
+                            </ObjectDataProvider>
+                        </ScrollViewer.Resources>
+                        <DataGrid x:Name="edgBlacklist" AutoGenerateColumns="False" ItemsSource="{Binding Source={StaticResource cvsTasks}}" SelectedIndex="{Binding SelectedIndex}">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
+                                <DataGridComboBoxColumn Header="Type" ItemsSource="{Binding Mode=OneWay, Source={StaticResource BlackListItemType}, ValidatesOnExceptions=True}" SelectedValueBinding="{Binding Type}" />
+                                <DataGridTextColumn Binding="{Binding Added, Converter={StaticResource DateConverter}, Mode=TwoWay, StringFormat=\{0:g\}}" Header="Date" IsReadOnly="True" SortDirection="Ascending" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ScrollViewer>
+                    <WrapPanel Grid.Row="2">
+                        <Button Margin="5" BorderThickness="1" Command="{Binding RemoveItem, Mode=OneWay}" ToolTip="Remove">
+                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                        <Button Grid.Column="1" Margin="5" BorderThickness="1"
+                        Command="{Binding RemoveItem, Mode=OneWay}"
+                        ToolTip="Clear">
+                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_clear}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </TabItem>
+            <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, Mode=Default, NotifyOnTargetUpdated=True}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <ScrollViewer>
+                        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" AlternationCount="2" SelectionUnit="Cell">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Binding="{Binding Command, Mode=TwoWay, NotifyOnTargetUpdated=True}" Header="Command" />
+                                <DataGridTextColumn Binding="{Binding Response, Mode=TwoWay, NotifyOnTargetUpdated=True}" Header="Response" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </ScrollViewer>
+                    <WrapPanel Grid.Row="1">
+                        <Button Grid.Column="0" Margin="5" Command="{Binding RemoveItem, Mode=OneWay}" ToolTip="Remove">
+                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                        <Button Grid.Column="1" Margin="5" Command="{Binding ClearItems, Mode=OneWay}" ToolTip="Clear">
+                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_clear}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                    </WrapPanel>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Log" DataContext="{Binding Log, Mode=Default, NotifyOnTargetUpdated=True}">
+                <ScrollViewer>
+                    <ListView AlternationCount="2" BorderThickness="0" x:Name="LogListView"
+                        ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Margin="5,2" Text="{Binding Time, Converter={StaticResource DateConverter}, NotifyOnTargetUpdated=True}" />
+                                        <TextBlock Grid.Column="1" Margin="5,2" Text="{Binding Type, NotifyOnTargetUpdated=True}" />
+                                        <TextBlock Grid.Column="2" Margin="5,2" Text="{Binding Message, NotifyOnTargetUpdated=True}" />
+                                    </Grid>
+                                </VirtualizingStackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.Resources>
+                            <ContextMenu x:Key="ItemContextMenu">
+                                <MenuItem Header="Copy" Command="{Binding Path=DataContext.SelectedItem.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"/>
+                            </ContextMenu>
+                        </ListView.Resources>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}" >
+                                <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Settings">
+                <TabControl BorderThickness="1,0,0,0" TabStripPlacement="Left">
+                    <TabItem Header="Media" Padding="6,5">
+                        <ScrollViewer CanContentScroll="True">
+                            <StackPanel>
+                                <Label Grid.Row="3" Grid.Column="0" Content="Mediaplayer Audiodevice" />
+                                <Grid DataContext="{Binding MediaPlayerAudioDevices, Mode=OneWay, NotifyOnTargetUpdated=True}" Grid.Row="3" Grid.Column="1" >
+                                    <ComboBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Name="MediaC"
+                                                      ItemsSource="{Binding Items, NotifyOnTargetUpdated=True}" 
+                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}" 
+                                                      SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                                <Label Content="Follower AudioDevice" />
+                                <Grid DataContext="{Binding FollowerAudioDevices, NotifyOnTargetUpdated=True}" Grid.Row="4" Grid.Column="1" >
+                                    <ComboBox Grid.Row="4" Grid.Column="1" IsReadOnly="True" Name="ComboBoxFollowerAudioDevice"
+                                                      ItemsSource="{Binding Items, NotifyOnTargetUpdated=True}" 
+                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}" 													  
+                                                      SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                                <Label Content="Subscriber Audiodevice" />
+                                <Grid DataContext="{Binding SubscriberAudioDevices, Mode=OneWay, NotifyOnTargetUpdated=True}" Grid.Row="5" Grid.Column="1" >
+                                    <ComboBox Grid.Row="5" Grid.Column="1" Name="ComboBsubscriberA"
+                                                      ItemsSource="{Binding Items, NotifyOnTargetUpdated=True}" 
+                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}" 
+                                                      
+                                                      SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                                <Label Content="Soundboard Audiodevice" />
+                                <Grid DataContext="{Binding SoundboardAudioDevices, Mode=OneWay, NotifyOnTargetUpdated=True}" Grid.Row="6" Grid.Column="1" >
+                                    <ComboBox Grid.Row="6" Grid.Column="1" Name="ComboBSoundboardA"
+                                                      ItemsSource="{Binding Items, NotifyOnTargetUpdated=True}" 
+                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}" 
+                                                      SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True}">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Name}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                                <Label Grid.Row="7" Content="Mediaplayer Playbackmode" />
+                                <Grid DataContext="{Binding PlayBackType, Mode=OneWay, NotifyOnTargetUpdated=True}" Grid.Row="7" Grid.Column="1" >
+                                    <ComboBox x:Name="cbPlaymode" Grid.Row="7" Grid.Column="1"
+                                                      ItemsSource="{Binding Items, NotifyOnTargetUpdated=True}" 
+                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}" >
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Mode=OneWay}" />
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </Grid>
+                                <TextBox Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Follower Soundfile" Style="{DynamicResource SearchMetroTextBox}"/>
+                                <TextBox  Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Subscriber Soundfile" Style="{DynamicResource SearchMetroTextBox}"/>
+                                <TextBox Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Soundboard Directory" Style="{DynamicResource SearchMetroTextBox}"/>
+                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer AutoSkipThreshold in s"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_AutoSkipThreshold, Source={x:Static Util:Settings.Instance}}"/>
+                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer MaxSongDuration in s"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_MaxSongDuration, Source={x:Static Util:Settings.Instance}}"/>
+                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer MaxVoteSkipCounter"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_MaxVoteCounter, Source={x:Static Util:Settings.Instance}}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                    <TabItem Header="Advanced" Padding="6,5">
+                        <ScrollViewer CanContentScroll="True">
+                            <StackPanel Margin="5">
+
+                                <Controls:NumericUpDown Controls:TextBoxHelper.Watermark="Twitch.tv API pollrate"
+                                                        TextAlignment="Left"
+                                                        Controls:TextBoxHelper.ClearTextButton="True"
+                                                        Delay="500"
+                                                        Speedup="true" />
+
+
+                                <Controls:NumericUpDown Controls:TextBoxHelper.Watermark="Message Updaterate"
+                                                        TextAlignment="Left"
+                                                        Controls:TextBoxHelper.ClearTextButton="True"
+                                                        Delay="500"
+                                                        Speedup="true" />
+
+                                <TextBox x:Name="tbVLCLibDLL" 
+                                            Controls:TextBoxHelper.ClearTextButton="True" 
+                                            Controls:TextBoxHelper.Watermark="Path to vlc.exe" 
+                                            IsReadOnly="True"
+                                            MouseDoubleClick="tbVLCLibDLL_MouseDoubleClick"
+                                            Text="{Binding VLC_LibVlcDllPath, Source={x:Static Util:Settings.Instance}}"
+                                            Style="{DynamicResource SearchMetroTextBox}"/>
+
+                                <TextBox x:Name="tbVLCPlugins" 
+                                            Controls:TextBoxHelper.ClearTextButton="True" 
+                                            Controls:TextBoxHelper.Watermark="Path to VLC Plugins folder" 
+                                            IsReadOnly="True"
+                                            MouseDoubleClick="tbVLCPlugins_MouseDoubleClick"
+                                            Text="{Binding VLC_LibVlcPluginPath, Source={x:Static Util:Settings.Instance}}"
+                                            Style="{DynamicResource SearchMetroTextBox}"/>
+
+                                <TextBox x:Name="tbBackup" 
+                                            Controls:TextBoxHelper.ClearTextButton="True" 
+                                            Controls:TextBoxHelper.Watermark="Bacup Directory" 
+                                            IsReadOnly="True"
+                                            MouseDoubleClick="tbBackup_MouseDoubleClick"
+                                            Text="{Binding BackupDirectory, Source={x:Static Util:Settings.Instance}}"
+                                            Style="{DynamicResource SearchMetroTextBox}"/>
+                                <TextBox x:Name="tbYoutubeClientSecret" 
+                                            Controls:TextBoxHelper.ClearTextButton="True" 
+                                            Controls:TextBoxHelper.Watermark="Bacup Directory" 
+                                            IsReadOnly="True"
+                                            MouseDoubleClick="tbYoutubeClientSecret_MouseDoubleClick"
+                                            Text="{Binding Youtube_API_JSON, Source={x:Static Util:Settings.Instance}}"
+                                            Style="{DynamicResource SearchMetroTextBox}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
+            </TabItem>
+        </TabControl>
+        <Grid Grid.Row="1" VerticalAlignment="Bottom" Grid.ColumnSpan="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0" Margin="5,0">
+                <StackPanel Orientation="Horizontal">
+                    <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="{Binding Value, ElementName=Slider_TrackProgress}" />
+                    <Slider x:Name="Slider_TrackProgress" Grid.Row="1" Grid.Column="1"
+                        MinWidth="100" MinHeight="20" Margin="0,15"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Interval="1" IsSnapToTickEnabled="True"
+                        LargeChange="0.1" Maximum="1" SmallChange="0.01" ValueChanged="Slider_ValueChanged" Width="200" />
+                </StackPanel>
+            </StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button x:Name="bPrevious" Width="45" Height="45" Margin="0"
+                    Click="bPrevious_Click"
+                    Style="{DynamicResource MetroCircleButtonStyle}"
+                    ToolTip="Previous">
+                    <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_navigate_previous}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+                <ToggleButton x:Name="bPlay" Width="50" Height="50" Margin="0"
+                        Style="{DynamicResource MetroCircleToggleButtonStyle}"
+                        ToolTip="Play">
+                    <Rectangle Margin="5,0,0,0" Style="{Binding Source={StaticResource ButtonStyle}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_control_play}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </ToggleButton>
+
+                <Button x:Name="bNext" Width="45" Height="45" Margin="0"
+                    Click="bNext_Click"
+                    Style="{DynamicResource MetroCircleButtonStyle}"
+                    ToolTip="Next">
+                    <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                        <Rectangle.OpacityMask>
+                            <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_navigate_next}" />
+                        </Rectangle.OpacityMask>
+                    </Rectangle>
+                </Button>
+            </StackPanel>
+            <StackPanel Grid.Column="2" Margin="0">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Slider Grid.Row="1" Grid.Column="1"
+                        MinWidth="100" MinHeight="20" Margin="0,15"
+                        HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Interval="1" IsSnapToTickEnabled="True"
+                        LargeChange="10" Maximum="100" SmallChange="1" ValueChanged="slider_Mediaplayer_ValueChanged"
+                        Value="{Binding Value, ElementName=slider_Mediaplayer, Mode=TwoWay}" Width="200" />
+                    <Label Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Content="{Binding Value, ElementName=slider_Mediaplayer}" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Controls:MetroWindow>

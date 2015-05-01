@@ -169,35 +169,33 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Core\Controller.cs" />
-    <Compile Include="Core\InsireBot.cs" />
-    <Compile Include="Core\MediaPlayer.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="Enums\AudioDeviceType.cs" />
     <Compile Include="Enums\BlackListItemType.cs" />
     <Compile Include="Enums\CommandType.cs" />
     <Compile Include="Enums\PlaybackType.cs" />
+    <Compile Include="InsireBot.cs" />
+    <Compile Include="MediaPlayer.cs" />
     <Compile Include="Interfaces\IAudioDeviceInterface.cs" />
     <Compile Include="Interfaces\IBaseInterface.cs" />
-    <Compile Include="Interfaces\IBaseViewModel.cs" />
-    <Compile Include="Interfaces\ILoggingItem.cs" />
-    <Compile Include="Interfaces\ISong.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Objects\AudioDevice.cs" />
     <Compile Include="Objects\BlackListItem.cs" />
     <Compile Include="Objects\CustomCommand.cs" />
     <Compile Include="Objects\LogItem.cs" />
     <Compile Include="Objects\Message.cs" />
     <Compile Include="Objects\PlayListItem.cs" />
-    <Compile Include="Core\MessageController.cs" />
     <Compile Include="Util\BindingProxy.cs" />
     <Compile Include="Util\Collections\NotifyingQueue.cs" />
     <Compile Include="Util\Collections\PlayList.cs" />
     <Compile Include="Util\Collections\ThreadSaveObservableCollection.cs" />
-    <Compile Include="Util\Collections\WPFControlThreadingExtensions.cs" />
     <Compile Include="Util\DatabindingDebugConverter.cs" />
     <Compile Include="Util\DateConverter.cs" />
     <Compile Include="Util\DurationConverter.cs" />
     <Compile Include="Util\EmailValidator.cs" />
-    <Compile Include="Util\GenericAccessor.cs" />
+    <Compile Include="Util\ObjectSerializer.cs" />
     <Compile Include="Util\Services\AudioDeviceAPI.cs" />
     <Compile Include="Util\Services\LocalDataBaseAPI.cs" />
     <Compile Include="Util\Services\PastebinAPI.cs" />
@@ -206,24 +204,18 @@
     <Compile Include="Util\Settings.cs" />
     <Compile Include="Util\SimpleCommand.cs" />
     <Compile Include="Util\VisibilityConverter.cs" />
-    <Compile Include="Util\WPF\AutoScrollingListView.cs" />
-    <Compile Include="Util\WPF\EnhancedDataGrid.cs" />
-    <Compile Include="Util\WPF\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Util\ObjectSerializer.cs" />
     <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\AccentViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\BlackListViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\FollowerAudioDeviceViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\MediaPlayerAudioDeviceViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\SoundboardAudioDeviceViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\SubscriberAudioDeviceViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\BaseViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\BlacklistViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\BlackListTypeViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\CustomCommandViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\LogViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\MessageViewModel.cs" />
+    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\ChatViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\PlayBackTypeViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\PlayListViewModel.cs" />
     <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\ThemeViewModel.cs" />
@@ -232,13 +224,13 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\Icons.xaml">
+    <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Util\WPF\MainWindow.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -285,6 +277,7 @@
   <ItemGroup>
     <Content Include="Resources\PastebinAPI.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

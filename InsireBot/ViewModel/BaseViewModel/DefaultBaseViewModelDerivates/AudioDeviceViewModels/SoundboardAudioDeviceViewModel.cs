@@ -27,12 +27,15 @@ namespace InsireBot.ViewModel
 			{
 				if (a.Name == Settings.Instance.VLC_SoundboardWaveOutDevice)
 				{
-					SelectedItem = a;
 					SelectedIndex = i;
 				}
 				i++;
 			}
+		}
 
+		protected override void FillMessageCompressor(string _Key, string _Value)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

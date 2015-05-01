@@ -11,7 +11,7 @@ namespace InsireBot.Objects
 	/// <summary>
 	/// Baseclass for all the ChatMessages
 	/// </summary>
-	public abstract class ChatItem : ObservableObject, ILoggingItem
+	public abstract class ChatItem : ObservableObject
 	{
 		public DateTime Time { get; set; }
 		public string Value { get; set; }
@@ -22,7 +22,8 @@ namespace InsireBot.Objects
 			Value = LocalDataBase.GetRandomMessage;
 		}
 
-		public ChatItem(String value):this()
+		public ChatItem(String value)
+			: this()
 		{
 			this.Value = value;
 		}
@@ -82,10 +83,10 @@ namespace InsireBot.Objects
 			User = Settings.Instance.IRC_Username;
 		}
 
-		public ChatReply(String value):this()
+		public ChatReply(String value)
+			: this()
 		{
 			this.Value = value;
-			MessageController.Instance.LogMessages.Enqueue(new ChatLogItem(value));
 		}
 	}
 }

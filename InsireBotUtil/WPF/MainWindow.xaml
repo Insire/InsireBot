@@ -17,7 +17,7 @@
             mc:Ignorable="d" WindowStartupLocation="Manual" MinWidth="700" MinHeight="500" 
             GlowBrush="{DynamicResource AccentColorBrush}"
             SizeToContent="Width" SaveWindowPosition="True" 
-            Initialized="window_Initialized" Loaded="window_Loaded" ResizeMode="CanResizeWithGrip">
+            Loaded="window_Loaded" ResizeMode="CanResizeWithGrip">
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -394,8 +394,7 @@
                         <ListView x:Name="Playlists"
                             ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" 
                             SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True, NotifyOnValidationError=True}"
-                            SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" 
-                            SelectionChanged="Playlists_SelectionChanged" >
+                            SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
                             <ListView.ContextMenu>
                                 <ContextMenu >
                                     <MenuItem Header="CopyToClipboard" />
@@ -450,7 +449,7 @@
                                 <GridView>
                                     <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" />
                                     <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Duration, Converter={StaticResource DurationConverter}}" />
-                                    <GridViewColumn Header="Requester" DisplayMemberBinding="{Binding RequestedBy}" />
+                                    <GridViewColumn Header="Requester" DisplayMemberBinding="{Binding Requester}" />
                                 </GridView>
                             </ListView.View>
                             <ListView.Resources>

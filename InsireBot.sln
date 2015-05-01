@@ -12,19 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchTest", "TwitchTest\TwitchTest.csproj", "{F3B6F470-1542-4AF6-9F62-8080B80808B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireDB", "InsireDB\InsireDB.csproj", "{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireBotCore", "InsireBotCore\InsireBotCore.csproj", "{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}"
+EndProject
 Global
-	GlobalSection(TeamFoundationVersionControl) = preSolution
-		SccNumberOfProjects = 3
-		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
-		SccTeamFoundationServer = https://vietense.visualstudio.com/defaultcollection
-		SccLocalPath0 = .
-		SccProjectUniqueName1 = InsireBot\\InsireBot.csproj
-		SccProjectName1 = InsireBot
-		SccLocalPath1 = InsireBot
-		SccProjectUniqueName2 = TwitchTest\\TwitchTest.csproj
-		SccProjectName2 = TwitchTest
-		SccLocalPath2 = TwitchTest
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -38,6 +30,14 @@ Global
 		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3B6F470-1542-4AF6-9F62-8080B80808B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

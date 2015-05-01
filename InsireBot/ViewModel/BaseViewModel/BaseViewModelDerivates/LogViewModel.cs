@@ -33,7 +33,7 @@ namespace InsireBot.ViewModel
 			}
 			else
 			{
-				Update();
+				UpdateExecute();
 			}
 		}
 
@@ -59,6 +59,11 @@ namespace InsireBot.ViewModel
 					return true;
 			}
 			return false;
+		}
+
+		protected override void FillMessageCompressor(string _Key, string _Value)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

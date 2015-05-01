@@ -17,23 +17,34 @@ namespace InsireBot.ViewModel
 		[XmlIgnore]
 		public ICommand CopyURLsCommand { get; set; }
 
-		[XmlIgnore]
-		public ICommand RemoveCommand { get; set; }
+		private BlackListViewModel<BlackListItem> _Blacklist;
 
 		public PlayListViewModel()
 		{
+			ViewModelLocator v = (ViewModelLocator)App.Current.FindResource("Locator");
+
+			_Blacklist = v.BlackList;
+
 			Name = "PlaylistLibrary";
 			Items = new ThreadSafeObservableCollection<PlayList>();
 
-			this.RemoveCommand = new SimpleCommand
-			{
-				ExecuteDelegate = _ => Remove(),
-				CanExecuteDelegate = _ => true
-			};
-
 			this.CopyURLsCommand = new SimpleCommand
 			{
-				ExecuteDelegate = _ => getItems(),
+				ExecuteDelegate = _ =>
+				{
+					string s = String.Empty;
+					if (SelectedIndex > 0)
+						foreach (PlayListItem p in Items[SelectedIndex].Items)
+						{
+							s += " " + p.Location;
+						}
+
+					if (s != String.Empty)
+					{
+						Clipboard.Clear();
+						Clipboard.SetDataObject(s);
+					}
+				},
 				CanExecuteDelegate = _ => true
 			};
 
@@ -55,7 +66,7 @@ namespace InsireBot.ViewModel
 			}
 			else
 			{
-				this.Update();
+				this.Load();
 			}
 		}
 
@@ -67,9 +78,42 @@ namespace InsireBot.ViewModel
 			}
 		}
 
+		public void Add(Uri par)
+		{
+			this.Add(new PlayListItem(par));
+		}
+
 		public void Add(PlayListItem par)
 		{
-			if (!Items[SelectedIndex].Check(par)) Items[SelectedIndex].Add(par);
+			if (!par.Default)
+			{
+				if (!_Blacklist.Check(par))
+				{
+					if (Items.Count != 0)
+						if (SelectedIndex > -1)
+							if (!Items[SelectedIndex].Check(par))
+							{
+								if (Items[SelectedIndex].Add(par))
+								{
+									MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("{0} was added to the Playlist.", par.Title), RelayToChat = true });
+								}
+							}
+							else
+							{
+								// Message: no playlist selected
+								MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("No Playlist selected.") });
+							}
+						else
+						{
+							// Message: no playists in collections. no items can be added
+							MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
+						}
+				}
+			}
+			else
+			{
+				MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("No Playlistitem created. Use !request <URL> or !songrequest <URL> to request a song.") });
+			}
 		}
 
 		public override void Save()
@@ -85,14 +129,13 @@ namespace InsireBot.ViewModel
 
 			foreach (String s in temp)
 			{
-				// before removingthe playlistname, the corresponding playlist xml files should be deleted first
+				// before removing the playlistname, the corresponding playlist xml files should be deleted first
 				if (File.Exists(String.Format("{1}\\{0}.xml", s, Settings.Instance.configFilePath)))
 				{
 					File.Delete(String.Format("{1}\\{0}.xml", s, Settings.Instance.configFilePath));
 				}
 				Settings.Instance.PlaylistNames.Remove(s);
 			}
-
 		}
 
 		public override bool Load()
@@ -113,60 +156,45 @@ namespace InsireBot.ViewModel
 				return false;
 		}
 
+		/// <summary>
+		/// Check if a Playlist with that Name already exists
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
 		public bool Check(string name)
 		{
 			foreach (PlayList c in Items)
 			{
-				if (c.Name == name) return true;
+				if (c.Name == name)
+				{
+					MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("There already exists a Playlist with that name.") });
+					return true;
+				}
 			}
 			return false;
 		}
 
+		/// <summary>
+		/// Check if a Playlist with that Name already exists
+		/// </summary>
+		/// <param name="par"></param>
+		/// <returns></returns>
 		public override bool Check(PlayList par)
 		{
 			foreach (PlayList c in Items)
 			{
-				if (c.Name == par.Name) return true;
-			}
-			return false;
-		}
-
-		public bool Check(PlayListItem par)
-		{
-			if (SelectedIndex < 0) return false;
-			foreach (PlayListItem c in Items[SelectedIndex])
-			{
-				if (c.Location == par.Location) return true;
-			}
-			return false;
-		}
-
-		new public void Update()
-		{
-			Load();
-			//if (!Load())
-			//{
-			//	Items.Add(new PlayList());
-			//	SelectedIndex = 0;
-			//}
-
-			//if (Items.Count == 0) Items.Add(new PlayList());
-		}
-
-		private void getItems()
-		{
-			string s = String.Empty;
-			if (SelectedItem != null)
-				foreach (PlayListItem p in SelectedItem.Items)
+				if (c.Name == par.Name)
 				{
-					s += " " + p.Location;
+					MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("There already exists a Playlist with that name.") });
+					return true;
 				}
-
-			if (s != String.Empty)
-			{
-				Clipboard.Clear();
-				Clipboard.SetDataObject(s);
 			}
+			return false;
+		}
+
+		protected override void FillMessageCompressor(string _Key, string _Value)
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

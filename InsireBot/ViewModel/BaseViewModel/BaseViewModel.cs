@@ -2,14 +2,43 @@
 using InsireBot.Util;
 using InsireBot.Util.Collections;
 using System.Windows.Input;
+using System;
 
 namespace InsireBot.ViewModel
 {
+	/// <summary>
+	/// Can Save/Load to/from XML file, supports ICommands
+	/// </summary>
+	/// <typeparam name="T">The CollectionObject</typeparam>
+	/// <typeparam name="S">The MessageObject</typeparam>
 	public abstract class BaseViewModel<T> : DefaultBaseViewModel<T>
 	{
-		public ICommand ClearItems { get { return new RelayCommand(ClearExecute, CanClearExecute); } }
+		public ICommand ClearItems { get; set; }
 
-		public ICommand RemoveItem { get { return new RelayCommand(RemoveExecute, CanRemoveExecute); } }
+		public ICommand RemoveItem { get; set; }
+
+		public ICommand UpdateItems { get; set; }
+
+		public BaseViewModel()
+		{
+			this.ClearItems = new SimpleCommand
+			{
+				ExecuteDelegate = _ => ClearExecute(),
+				CanExecuteDelegate = _ => true
+			};
+
+			this.RemoveItem = new SimpleCommand
+			{
+				ExecuteDelegate = _ => RemoveExecute(),
+				CanExecuteDelegate = _ => true
+			};
+
+			this.UpdateItems = new SimpleCommand
+			{
+				ExecuteDelegate = _ => UpdateExecute(),
+				CanExecuteDelegate = _ => true
+			};
+		}
 
 		public virtual bool Load()
 		{
@@ -50,12 +79,20 @@ namespace InsireBot.ViewModel
 					SelectedIndex = 0;
 				return true;
 			}
-			return false;
+			else
+			{
+				MessageBuffer.Enqueue(new BaseMessage { Value = "An equal Item already exists in that Collection and can't be added again." });
+				return false;
+			}
+
 		}
 
 		public virtual bool Check()
 		{
-			return Check(Items[SelectedIndex]);
+			if (SelectedIndex > -1)
+				return Check(Items[SelectedIndex]);
+			else
+				return false;
 		}
 
 		/// <summary>
@@ -66,16 +103,6 @@ namespace InsireBot.ViewModel
 		public abstract bool Check(T par);
 
 		#region CommandMethods
-
-		private bool CanClearExecute()
-		{
-			return true;
-		}
-
-		private bool CanRemoveExecute()
-		{
-			return true;
-		}
 
 		private void ClearExecute()
 		{
@@ -93,14 +120,13 @@ namespace InsireBot.ViewModel
 			Remove();
 		}
 
-		#endregion CommandMethods
-
-		public void Update()
+		public void UpdateExecute()
 		{
 			if (!Load())
 			{
 				Items = new ThreadSafeObservableCollection<T>();
 			}
 		}
+		#endregion CommandMethods
 	}
 }

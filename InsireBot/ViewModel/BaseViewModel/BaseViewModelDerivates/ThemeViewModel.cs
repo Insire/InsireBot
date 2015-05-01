@@ -19,15 +19,22 @@ namespace InsireBot.ViewModel
 			return false;
 		}
 
-		new public void Update()
+		public void Update()
 		{
+			int i = 0;
 			Items = new Util.Collections.ThreadSafeObservableCollection<AppTheme>();
 			foreach (AppTheme at in ThemeManager.AppThemes)
 			{
 				Items.Add(at);
 				if (Settings.Instance.MetroTheme == at.Name)
-					SelectedItem = at;
+					SelectedIndex = i;
+				i++;
 			}
+		}
+
+		protected override void FillMessageCompressor(string _Key, string _Value)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }

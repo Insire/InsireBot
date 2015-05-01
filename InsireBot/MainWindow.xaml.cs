@@ -1,19 +1,20 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using InsireBot.Core;
-using InsireBot.Enums;
-using InsireBot.Objects;
 using InsireBot.Util.Collections;
 using InsireBot.ViewModel;
+using InsireBot.Enums;
+using InsireBot.Util;
+using InsireBot.Objects;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Ookii.Dialogs.Wpf;
 
-namespace InsireBot.Util.WPF
+namespace InsireBot
 {
 	/// <summary>
 	/// Interaktionslogik für MainWindow.xaml 
@@ -35,7 +36,7 @@ namespace InsireBot.Util.WPF
 		public MainWindow()
 		{
 			InitializeComponent();
-			_Controller.InitializedMainWindow = true;
+			//_Controller.InitializedMainWindow = true;
 			PlaylistGrid.IsEnabled = true;
 			Playlists.IsEnabled = true;
 			PlaylistItems.IsEnabled = true;
@@ -47,6 +48,7 @@ namespace InsireBot.Util.WPF
 			_Playlist = v.PlayList;
 		}
 
+		#region Updating Themes and Accents
 		void _ThemeViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "SelectedIndex")
@@ -87,6 +89,7 @@ namespace InsireBot.Util.WPF
 				Settings.Instance.MetroAccent = Accent;
 			Settings.Instance.MetroTheme = ThemeManager.DetectAppStyle(this).Item1.Name;
 		}
+		#endregion
 
 		private void ToggleFlyout(int index)
 		{
@@ -172,10 +175,6 @@ namespace InsireBot.Util.WPF
 
 		#endregion
 
-		#region BlacklistTab
-
-		#region Filter
-
 		private void Blacklist_KeywordFilter(object sender, System.Windows.Data.FilterEventArgs e)
 		{
 			BlackListItem t = e.Item as BlackListItem;
@@ -224,7 +223,12 @@ namespace InsireBot.Util.WPF
 			}
 		}
 
-		#endregion Filter
+		#region Events
+
+		//private void window_Initialized(object sender, EventArgs e)
+		//{
+		//	_Controller = new Controller();
+		//}
 
 		private void BlacklistFilter_Changed(object sender, RoutedEventArgs e)
 		{
@@ -260,10 +264,7 @@ namespace InsireBot.Util.WPF
 			CollectionViewSource.GetDefaultView(edgBlacklist.ItemsSource).Refresh();
 		}
 
-		#endregion BlacklistTab
-
-		#region Events
-
+		#region MediaPlayerEvents
 		/// <summary>
 		/// gets called when the TrackPositionSliderValue gets changed 
 		/// </summary>
@@ -275,16 +276,10 @@ namespace InsireBot.Util.WPF
 				_Controller.Slider_ValueChanged(sender, e);
 		}
 
-		private void window_Initialized(object sender, EventArgs e)
-		{
-			_Controller = new Controller();
-		}
-
 		private void window_Loaded(object sender, RoutedEventArgs e)
 		{
 			UpdateColors();
 		}
-
 		private void cbMediaPlayerSilent_Unchecked(object sender, RoutedEventArgs e)
 		{
 			if (_Controller != null)
@@ -376,33 +371,61 @@ namespace InsireBot.Util.WPF
 		}
 		#endregion
 
-		private void bLoadFromFile_Click(object sender, RoutedEventArgs e)
-		{
-			// As of .Net 3.5 SP1, WPF's Microsoft.Win32.OpenFileDialog class still uses the old style 
-			VistaOpenFileDialog dialog = new VistaOpenFileDialog();
-			dialog.Filter = "All files (*.*)|*.*";
-			if (!VistaFileDialog.IsVistaFileDialogSupported)
-				MessageBox.Show(this, "Because you are not using Windows Vista or later, you have to fill in the path by yourself", "Not Supported");
-			if ((bool)dialog.ShowDialog(this))
-			{
-				StreamReader streamReader = new StreamReader(dialog.FileName);
-				string text = streamReader.ReadToEnd();
-				streamReader.Close();
+		#endregion
 
-				MessageController.Instance.ChatMessages.Enqueue(new ChatCommand(Settings.Instance.IRC_Username, text, CommandType.Request));
+		private async void bLoadFromFile_Click(object sender, RoutedEventArgs e)
+		{
+			if (_Playlist.Items.Count == 0)
+				await AddPlayList();
+
+			if (_Playlist.Items.Count != 0)
+			{
+				if (_Playlist.SelectedIndex > -1)
+				{
+					// As of .Net 3.5 SP1, WPF's Microsoft.Win32.OpenFileDialog class still uses the old style 
+					VistaOpenFileDialog dialog = new VistaOpenFileDialog();
+					dialog.Filter = "All files (*.*)|*.*";
+					if (!VistaFileDialog.IsVistaFileDialogSupported)
+						MessageBox.Show(this, "Because you are not using Windows Vista or later, you have to fill in the path by yourself", "Not Supported");
+					if ((bool)dialog.ShowDialog(this))
+					{
+						StreamReader streamReader = new StreamReader(dialog.FileName);
+						string text = streamReader.ReadToEnd();
+						streamReader.Close();
+
+						Controller.FeedMe(text);
+					}
+				}
+				else
+				{
+					await this.ShowMessageAsync("Playlist needed", "You need to select a Playlist to add Songs to.", MessageDialogStyle.Affirmative);
+				}
+
 			}
 		}
 
 		private async void bAddPlayListItem_Click(object sender, RoutedEventArgs e)
 		{
-			//this.MetroDialogOptions.ColorScheme = UseAccentForDialogsMenuItem.IsChecked ? MetroDialogColorScheme.Accented : MetroDialogColorScheme.Theme;
+			if (_Playlist.Items.Count == 0)
+				await AddPlayList();
 
-			var result = await this.ShowInputAsync("Add Youtube Playlist or Song", "Post the Link!");
+			if (_Playlist.Items.Count != 0)
+			{
+				if (_Playlist.SelectedIndex > -1)
+				{
+					var result = await this.ShowInputAsync("Add Youtube Playlist or Song", "Post the Link!");
 
-			if (result == null) //user pressed cancel
-				return;
+					if (result == null) //user pressed cancel
+						return;
 
-			MessageController.Instance.ChatMessages.Enqueue(new ChatCommand(Settings.Instance.IRC_Username, result, CommandType.Request));
+					Controller.FeedMe(result);
+				}
+				else
+				{
+					await this.ShowMessageAsync("Playlist needed", "You need to select a Playlist to add Songs to.", MessageDialogStyle.Affirmative);
+				}
+			}
+
 		}
 
 		private void tbYoutubeClientSecret_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -507,22 +530,12 @@ namespace InsireBot.Util.WPF
 			Settings.Instance.VLC_PlayBackType = (PlaybackType)cbPlaymode.SelectedValue;
 		}
 
-		private void Playlists_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+		private async void bAddPlaylist_Click(object sender, RoutedEventArgs e)
 		{
-			//PlaylistItemsGrid.DataContext = null;
-
-			//PlaylistItems.ItemsSource = null;
-
-			//if (_Playlist != null)
-			//	if (_Playlist.SelectedItem != null)
-			//	{
-			//		PlaylistItemsGrid.DataContext = _Playlist.SelectedItem;
-
-			//		PlaylistItems.ItemsSource = _Playlist.SelectedItem.Items;
-			//	}
+			await AddPlayList();
 		}
 
-		private async void bAddPlaylist_Click(object sender, RoutedEventArgs e)
+		private async Task AddPlayList()
 		{
 			var result = await this.ShowInputAsync("Add a new Playlist", "What should the Name be?");
 

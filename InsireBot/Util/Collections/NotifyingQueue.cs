@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace InsireBot.Util.Collections
 {
-	public class NotifyingQueue<T>
+	public class NotifyingQueue<T> : Queue<T>
 	{
-		private readonly Queue<T> queue = new Queue<T>();
 		public event EventHandler Changed;
 
 		protected virtual void OnChanged()
@@ -13,19 +12,10 @@ namespace InsireBot.Util.Collections
 			if (Changed != null) Changed(this, EventArgs.Empty);
 		}
 
-		public virtual void Enqueue(T item)
+		new public virtual void Enqueue(T item)
 		{
-			queue.Enqueue(item);
+			base.Enqueue(item);
 			OnChanged();
-		}
-
-		public int Count { get { return queue.Count; } }
-
-		public virtual T Dequeue()
-		{
-			T item = queue.Dequeue();
-			//OnChanged();
-			return item;
 		}
 	}
 }

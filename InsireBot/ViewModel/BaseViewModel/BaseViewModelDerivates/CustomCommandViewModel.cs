@@ -25,7 +25,7 @@ namespace InsireBot.ViewModel
 			}
 			else
 			{
-				Update();
+				UpdateExecute();
 			}
 		}
 
@@ -44,6 +44,11 @@ namespace InsireBot.ViewModel
 				if (c.Command == par.Command && c.Response == par.Response) return true;
 			}
 			return false;
+		}
+
+		protected override void FillMessageCompressor(string _Key, string _Value)
+		{
+			throw new System.NotImplementedException();
 		}
 	}
 }
