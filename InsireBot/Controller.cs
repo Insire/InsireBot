@@ -203,22 +203,22 @@ namespace InsireBot
 
 		public void removePlayListItem()
 		{
-			throw new NotImplementedException();
+			_Playlist.Remove();
 		}
 
 		public void removePlayListItem(PlayListItem par)
 		{
-			throw new NotImplementedException();
+			_Playlist.Remove(par);
 		}
 
 		public void removePlayListItem(String parURL)
 		{
-			throw new NotImplementedException();
+			_Playlist.Remove(parURL);
 		}
 
 		public void removePlayListItems(List<PlayListItem> par)
 		{
-			throw new NotImplementedException();
+			_Playlist.Remove(par);
 		}
 
 		/// <summary>
@@ -227,6 +227,7 @@ namespace InsireBot
 		/// <param name="par"></param>
 		public void FeedMe(String par)
 		{
+
 			// check string for youtube urls
 			// put them into a list
 			// iterate that list
@@ -245,7 +246,6 @@ namespace InsireBot
 			if (_Bot.IsConnected)
 				_Bot.Send(par.Value);
 		}
-
 
 		public void Log(LogItem par)
 		{

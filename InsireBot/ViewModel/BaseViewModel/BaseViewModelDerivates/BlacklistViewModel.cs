@@ -44,7 +44,7 @@ namespace InsireBot.ViewModel
 				foreach (BlackListItem obj in x)
 					Remove(obj);
 
-				MessageBuffer.Enqueue(new CompressedMessage { Value = "{0} is not blacklisted anymore.", Params = new String[] { parValue }, RelayToChat = true });
+				FillMessageCompressor(new CompressedMessage { Value = "{0} is not blacklisted anymore.", Params = new String[] { parValue }, RelayToChat = true }, "{0} Items are not blacklisted anymore");
 				return true;
 			}
 			else
@@ -85,14 +85,14 @@ namespace InsireBot.ViewModel
 		/// <summary>
 		/// Checks if par is part of the list. Can be added if Add is true and it isnt part of the list yet.
 		/// </summary>
-		/// <param name="par"></param>
-		/// <param name="Add"></param>
+		/// <param name="par">the Item to be checked and maybe added</param>
+		/// <param name="Add">Flag if Item should be added if it is not in the list</param>
 		/// <returns></returns>
 		public bool Check(BlackListItem par, bool Add = false)
 		{
 			if (Items.Contains(par))
 			{
-				MessageBuffer.Enqueue(new CompressedMessage { Value = String.Format("{0} is blacklisted.", par.Value), RelayToChat = true });
+				FillMessageCompressor(new CompressedMessage { Value = String.Format("{0} is blacklisted.", par.Value), RelayToChat = true }, "{0} Items are blacklisted");
 				return true;
 			}
 			else
@@ -100,11 +100,11 @@ namespace InsireBot.ViewModel
 				if (Add)
 				{
 					Items.Add(par);
-					MessageBuffer.Enqueue(new CompressedMessage { Value = String.Format("{0} is now blacklisted.", par.Value), RelayToChat = true });
+					FillMessageCompressor(new CompressedMessage { Value = String.Format("{0} is now blacklisted.", par.Value), RelayToChat = true }, "{0} Items are now blacklisted");
 				}
 				else
 					// all is fine, since nothing is blacklisted
-					MessageBuffer.Enqueue(new CompressedMessage { Value = String.Format("{0} is not blacklisted.", par.Value), RelayToChat = true });
+					FillMessageCompressor(new CompressedMessage { Value = String.Format("{0} is not blacklisted.", par.Value), RelayToChat = true }, "{0} Items are not blacklisted");
 			}
 
 			return false;
@@ -112,12 +112,7 @@ namespace InsireBot.ViewModel
 
 		public override bool Check(BlackListItem par)
 		{
-			throw new NotImplementedException();
-		}
-
-		protected override void FillMessageCompressor(string _Key, string _Value)
-		{
-			throw new NotImplementedException();
+			return Items.Contains(par);
 		}
 	}
 }

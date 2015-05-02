@@ -60,10 +60,5 @@ namespace InsireBot.ViewModel
 			}
 			return false;
 		}
-
-		protected override void FillMessageCompressor(string _Key, string _Value)
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 }

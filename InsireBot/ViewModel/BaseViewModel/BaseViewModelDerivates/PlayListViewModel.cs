@@ -34,8 +34,6 @@ namespace InsireBot.ViewModel
 
 		public PlayListViewModel()
 		{
-
-
 			Name = "PlaylistLibrary";
 			Items = new ThreadSafeObservableCollection<PlayList>();
 
@@ -106,24 +104,24 @@ namespace InsireBot.ViewModel
 							{
 								if (Items[SelectedIndex].Add(par))
 								{
-									MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("{0} was added to the Playlist.", par.Title), RelayToChat = true });
+									FillMessageCompressor(new CompressedMessage { Value = "{0} was added to the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were added to the Playlist");
 								}
 							}
 							else
 							{
 								// Message: no playlist selected
-								MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("No Playlist selected.") });
+								FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlist selected.") });
 							}
 						else
 						{
 							// Message: no playists in collections. no items can be added
-							MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
+							FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
 						}
 				}
 			}
 			else
 			{
-				MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("No Playlistitem created. Use !request <URL> or !songrequest <URL> to request a song.") });
+				FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlistitem created. Use !request <URL> or !songrequest <URL> to request a song.") });
 			}
 		}
 
@@ -135,10 +133,9 @@ namespace InsireBot.ViewModel
 				if (!Settings.Instance.PlaylistNames.Contains(p.Name))
 					Settings.Instance.PlaylistNames.Add(p.Name);
 			}
-			// cast to list so that we can iterate it and remove the deleted items from it
-			List<String> temp = Settings.Instance.PlaylistNames.Except(Items.Select(p => p.Name)).ToList(); ;
 
-			foreach (String s in temp)
+			// cast to list so that we can iterate it and remove the deleted items from it
+			foreach (String s in Settings.Instance.PlaylistNames.Except(Items.Select(p => p.Name)).ToList())
 			{
 				// before removing the playlistname, the corresponding playlist xml files should be deleted first
 				if (File.Exists(String.Format("{1}\\{0}.xml", s, Settings.Instance.configFilePath)))
@@ -178,7 +175,7 @@ namespace InsireBot.ViewModel
 			{
 				if (c.Name == name)
 				{
-					MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("There already exists a Playlist with that name.") });
+					FillMessageCompressor(new BaseMessage { Value = String.Format("There already exists a Playlist with that name.") });
 					return true;
 				}
 			}
@@ -196,16 +193,46 @@ namespace InsireBot.ViewModel
 			{
 				if (c.Name == par.Name)
 				{
-					MessageBuffer.Enqueue(new BaseMessage { Value = String.Format("There already exists a Playlist with that name.") });
+					FillMessageCompressor(new BaseMessage { Value = String.Format("There already exists a Playlist with that name.") });
 					return true;
 				}
 			}
 			return false;
 		}
 
-		protected override void FillMessageCompressor(string _Key, string _Value)
+		public bool Remove(PlayListItem par)
 		{
-			throw new NotImplementedException();
+			return Items[SelectedIndex].Remove(par);
+		}
+
+		public bool Remove(String parURL)
+		{
+			int removed = 0;
+			int found = 0;
+			foreach (PlayListItem item in (from p in Items[SelectedIndex].Items where p.Location == parURL select p))
+			{
+				found++;
+				if (Items[SelectedIndex].Remove(item)) removed++;
+			}
+
+			if (removed == found) return true;
+			else
+				return false;
+		}
+
+		public bool Remove(List<PlayListItem> par)
+		{
+			int removed = 0;
+			int found = 0;
+			foreach (PlayListItem item in par)
+			{
+				found++;
+				if (Items[SelectedIndex].Remove(item)) removed++;
+			}
+
+			if (removed == found) return true;
+			else
+				return false;
 		}
 	}
 }

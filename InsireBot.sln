@@ -14,8 +14,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchTest", "TwitchTest\Tw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireDB", "InsireDB\InsireDB.csproj", "{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireBotCore", "InsireBotCore\InsireBotCore.csproj", "{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,10 +32,6 @@ Global
 		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FAEA1F68-843B-4687-8C40-B7DFDFE2771F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

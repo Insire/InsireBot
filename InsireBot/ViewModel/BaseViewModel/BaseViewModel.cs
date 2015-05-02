@@ -81,7 +81,7 @@ namespace InsireBot.ViewModel
 			}
 			else
 			{
-				MessageBuffer.Enqueue(new BaseMessage { Value = "An equal Item already exists in that Collection and can't be added again." });
+				FillMessageCompressor(new BaseMessage { Value = "An equal Item already exists in that Collection and can't be added again." });
 				return false;
 			}
 

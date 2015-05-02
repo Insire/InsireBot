@@ -212,7 +212,22 @@ namespace InsireBot.ViewModel
 		/// <summary>
 		/// predefine a compressed message for each generated message, so it can be substiuted when printing every message isn't viable. Then add those messages to the MessageCompressor
 		/// </summary>
-		protected abstract void FillMessageCompressor(String _Key, String _Value);
+		public virtual void FillMessageCompressor(string _Key, string _Value)
+		{
+			MessageCompressor.Add(_Key, _Value);
+		}
+
+		public virtual void FillMessageCompressor(BaseMessage par)
+		{
+			MessageCompressor.Add(par.Value, par.Value);
+			MessageBuffer.Enqueue(par);
+		}
+
+		public virtual void FillMessageCompressor(CompressedMessage par, String substitueString)
+		{
+			MessageCompressor.Add(par.Value, par.Value);
+			MessageBuffer.Enqueue(par);
+		}
 
 		/// <summary>
 		/// 
