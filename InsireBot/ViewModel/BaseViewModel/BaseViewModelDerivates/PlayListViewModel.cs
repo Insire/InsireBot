@@ -1,5 +1,6 @@
 ﻿using InsireBot.Objects;
 using InsireBot.Util;
+using InsireBot.Enums;
 using InsireBot.Util.Collections;
 using InsireBot.Util.Services;
 using System;
@@ -87,9 +88,12 @@ namespace InsireBot.ViewModel
 			}
 		}
 
-		public void Add(Uri par)
+		public void Add(Uri par, UriType type)
 		{
-			this.Add(new PlayListItem(par));
+			if (type == UriType.PlaylistItem)
+				this.Add(new PlayListItem(par));
+			if (type == UriType.Playlist)
+				this.Add(new PlayList(par));
 		}
 
 		public void Add(PlayListItem par)

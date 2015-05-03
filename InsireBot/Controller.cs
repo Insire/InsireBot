@@ -3,6 +3,7 @@ using InsireBot.ViewModel;
 using InsireBot.Enums;
 using InsireBot.Objects;
 using InsireBot.Util.Collections;
+using InsireBot.Util;
 using System;
 using System.Text.RegularExpressions;
 using System.Timers;
@@ -25,8 +26,7 @@ namespace InsireBot
 		private static ChatViewModel _Chat;
 		private static CustomCommandViewModel _Customcommands;
 
-		private bool _Playing = false;
-		private bool _InitializedMainWindow = false;
+		private bool _Playing = false; // if the vlc player is playing a song
 		private static object _oSyncRoot = new Object();
 		private static volatile Controller _instance = null;
 
@@ -40,12 +40,6 @@ namespace InsireBot
 		{
 			get { return _Bot; }
 			set { _Bot = value; }
-		}
-
-		public bool InitializedMainWindow
-		{
-			get { return _InitializedMainWindow; }
-			set { _InitializedMainWindow = value; }
 		}
 
 		public MediaPlayer Player
@@ -120,8 +114,6 @@ namespace InsireBot
 			else
 				if (!par.Playable)
 					par = new MediaPlayer(type);
-
-			//if (!_InitializedMainWindow) return false;
 
 			if (par != null)
 				if (par.Playable)
@@ -198,7 +190,7 @@ namespace InsireBot
 
 		public void addPlayList(Uri par)
 		{
-			_Playlist.Add(par);
+			_Playlist.Add(par, UriType.Playlist);
 		}
 
 		public void removePlayListItem()
@@ -227,12 +219,46 @@ namespace InsireBot
 		/// <param name="par"></param>
 		public void FeedMe(String par)
 		{
+			foreach (String s in par.Split(' '))
+			{
+				Uri u = null;
+				try
+				{
+					// check string for URIs
+					u = new Uri(s);
+				}
+				catch (ArgumentNullException)
+				{
+					_Log.FillMessageCompressor(new CompressedMessage { Value = "The supplied URL was empty", Time = DateTime.Now }, "The supplied URLs were empty");
+					return;
+				}
+				catch (UriFormatException)
+				{
+					_Log.FillMessageCompressor(new CompressedMessage { Value = "The supplied URL wasn't valid", Time = DateTime.Now, Params = new String[] { par } }, "The supplied URLs weren't valid");
+					return;
+				}
 
-			// check string for youtube urls
-			// put them into a list
-			// iterate that list
-			// check if item is playlist, call addplaylist
-			// check if item is plylistitem, call addplaylistitem
+				if (u.Host == "www.youtube.com")
+				{
+					foreach (string o in System.Web.HttpUtility.ParseQueryString(u.Query).AllKeys)
+					{
+						string id = System.Web.HttpUtility.ParseQueryString(u.Query).Get(o);
+						switch (o)
+						{
+							case "v":
+								_Playlist.Add(u, UriType.PlaylistItem);
+								break;
+
+							case "list":
+								if (Settings.Instance.Valid_Youtube_Mail)
+								{
+									_Playlist.Add(u, UriType.Playlist);
+								}
+								break;
+						}
+					}
+				}
+			}
 		}
 
 		public void SendToChat(String par)
@@ -251,7 +277,6 @@ namespace InsireBot
 		{
 			_Log.Add(par);
 		}
-
 
 		#region MediaPlayerGUIEvents
 

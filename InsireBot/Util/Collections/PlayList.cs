@@ -21,11 +21,16 @@ namespace InsireBot.Util.Collections
 		private int _SelectedIndex;
 		private PlayListItem _SelectedItem;
 
+		/// <summary>
+		/// Ammount of Items in the list
+		/// </summary>
 		public int Count
 		{
 			get { return Items.Count; }
 		}
-
+		/// <summary>
+		/// List of Items
+		/// </summary>
 		public ThreadSafeObservableCollection<PlayListItem> Items
 		{
 			get { return _Items; }
@@ -39,8 +44,19 @@ namespace InsireBot.Util.Collections
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
 		public String ID { get; set; }
 
+		/// <summary>
+		/// URL to the Playlist
+		/// </summary>
+		public String Location { get; set; }
+
+		/// <summary>
+		/// Name of the Playlist
+		/// </summary>
 		public string Name
 		{
 			get { return _Name; }
@@ -54,6 +70,9 @@ namespace InsireBot.Util.Collections
 			}
 		}
 
+		/// <summary>
+		/// Index of the currently selected/playing Item
+		/// </summary>
 		public int SelectedIndex
 		{
 			get { return _SelectedIndex; }
@@ -68,7 +87,9 @@ namespace InsireBot.Util.Collections
 				}
 			}
 		}
-
+		/// <summary>
+		/// the currently selected/playing Item
+		/// </summary>
 		public PlayListItem SelectedItem
 		{
 			get { return _SelectedItem; }
@@ -139,6 +160,12 @@ namespace InsireBot.Util.Collections
 			};
 		}
 
+		public PlayList(Uri par)
+		{
+			Location = par.AbsoluteUri;
+			// TODO parse the uri using the youtube service
+			throw new NotSupportedException();
+		}
 
 		public PlayList(string Name)
 			: this()

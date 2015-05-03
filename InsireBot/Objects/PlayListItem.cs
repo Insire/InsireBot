@@ -42,7 +42,9 @@ namespace InsireBot
 		// playable in the current region
 		public bool Restricted { get; set; }
 
-		/// The song title.
+		/// <summary>
+		/// the song title
+		/// </summary>
 		public string Title { get; set; }
 
 		//

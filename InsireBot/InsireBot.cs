@@ -523,15 +523,15 @@ namespace InsireBot
 				_IrcClient.Connected += (sender2, e2) => connectedEvent.Set();
 				_IrcClient.Connect(server, false, _IrcUserInfo);
 
-				if (Settings.Instance.DebugMode)
-				{
-					//	if (!connectedEvent.Wait(10000))
-					//	{
-					//		_IrcClient.Dispose();
-					//		_Log.Add(new LogItem { Value = "Connection to " + server + " timed out.", Origin = Settings.Instance.IRC_Username });
-					//		return;
-					//	}
-				}
+				//if (Settings.Instance.DebugMode)
+				//{
+				//	if (!connectedEvent.Wait(10000))
+				//	{
+				//		_IrcClient.Dispose();
+				//		_Log.Add(new LogItem { Value = "Connection to " + server + " timed out.", Origin = Settings.Instance.IRC_Username });
+				//		return;
+				//	}
+				//}
 
 			}
 		}
@@ -569,7 +569,10 @@ namespace InsireBot
 
 		internal bool CanConnectExecute()
 		{
-			return true;
+			if (IsConnected == true)
+				return false;
+			else
+				return true;
 		}
 
 		#endregion Connect Command
