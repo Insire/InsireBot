@@ -1,51 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Net;
-using System.Runtime.Serialization.Json;
+using System.Collections.Generic;
 
-namespace InsireBot.Util.Services
+namespace TwitchService
 {
-	internal class TwitchAPI
-	{
-		// maybe: https://github.com/EasyAsABC123/LivestreamBuddy/tree/master/LivestreamBuddyNew
-		/// <summary>
-		/// does multiple calls to fetch stream and channel data from twitch; merges them into one
-		/// object and returns it
-		/// </summary>
-		/// <param name="channelName"> the channelname (without #) </param>
-		/// <returns> the master object, containing the called objects </returns>
-		public static TwitchDataObject getStreamMetaData(String channelName)
-		{
-			TwitchDataObject _tdo = new TwitchDataObject();
-			String _apiLink = "https://api.twitch.tv/kraken/streams/";
-
-			//fetch stream data
-			using (var w = new WebClient())
-			{
-				var jsonData = w.DownloadData(_apiLink + channelName);
-				var s = new DataContractJsonSerializer(typeof(RootObject));
-				using (var ms = new MemoryStream(jsonData))
-				{
-					var obj = (RootObject)s.ReadObject(ms);
-					_tdo._stream = obj;
-				}
-			}
-
-			//fetch channel data
-			using (var w = new WebClient())
-			{
-				var jsonData = w.DownloadData(_apiLink + channelName);
-				var s = new DataContractJsonSerializer(typeof(RootObject_channels));
-				using (var ms = new MemoryStream(jsonData))
-				{
-					var obj = (RootObject_channels)s.ReadObject(ms);
-					_tdo._channel = obj;
-				}
-			}
-			return _tdo;
-		}
-	}
-
+	#region Channel
 	public class Links
 	{
 		public String self { get; set; }
@@ -62,7 +20,7 @@ namespace InsireBot.Util.Services
 
 	public class Links2
 	{
-		public string self { get; set; }
+		public String self { get; set; }
 	}
 
 	public class Links3
@@ -97,7 +55,7 @@ namespace InsireBot.Util.Services
 		public object background { get; set; }
 		public object profile_banner { get; set; }
 		public object profile_banner_background_color { get; set; }
-		public string url { get; set; }
+		public String url { get; set; }
 		public int views { get; set; }
 		public int followers { get; set; }
 		public Links3 _links { get; set; }
@@ -113,7 +71,7 @@ namespace InsireBot.Util.Services
 		public Channel channel { get; set; }
 	}
 
-	public class RootObject
+	public class Root
 	{
 		public Links _links { get; set; }
 		public Stream stream { get; set; }
@@ -146,10 +104,10 @@ namespace InsireBot.Util.Services
 		public String created_at { get; set; }
 		public String updated_at { get; set; }
 		public String logo { get; set; }
-		public String banner { get; set; }
-		public String video_banner { get; set; }
-		public String background { get; set; }
-		public String profile_banner { get; set; }
+		public object banner { get; set; }
+		public object video_banner { get; set; }
+		public object background { get; set; }
+		public object profile_banner { get; set; }
 		public object profile_banner_background_color { get; set; }
 		public String url { get; set; }
 		public int views { get; set; }
@@ -160,6 +118,94 @@ namespace InsireBot.Util.Services
 	public class TwitchDataObject
 	{
 		public RootObject_channels _channel { get; set; }
-		public RootObject _stream { get; set; }
+		public Root _stream { get; set; }
+	}
+	#endregion
+
+	#region subscriptions
+	public class User
+	{
+		public String display_name { get; set; }
+		public int _id { get; set; }
+		public String name { get; set; }
+		public bool staff { get; set; }
+		public String created_at { get; set; }
+		public String updated_at { get; set; }
+		public String logo { get; set; }
+		public SubscriptionLinks3 _links { get; set; }
+	}
+
+	public class Subscription
+	{
+		public String created_at { get; set; }
+		public String _id { get; set; }
+		public SubscriptionLinks2 _links { get; set; }
+		public User user { get; set; }
+	}
+
+	public class SubscriptionRootObject
+	{
+		public int _total { get; set; }
+		public SubscriptionLinks _links { get; set; }
+		public List<Subscription> subscriptions { get; set; }
+	}
+
+	public class SubscriptionLinks
+	{
+		public String self { get; set; }
+		public String next { get; set; }
+	}
+
+	public class SubscriptionLinks2
+	{
+		public String self { get; set; }
+	}
+
+	public class SubscriptionLinks3
+	{
+		public String self { get; set; }
+	}
+
+	#endregion
+
+	public class Host
+	{
+		public int host_id { get; set; }
+		public int target_id { get; set; }
+		public String host_login { get; set; }
+		public String target_login { get; set; }
+	}
+
+	public class AuthenticationObject
+	{
+		public String Token { get; set; }
+		public String ClientID { get; set; }
+		public String RedirectURI { get; set; }
+		public String Scopes { get; set; }
+
+		public AuthenticationObject()
+		{
+			GetScope();
+		}
+
+		public void GetScope()
+		{
+			String[] arr = new String[] { 
+				//"user_read", 
+				//"user_subscriptions", 
+				//"channel_read", 
+				//"channel_editor",
+				"channel_check_subscription", 
+				"channel_subscriptions"
+				 };
+			for (int i = 0; i < arr.Length; i++)
+			{
+				if (i == 0)
+					Scopes += arr[i];
+				else
+					Scopes += "+" + arr[i];
+			}
+
+		}
 	}
 }

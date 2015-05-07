@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Google.Apis.Auth.OAuth2;
@@ -17,6 +17,31 @@ namespace YoutubeService
 		public List<Playlist> GetPlaylistByID(String ID)
 		{
 			return GetPlaylistByIDAsync(ID).Result;
+		}
+
+		public List<PlaylistItem> GetPlaylistItemByName(String Name)
+		{
+			return GetPlaylistItemByNameAsync(Name).Result;
+		}
+
+		public List<Playlist> GetPlaylistByName(String Name)
+		{
+			return GetPlaylistByNameAsync(Name).Result;
+		}
+
+		public List<Playlist> GetUserPlayLists()
+		{
+			return GetUserPlayListsAsync().Result;
+		}
+
+		public List<PlaylistItem> GetPlayListItemByPlaylistID(String ID)
+		{
+			return GetPlayListItemByPlaylistIDAsync(ID).Result;
+		}
+
+		public List<PlaylistItem> GetPlayListItemByPlaylistitemID(String ID)
+		{
+			return GetPlayListItemByPlaylistitemIDAsync(ID).Result;
 		}
 
 		private async Task<List<Playlist>> GetPlaylistByIDAsync(String ID)
@@ -42,62 +67,12 @@ namespace YoutubeService
 			return playlist;
 		}
 
-		public List<PlaylistItem> GetPlaylistItemByName(String Name)
-		{
-			return GetPlaylistItemByNameAsync(Name).Result;
-		}
-
-		private async Task<List<PlaylistItem>> GetPlaylistItemByNameAsync(String Name)
-		{
-			List<PlaylistItem> PlaylistItems = new List<PlaylistItem>();
-
-			var youtubeService = await this.GetYouTubeService();
-
-			var channelsListRequest = youtubeService.Channels.List("contentDetails");
-			channelsListRequest.Mine = true;
-			var playlists = youtubeService.Playlists.List("snippet");
-			playlists.PageToken = "";
-			playlists.MaxResults = 50;
-			playlists.Mine = true;
-			while (playlists.PageToken != null)
-			{
-				// get the playlists of the user
-				PlaylistListResponse presponse = playlists.ExecuteAsync().Result;
-
-				foreach (var currentPlayList in presponse.Items)
-				{
-					// get the videos per playlist
-					foreach (PlaylistItem p in GetPlayListItemByID(currentPlayList.Id))
-					{
-						// select the videos with the given name and check if they are already in the result, add them if they werent added already
-						var x = (from item in PlaylistItems where p.Snippet.Title == Name select item);
-
-						if (x == null)
-							PlaylistItems.Add(p);
-					}
-				}
-				playlists.PageToken = presponse.NextPageToken;
-			}
-
-			return PlaylistItems;
-		}
-
-		public List<Playlist> GetPlaylistByName(String Name)
-		{
-			return GetPlaylistByNameAsync(Name).Result;
-		}
-
 		private async Task<List<Playlist>> GetPlaylistByNameAsync(String Name)
 		{
 			var youtubeService = await this.GetYouTubeService();
 			List<Playlist> playlist = GetUserPlayLists();
 
 			return (from p in playlist where p.Snippet.Title == Name select p).ToList();
-		}
-
-		public List<Playlist> GetUserPlayLists()
-		{
-			return GetUserPlayListsAsync().Result;
 		}
 
 		private async Task<List<Playlist>> GetUserPlayListsAsync()
@@ -125,12 +100,42 @@ namespace YoutubeService
 			return playlist;
 		}
 
-		public List<PlaylistItem> GetPlayListItemByID(String ID)
+		private async Task<List<PlaylistItem>> GetPlaylistItemByNameAsync(String Name)
 		{
-			return GetPlayListItemByIDAsync(ID).Result;
+			List<PlaylistItem> PlaylistItems = new List<PlaylistItem>();
+
+			var youtubeService = await this.GetYouTubeService();
+
+			var channelsListRequest = youtubeService.Channels.List("contentDetails");
+			channelsListRequest.Mine = true;
+			var playlists = youtubeService.Playlists.List("snippet");
+			playlists.PageToken = "";
+			playlists.MaxResults = 50;
+			playlists.Mine = true;
+			while (playlists.PageToken != null)
+			{
+				// get the playlists of the user
+				PlaylistListResponse presponse = playlists.ExecuteAsync().Result;
+
+				foreach (var currentPlayList in presponse.Items)
+				{
+					// get the videos per playlist
+					foreach (PlaylistItem p in GetPlayListItemByPlaylistID(currentPlayList.Id))
+					{
+						// select the videos with the given name and check if they are already in the result, add them if they werent added already
+						var x = (from item in PlaylistItems where p.Snippet.Title == Name select item);
+
+						if (x == null)
+							PlaylistItems.Add(p);
+					}
+				}
+				playlists.PageToken = presponse.NextPageToken;
+			}
+
+			return PlaylistItems;
 		}
 
-		private async Task<List<PlaylistItem>> GetPlayListItemByIDAsync(String ID)
+		private async Task<List<PlaylistItem>> GetPlayListItemByPlaylistIDAsync(String ID)
 		{
 			List<PlaylistItem> PlayListItems = new List<PlaylistItem>();
 			YouTubeService youtubeService = await this.GetYouTubeService();
@@ -142,6 +147,30 @@ namespace YoutubeService
 				PlaylistItemsResource.ListRequest listRequest = youtubeService.PlaylistItems.List("snippet");
 				listRequest.MaxResults = 50;
 				listRequest.PlaylistId = ID;
+				listRequest.PageToken = nextPageToken;
+				var response = listRequest.ExecuteAsync().Result;
+
+				foreach (var playlistItem in response.Items)
+				{
+					PlayListItems.Add(playlistItem);
+				}
+				nextPageToken = response.NextPageToken;
+			}
+			return PlayListItems;
+		}
+
+		private async Task<List<PlaylistItem>> GetPlayListItemByPlaylistitemIDAsync(String ID)
+		{
+			List<PlaylistItem> PlayListItems = new List<PlaylistItem>();
+			YouTubeService youtubeService = await this.GetYouTubeService();
+			var channelsListRequest = youtubeService.Channels.List("contentDetails");
+			channelsListRequest.Mine = false;
+			var nextPageToken = "";
+			while (nextPageToken != null)
+			{
+				PlaylistItemsResource.ListRequest listRequest = youtubeService.PlaylistItems.List("snippet");
+				listRequest.MaxResults = 50;
+				listRequest.Id = ID;
 				listRequest.PageToken = nextPageToken;
 				var response = listRequest.ExecuteAsync().Result;
 

@@ -6,13 +6,13 @@ namespace YoutubeService
 {
 	public partial class Youtube
 	{
-		public bool AddSongToPlaylist(string songId, string playlistId)
+		public bool AddSongToPlaylist(string videoID, string playlistID)
 		{
 			bool Added = false;
 
 			try
 			{
-				this.AddSongToPlaylistAsync(songId, playlistId).Wait();
+				this.AddSongToPlaylistAsync(videoID, playlistID).Wait();
 				Added = true;
 			}
 			catch (AggregateException)
@@ -23,15 +23,15 @@ namespace YoutubeService
 			return Added;
 		}
 
-		private async Task AddSongToPlaylistAsync(string songId, string playlistId)
+		private async Task AddSongToPlaylistAsync(string videoID, string playlistID)
 		{
 			var youtubeService = await this.GetYouTubeService();
 			var newPlaylistItem = new PlaylistItem();
 			newPlaylistItem.Snippet = new PlaylistItemSnippet();
-			newPlaylistItem.Snippet.PlaylistId = playlistId;
+			newPlaylistItem.Snippet.PlaylistId = playlistID;
 			newPlaylistItem.Snippet.ResourceId = new ResourceId();
 			newPlaylistItem.Snippet.ResourceId.Kind = "youtube#video";
-			newPlaylistItem.Snippet.ResourceId.VideoId = songId;
+			newPlaylistItem.Snippet.ResourceId.VideoId = videoID;
 
 			youtubeService.PlaylistItems.Insert(newPlaylistItem, "snippet").Execute();
 		}
@@ -53,13 +53,13 @@ namespace YoutubeService
 			return Added;
 		}
 
-		public bool AddPlaylist(String title)
+		public bool AddPlaylist(String Name)
 		{
 			bool Added = false;
 
 			try
 			{
-				this.AddPlaylistAsync(title).Wait();
+				this.AddPlaylistByNameAsync(Name).Wait();
 				Added = true;
 			}
 			catch (AggregateException)
@@ -76,7 +76,7 @@ namespace YoutubeService
 			youtubeService.Playlists.Insert(par, "snippet").Execute();
 		}
 
-		private async Task AddPlaylistAsync(string title)
+		private async Task AddPlaylistByNameAsync(string title)
 		{
 			var youtubeService = await this.GetYouTubeService();
 			var newPlaylist = new Playlist();

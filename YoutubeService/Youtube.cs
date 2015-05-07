@@ -3,7 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace YoutubeService
 {
-	public partial class Youtube : IDisposable
+	/// <summary>
+	/// required nuget packages:
+	/// https://www.nuget.org/packages/Google.GData.Client/
+	/// https://www.nuget.org/packages/Google.Apis.YouTube.v3/
+	/// </summary>
+	public partial class Youtube
 	{
 		public string YoutubeVideoURL
 		{
@@ -25,32 +30,13 @@ namespace YoutubeService
 
 		public Youtube(String YoutubeAPIJSON)
 		{
-			this.Youtube_API_JSON = YoutubeAPIJSON;
-			this.YoutubeVideoURL = @"https://www.youtube.com/watch?v=";
-			this.GData = @"https://gdata.youtube.com/feeds/api/videos/";
+			if (!String.IsNullOrEmpty(YoutubeAPIJSON))
+			{
+				this.Youtube_API_JSON = YoutubeAPIJSON;
+				this.YoutubeVideoURL = @"https://www.youtube.com/watch?v=";
+				this.GData = @"https://gdata.youtube.com/feeds/api/videos/";
+			}
 		}
-
-		public bool CheckVideoRestriction(Google.YouTube.Video video)
-		{
-			if (video.Status != null)
-				if (video.Status.Reason.Equals("requesterRegion"))
-				{
-					return true;
-				}
-				else
-					return false;
-			else
-				return false;
-		}
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			throw new NotImplementedException();
-		}
-
-		#endregion
 	}
 
 	public class DurationParser

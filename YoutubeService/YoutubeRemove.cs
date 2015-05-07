@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
-using System.Linq;
 
 namespace YoutubeService
 {
@@ -25,7 +25,7 @@ namespace YoutubeService
 			if (SelectedPlayList != null)
 			{
 				// get the entries of the selected playlist and select an one by the supplied ID
-				List<PlaylistItem> PlayListItems = GetPlayListItemByIDAsync(SelectedPlayList.Id).Result;
+				List<PlaylistItem> PlayListItems = GetPlayListItemByPlaylistIDAsync(SelectedPlayList.Id).Result;
 				PlaylistItem SelectedPlayListItem = (from p in PlayListItems where p.Id == YoutubeVideoID select p).FirstOrDefault();
 
 				if (SelectedPlayListItem != null)

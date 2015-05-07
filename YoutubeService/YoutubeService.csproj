@@ -49,15 +49,6 @@
     <Reference Include="Google.Apis.YouTube.v3">
       <HintPath>..\packages\Google.Apis.YouTube.v3.1.9.0.1280\lib\portable-net40+sl50+win+wpa81+wp80\Google.Apis.YouTube.v3.dll</HintPath>
     </Reference>
-    <Reference Include="Google.GData.Client">
-      <HintPath>..\packages\Google.GData.Client.2.2.0.0\lib\Google.GData.Client.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.GData.Extensions">
-      <HintPath>..\packages\Google.GData.Extensions.2.2.0.0\lib\Google.GData.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.GData.YouTube">
-      <HintPath>..\packages\Google.GData.YouTube.2.2.0.0\lib\Google.GData.YouTube.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\packages\log4net.2.0.3\lib\net40-full\log4net.dll</HintPath>
     </Reference>

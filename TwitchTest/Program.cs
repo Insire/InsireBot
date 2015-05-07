@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using TwitchService;
 
 namespace TwitchTest
 {
@@ -17,29 +18,17 @@ namespace TwitchTest
 
 		static void Main(string[] args)
 		{
-			var clientID = "qmvhnw2w7cuw41i7htvzxsxy2ci6ugm";
-			var clientSecret = "41ul2iy0itkvrsn46p1712cgvfr9p61";
-			var provider = "Twitch";
+			Twitch t = new Twitch("Chemsorly", "");
+			foreach (Host h in t.Hosts)
+				Console.WriteLine(h.host_login);
 
-
-			var redirectURL = "localhost";
-
-
-			var accessToken = "stored-access-token-for-user";
-
-			var oauth2 = new OAuth2(
-						  clientID,
-						  clientSecret,
-						  provider,
-						  redirectURL,
-						  accessToken);
-
-			oauth2.Authenticate();
-			if (oauth2.IsAuthorized)
-			{
-				Console.WriteLine("yay!");
-			}
+			t.GetAuthentication(new AuthenticationObject() { ClientID = "qmvhnw2w7cuw41i7htvzxsxy2ci6ugm", RedirectURI = @"http://localhost:51665" });
 			Console.ReadKey();
 		}
+
+		// client ID: qmvhnw2w7cuw41i7htvzxsxy2ci6ugm
+		// redirect url: D:\Repositories\git Repos\Insirebot\TwitchTest\redirect.html
+		// name: InsireBot
+		// token: 6yyl5fk36l3btk6p2q2gelmm6i8rri
 	}
 }

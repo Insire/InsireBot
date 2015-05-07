@@ -8,6 +8,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6B804011-7C6B-495B-96B0-B57D6F8752A3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchTest", "TwitchTest\TwitchTest.csproj", "{F3B6F470-1542-4AF6-9F62-8080B80808B3}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF} = {0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireDB", "InsireDB\InsireDB.csproj", "{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}"
 EndProject
@@ -17,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeTest", "YoutubeTest\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeService", "YoutubeService\YoutubeService.csproj", "{091DE384-B067-46DD-B5FB-4548FB5CC718}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchService", "TwitchService\TwitchService.csproj", "{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +49,10 @@ Global
 		{091DE384-B067-46DD-B5FB-4548FB5CC718}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{091DE384-B067-46DD-B5FB-4548FB5CC718}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{091DE384-B067-46DD-B5FB-4548FB5CC718}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
