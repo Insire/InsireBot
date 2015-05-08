@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace YoutubeService
 {
@@ -41,7 +42,7 @@ namespace YoutubeService
 
 	public class DurationParser
 	{
-		private readonly string durationRegexExpression = @"PT(?<minutes>[0-9]{0,})M(?<seconds>[0-9]{0,})S";
+		private readonly string durationRegexExpression = @"PT((?<minutes>[0-9]{0,})M){0,}((?<seconds>[0-9]{0,})S){0,}";
 
 		/// <summary>
 		/// 
@@ -55,14 +56,24 @@ namespace YoutubeService
 			Match m = regexNamespaceInitializations.Match(durationStr);
 			if (m.Success)
 			{
-				string minutesStr = m.Groups["minutes"].Value;
-				string secondsStr = m.Groups["seconds"].Value;
-				int minutes = int.Parse(minutesStr);
-				int seconds = int.Parse(secondsStr);
-				TimeSpan duration = new TimeSpan(0, minutes, seconds);
+				TimeSpan duration = new TimeSpan();
+
+				int minutes = 0;
+				Int32.TryParse(m.Groups["minutes"].Value, out minutes);
+				int seconds = 0;
+				int.TryParse(m.Groups["seconds"].Value, out seconds);
+
+
+				duration = new TimeSpan(0, minutes, seconds);
+
 				durationResult = (ulong)duration.Ticks;
 			}
 			return durationResult;
+		}
+
+		public TimeSpan GetTimeSpan(string par)
+		{
+			return XmlConvert.ToTimeSpan(par);
 		}
 	}
 

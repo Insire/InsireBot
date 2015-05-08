@@ -28,6 +28,7 @@ namespace TwitchTest
 				}
 
 			//t.GetAuthentication(new AuthenticationObject() { ClientID = "qmvhnw2w7cuw41i7htvzxsxy2ci6ugm", RedirectURI = @"http://localhost" });
+			Console.WriteLine("done!");
 			Console.ReadKey();
 		}
 

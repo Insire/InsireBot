@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace TwitchService
 {
@@ -61,16 +60,6 @@ namespace TwitchService
 		public Links3 _links { get; set; }
 	}
 
-	public class Stream
-	{
-		public long _id { get; set; }
-		public String game { get; set; }
-		public int viewers { get; set; }
-		public Preview preview { get; set; }
-		public Links2 _links { get; set; }
-		public Channel channel { get; set; }
-	}
-
 	public class Root
 	{
 		public Links _links { get; set; }
@@ -91,31 +80,7 @@ namespace TwitchService
 		public String videos { get; set; }
 	}
 
-	public class RootObject_channels
-	{
-		public bool mature { get; set; }
-		public String status { get; set; }
-		public String broadcaster_language { get; set; }
-		public String display_name { get; set; }
-		public String game { get; set; }
-		public String delay { get; set; }
-		public String language { get; set; }
-		public int _id { get; set; }
-		public String name { get; set; }
-		public String created_at { get; set; }
-		public String updated_at { get; set; }
-		public String logo { get; set; }
-		public object banner { get; set; }
-		public object video_banner { get; set; }
-		public object background { get; set; }
-		public object profile_banner { get; set; }
-		public object profile_banner_background_color { get; set; }
-		public bool partner { get; set; }
-		public String url { get; set; }
-		public int views { get; set; }
-		public int followers { get; set; }
-		public Links_channels _links { get; set; }
-	}
+
 
 	public class TwitchDataObject
 	{
@@ -135,21 +100,6 @@ namespace TwitchService
 		public String updated_at { get; set; }
 		public String logo { get; set; }
 		public SubscriptionLinks3 _links { get; set; }
-	}
-
-	public class Subscription
-	{
-		public String created_at { get; set; }
-		public String _id { get; set; }
-		public SubscriptionLinks2 _links { get; set; }
-		public User user { get; set; }
-	}
-
-	public class SubscriptionRootObject
-	{
-		public int _total { get; set; }
-		public SubscriptionLinks _links { get; set; }
-		public List<Subscription> subscriptions { get; set; }
 	}
 
 	public class SubscriptionLinks

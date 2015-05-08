@@ -1,11 +1,14 @@
 ﻿using System;
 using Google.Apis.YouTube.v3.Data;
 using YoutubeService;
+using System.Xml;
 
 namespace YoutubeTest
 {
 	class Program
 	{
+		static Youtube yt = new Youtube(@"D:\Repositories\git Repos\Insirebot\YoutubeTest\client_secret.json");
+
 		static void Main(string[] args)
 		{
 			Uri[] playlists = new Uri[] { 
@@ -15,16 +18,22 @@ namespace YoutubeTest
 
 			Uri[] playlistitems = new Uri[]{
 				new Uri("https://www.youtube.com/watch?v=bXSzBeoYlC8"),
-				new Uri("https://www.youtube.com/watch?v=dApq3NNqKAc")
+				new Uri("https://www.youtube.com/watch?v=dApq3NNqKAc"),
+				new Uri("https://www.youtube.com/watch?v=6Yv22-yc4MA"),
+				new Uri("https://www.youtube.com/watch?v=_nVGW4fZz_o"),
+				new Uri("https://www.youtube.com/watch?v=aP7V_KtOzJc"),
+				new Uri("https://www.youtube.com/watch?v=Z4G9MU4wvTo"),
+				new Uri("https://www.youtube.com/watch?v=TUHfId9hg0Q"),
+				new Uri("https://www.youtube.com/watch?v=QTcK1jhSMwo"),
+				new Uri("https://www.youtube.com/watch?v=YZKN73_0xtI"),
+				new Uri("https://www.youtube.com/watch?v=WMTsZLTdhHQ")
 			};
-
 
 			Uri[] restrictedplaylistitems = new Uri[]{
 				new Uri("https://www.youtube.com/watch?v=3N2PHSZTYoM"),
-				new Uri("https://www.youtube.com/watch?v=uFiLbw5wRyU")
+				new Uri("https://www.youtube.com/watch?v=uFiLbw5wRyU"),
+				new Uri("https://www.youtube.com/watch?v=BIhGIEfzVDM")
 			};
-
-			Youtube yt = new Youtube(@"D:\Repositories\git Repos\Insirebot\YoutubeTest\client_secret.json");
 
 			//Console.WriteLine("get specific playlists:");
 			//foreach (Uri u in playlists)
@@ -69,8 +78,29 @@ namespace YoutubeTest
 			//Console.WriteLine("remove playlist test");
 			//yt.RemovePlaylistByName("test");
 
-			Console.WriteLine("get unavailable Playlistitems");
-			foreach (Uri u in restrictedplaylistitems)
+			Console.WriteLine("------------------------------------------");
+			Console.WriteLine("get unavailable Playlistitems " + restrictedplaylistitems.Length);
+			Console.WriteLine("------------------------------------------");
+			printPlaylistitemDetails(restrictedplaylistitems);
+			Console.WriteLine("------------------------------------------");
+			Console.WriteLine("get Playlistitems " + playlistitems.Length);
+			Console.WriteLine("------------------------------------------");
+			printPlaylistitemDetails(playlistitems);
+			Console.WriteLine("------------------------------------------");
+			Console.WriteLine("get Videos " + playlistitems.Length);
+			Console.WriteLine("------------------------------------------");
+			printVideoDetails(playlistitems);
+			Console.WriteLine("------------------------------------------");
+			Console.WriteLine("get restricted Videos " + restrictedplaylistitems.Length);
+			Console.WriteLine("------------------------------------------");
+			printVideoDetails(restrictedplaylistitems);
+
+			Console.ReadKey();
+		}
+
+		private static void printPlaylistitemDetails(Uri[] arr)
+		{
+			foreach (Uri u in arr)
 			{
 				foreach (string key in System.Web.HttpUtility.ParseQueryString(u.Query).AllKeys)
 				{
@@ -83,8 +113,11 @@ namespace YoutubeTest
 					}
 				}
 			}
-			Console.WriteLine("get unavailable Playlistitems #2");
-			foreach (Uri u in restrictedplaylistitems)
+		}
+
+		private static void printVideoDetails(Uri[] arr)
+		{
+			foreach (Uri u in arr)
 			{
 				foreach (string key in System.Web.HttpUtility.ParseQueryString(u.Query).AllKeys)
 				{
@@ -93,18 +126,24 @@ namespace YoutubeTest
 					foreach (Video p in yt.GetVideoByVideoID(id))
 					{
 						if (p != null)
-								Console.WriteLine(p.Snippet.Title);
+						{
+
+							DurationParser d = new DurationParser();
+							Console.Write(p.Snippet.Title + " " + d.GetTimeSpan(p.ContentDetails.Duration).TotalSeconds + "s");
+
+						}
+						if (p.ContentDetails.RegionRestriction != null)
+						{
+							Console.Write(" is blocked in ");
+							foreach (String s in p.ContentDetails.RegionRestriction.Blocked)
+							{
+								Console.Write(s);
+							}
+						}
+						Console.Write("\n");
 					}
 				}
 			}
-
-			//Video v = yt.GetVideoByVideoID("6Yv22-yc4MA")[0];
-			//if (v != null)
-			//{
-			//	DurationParser d = new DurationParser();
-			//	Console.WriteLine(new TimeSpan((Int64)d.GetDuration(v.ContentDetails.Duration)).TotalSeconds);
-			//}
-			Console.ReadKey();
 		}
 	}
 }
