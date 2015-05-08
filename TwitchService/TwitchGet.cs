@@ -45,7 +45,7 @@ namespace TwitchService
 		{
 			using (var w = new WebClient())
 			{
-				String url = String.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions?oauth_token={1}&direction=desc&limit=100", ChannelName, this.AccessToken);
+				String url = String.Format("https://api.twitch.tv/kraken/channels/{0}/subscriptions?oauth_token={1}&limit=100", ChannelName, this.AccessToken);
 				var jsonData = w.DownloadData(url);
 				var s = new DataContractJsonSerializer(typeof(SubscriptionRootObject));
 				using (var ms = new MemoryStream(jsonData))

@@ -24,12 +24,12 @@ namespace TwitchService
 
 			GetChannelInfo(ChannelName);
 			GetHosts(ChannelName);
-
-			if (!String.IsNullOrEmpty(Token))
-			{
-				this.Subscribtions = new SubscriptionRootObject();
-				GetSubscribtions(ChannelName);
-			}
+			if (Channel._channel.partner)
+				if (!String.IsNullOrEmpty(Token))
+				{
+					this.Subscribtions = new SubscriptionRootObject();
+					GetSubscribtions(ChannelName);
+				}
 
 		}
 	}

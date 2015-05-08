@@ -163,8 +163,6 @@ namespace YoutubeService
 		{
 			List<PlaylistItem> PlayListItems = new List<PlaylistItem>();
 			YouTubeService youtubeService = await this.GetYouTubeService();
-			var channelsListRequest = youtubeService.Channels.List("contentDetails");
-			channelsListRequest.Mine = false;
 			var nextPageToken = "";
 			while (nextPageToken != null)
 			{
@@ -180,6 +178,35 @@ namespace YoutubeService
 				}
 				nextPageToken = response.NextPageToken;
 			}
+			return PlayListItems;
+		}
+
+		public List<Video> GetVideoByVideoID(String ID)
+		{
+			List<Video> items = new List<Video>();
+			try
+			{
+				items = GetVideoByVideoIDAsync(ID).Result;
+			}
+			catch (AggregateException e)
+			{
+				Console.WriteLine(e.Message);
+			}
+			return items;
+		}
+
+		private async Task<List<Video>> GetVideoByVideoIDAsync(String ID)
+		{
+			List<Video> PlayListItems = new List<Video>();
+			YouTubeService youtubeService = await this.GetYouTubeService();
+			VideosResource.ListRequest listRequest = youtubeService.Videos.List("snippet,contentDetails");
+			listRequest.Id = ID;
+			var response = listRequest.ExecuteAsync().Result;
+
+			if (response != null)
+				if (response.Items != null)
+					PlayListItems = response.Items.ToList();
+
 			return PlayListItems;
 		}
 

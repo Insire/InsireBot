@@ -18,11 +18,16 @@ namespace TwitchTest
 
 		static void Main(string[] args)
 		{
-			Twitch t = new Twitch("Chemsorly", "");
+			Twitch t = new Twitch("InsireThomson", "js0l4ryivix0j4z9efzn3qxi42sci6");
 			foreach (Host h in t.Hosts)
 				Console.WriteLine(h.host_login);
+			if (t.Subscribtions != null)
+				foreach (Subscription x in t.Subscribtions.subscriptions)
+				{
+					Console.WriteLine(x.user);
+				}
 
-			t.GetAuthentication(new AuthenticationObject() { ClientID = "qmvhnw2w7cuw41i7htvzxsxy2ci6ugm", RedirectURI = @"http://localhost:51665" });
+			//t.GetAuthentication(new AuthenticationObject() { ClientID = "qmvhnw2w7cuw41i7htvzxsxy2ci6ugm", RedirectURI = @"http://localhost" });
 			Console.ReadKey();
 		}
 

@@ -94,11 +94,12 @@ namespace TwitchService
 	public class RootObject_channels
 	{
 		public bool mature { get; set; }
-		public object abuse_reported { get; set; }
 		public String status { get; set; }
+		public String broadcaster_language { get; set; }
 		public String display_name { get; set; }
 		public String game { get; set; }
-		public int delay { get; set; }
+		public String delay { get; set; }
+		public String language { get; set; }
 		public int _id { get; set; }
 		public String name { get; set; }
 		public String created_at { get; set; }
@@ -109,6 +110,7 @@ namespace TwitchService
 		public object background { get; set; }
 		public object profile_banner { get; set; }
 		public object profile_banner_background_color { get; set; }
+		public bool partner { get; set; }
 		public String url { get; set; }
 		public int views { get; set; }
 		public int followers { get; set; }
