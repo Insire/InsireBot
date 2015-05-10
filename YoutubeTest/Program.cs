@@ -127,10 +127,8 @@ namespace YoutubeTest
 					{
 						if (p != null)
 						{
-
 							DurationParser d = new DurationParser();
 							Console.Write(p.Snippet.Title + " " + d.GetTimeSpan(p.ContentDetails.Duration).TotalSeconds + "s");
-
 						}
 						if (p.ContentDetails.RegionRestriction != null)
 						{

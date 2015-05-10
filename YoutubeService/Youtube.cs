@@ -42,35 +42,6 @@ namespace YoutubeService
 
 	public class DurationParser
 	{
-		private readonly string durationRegexExpression = @"PT((?<minutes>[0-9]{0,})M){0,}((?<seconds>[0-9]{0,})S){0,}";
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="durationStr"></param>
-		/// <returns>Timespan.Ticks</returns>
-		public ulong? GetDuration(string durationStr)
-		{
-			ulong? durationResult = default(ulong?);
-			Regex regexNamespaceInitializations = new Regex(durationRegexExpression, RegexOptions.None);
-			Match m = regexNamespaceInitializations.Match(durationStr);
-			if (m.Success)
-			{
-				TimeSpan duration = new TimeSpan();
-
-				int minutes = 0;
-				Int32.TryParse(m.Groups["minutes"].Value, out minutes);
-				int seconds = 0;
-				int.TryParse(m.Groups["seconds"].Value, out seconds);
-
-
-				duration = new TimeSpan(0, minutes, seconds);
-
-				durationResult = (ulong)duration.Ticks;
-			}
-			return durationResult;
-		}
-
 		public TimeSpan GetTimeSpan(string par)
 		{
 			return XmlConvert.ToTimeSpan(par);
@@ -93,12 +64,38 @@ namespace YoutubeService
 			return IDs;
 		}
 
+		public List<String> GetIDs(List<String> playlistitems, String filter)
+		{
+			List<String> IDs = new List<string>();
+			foreach (String s in playlistitems)
+			{
+				Uri u = new Uri(s);
+				foreach (string key in System.Web.HttpUtility.ParseQueryString(u.Query).AllKeys)
+				{
+					if (key == filter)
+						IDs.Add(System.Web.HttpUtility.ParseQueryString(u.Query).Get(key));
+				}
+			}
+			return IDs;
+		}
+
 		public String GetID(Uri playlistitem, String filter)
 		{
 			foreach (string key in System.Web.HttpUtility.ParseQueryString(playlistitem.Query).AllKeys)
 			{
 				if (key == filter)
 					return System.Web.HttpUtility.ParseQueryString(playlistitem.Query).Get(key);
+			}
+			return String.Empty;
+		}
+
+		public String GetID(String playlistitem, String filter)
+		{
+			Uri u = new Uri(playlistitem);
+			foreach (string key in System.Web.HttpUtility.ParseQueryString(u.Query).AllKeys)
+			{
+				if (key == filter)
+					return System.Web.HttpUtility.ParseQueryString(u.Query).Get(key);
 			}
 			return String.Empty;
 		}

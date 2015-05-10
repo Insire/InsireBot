@@ -12,25 +12,17 @@ namespace TwitchService
 		/// Needs to be set for getting the Subscribtion Data
 		/// </summary>
 		public String AccessToken { get; private set; }
-		public TwitchDataObject Channel { get; private set; }
-		public SubscriptionRootObject Subscribtions { get; private set; }
-		public List<Host> Hosts { get; private set; }
+		public StreamRoot StreamRoot { get; private set; }
+		public ChannelRoot ChannelRoot { get; private set; }
+		public SubscribtionRoot SubscribtionRoot { get; private set; }
+		public FollowRoot FollowRoot { get; private set; }
+		public HostRoot HostRoot { get; private set; }
 
 		public Twitch(String ChannelName, String Token)
 		{
 			this.AccessToken = Token;
 
-			this.Channel = new TwitchDataObject();
-
 			GetChannelInfo(ChannelName);
-			GetHosts(ChannelName);
-			if (Channel._channel.partner)
-				if (!String.IsNullOrEmpty(Token))
-				{
-					this.Subscribtions = new SubscriptionRootObject();
-					GetSubscribtions(ChannelName);
-				}
-
 		}
 	}
 }

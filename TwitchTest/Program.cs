@@ -19,10 +19,11 @@ namespace TwitchTest
 		static void Main(string[] args)
 		{
 			Twitch t = new Twitch("InsireThomson", "js0l4ryivix0j4z9efzn3qxi42sci6");
-			foreach (Host h in t.Hosts)
+			foreach (Host h in t.HostRoot.hosts)
 				Console.WriteLine(h.host_login);
-			if (t.Subscribtions != null)
-				foreach (Subscription x in t.Subscribtions.subscriptions)
+
+			if (t.SubscribtionRoot != null)
+				foreach (Subscription x in t.SubscribtionRoot.subscriptions)
 				{
 					Console.WriteLine(x.user);
 				}
