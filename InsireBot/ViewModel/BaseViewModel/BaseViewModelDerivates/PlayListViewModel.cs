@@ -100,27 +100,30 @@ namespace InsireBot.ViewModel
 		{
 			if (!par.Default)
 			{
-				if (!_Blacklist.Check(par))
+				if (!Blacklist.Check(par))
 				{
 					if (Items.Count != 0)
-						if (SelectedIndex > -1)
-							if (!Items[SelectedIndex].Check(par))
+					{
+						if (SelectedIndex == -1) SelectedIndex = 0;
+
+						if (!Items[SelectedIndex].Check(par))
+						{
+							if (Items[SelectedIndex].Add(par))
 							{
-								if (Items[SelectedIndex].Add(par))
-								{
-									FillMessageCompressor(new CompressedMessage { Value = "{0} was added to the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were added to the Playlist");
-								}
+								FillMessageCompressor(new CompressedMessage { Value = "{0} was added to the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were added to the Playlist");
 							}
-							else
-							{
-								// Message: no playlist selected
-								FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlist selected.") });
-							}
+						}
 						else
 						{
-							// Message: no playists in collections. no items can be added
-							FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
+							// Message: no playlist selected
+							FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlist selected.") });
 						}
+					}
+					else
+					{
+						// Message: no playists in collections. no items can be added
+						FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
+					}
 				}
 			}
 			else
@@ -152,14 +155,18 @@ namespace InsireBot.ViewModel
 
 		public override bool Load()
 		{
+			int emptyplaylistcounter = 0;
 			foreach (string s in Settings.Instance.PlaylistNames)
 			{
 				if (!Check(s))
 				{
 					PlayList temp = ObjectSerializer.Load<PlayList>(s);
 					temp.Name = s;
-					if (temp.Count != 0)
+					if (emptyplaylistcounter == 0 & temp.Count == 0)
 						Items.Add(temp);
+					else
+						if (temp.Count != 0)
+							Items.Add(temp);
 				}
 			}
 			if (Items.Count > 0)

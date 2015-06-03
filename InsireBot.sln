@@ -10,6 +10,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchTest", "TwitchTest\TwitchTest.csproj", "{F3B6F470-1542-4AF6-9F62-8080B80808B3}"
 	ProjectSection(ProjectDependencies) = postProject
 		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF} = {0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131} = {AD6C1C9C-A011-4940-A85F-2A8E7A547131}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsireDB", "InsireDB\InsireDB.csproj", "{40282474-BEEC-4B1E-AAA2-AF8AA0C686CE}"
@@ -17,11 +18,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeTest", "YoutubeTest\YoutubeTest.csproj", "{14E029F7-5DD8-4435-A6BA-757F999F7653}"
 	ProjectSection(ProjectDependencies) = postProject
 		{091DE384-B067-46DD-B5FB-4548FB5CC718} = {091DE384-B067-46DD-B5FB-4548FB5CC718}
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131} = {AD6C1C9C-A011-4940-A85F-2A8E7A547131}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YoutubeService", "YoutubeService\YoutubeService.csproj", "{091DE384-B067-46DD-B5FB-4548FB5CC718}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchService", "TwitchService\TwitchService.csproj", "{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131} = {AD6C1C9C-A011-4940-A85F-2A8E7A547131}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceUtilities", "ServiceUtilities\ServiceUtilities.csproj", "{AD6C1C9C-A011-4940-A85F-2A8E7A547131}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +60,10 @@ Global
 		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD6C1C9C-A011-4940-A85F-2A8E7A547131}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

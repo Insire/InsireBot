@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization.Json;
+using ServiceUtilities;
 
 namespace TwitchService
 {
@@ -14,13 +15,15 @@ namespace TwitchService
 			ChannelRoot = GetChannel(ChannelName);
 			StreamRoot = GetStream(ChannelName);
 			HostRoot = GetHosts(ChannelName);
+			FollowRoot = GetFollowers(ChannelName);
 
-			if (ChannelRoot.stream.channel.partner)
-				if (!String.IsNullOrEmpty(this.AccessToken))
-				{
-					this.SubscribtionRoot = new SubscribtionRoot();
-					GetSubscribtions(ChannelName);
-				}
+			if (ChannelRoot.channel != null)
+				if (ChannelRoot.channel.partner)
+					if (!String.IsNullOrEmpty(this.AccessToken))
+					{
+						this.SubscribtionRoot = new SubscribtionRoot();
+						GetSubscribtions(ChannelName);
+					}
 		}
 
 		private StreamRoot GetStream(String ChannelName)
@@ -35,10 +38,26 @@ namespace TwitchService
 			return GetData<ChannelRoot>(url);
 		}
 
-		private FollowRoot GetFollowers(String ChannelName)
+		private FollowRoot GetFollowers(String ChannelName, int Offset = 0)
 		{
-			String url = String.Format("https://api.twitch.tv/kraken/channels/{0}/follows", ChannelName);
+			String url = String.Format("https://api.twitch.tv/kraken/channels/{0}/follows?limit=100&offset={1}", ChannelName, Offset);
 			return GetData<FollowRoot>(url);
+		}
+
+		private List<Follow> GetAllFollowes(String ChannelName)
+		{
+			List<Follow> tempFollowers = new List<Follow>();
+			int offset = 0;
+			FollowRoot data = GetFollowers(ChannelName, offset);
+			while (offset < 200)
+			{
+
+				tempFollowers.AddRange(data.follows);
+				//int tempoffset = 0;
+				Int32.TryParse(URLParser.GetID(data._links.next, "offset"), out offset);
+			}
+
+			return tempFollowers;
 		}
 
 		private SubscribtionRoot GetSubscribtions(String ChannelName)
@@ -49,10 +68,29 @@ namespace TwitchService
 
 		private HostRoot GetHosts(String ChannelName)
 		{
-			ChannelRoot _Channel = GetChannel(ChannelName);
-			string url = String.Format("http://tmi.twitch.tv/hosts?include_logins=1&target={0}", _Channel.stream._id);
-			return GetData<HostRoot>(url);
+			string id = GetChannelID();
+			if (!String.IsNullOrEmpty(id))
+			{
+				string url = String.Format("http://tmi.twitch.tv/hosts?include_logins=1&target={0}", id);
+				return GetData<HostRoot>(url);
+			}
+			return new HostRoot();
 		}
+
+		private String GetChannelID()
+		{
+			if (ChannelRoot.channel != null)
+			{
+				return ChannelRoot.channel._id.ToString();
+			}
+
+			if (StreamRoot.stream != null)
+			{
+				return StreamRoot.stream._id.ToString();
+			}
+			return String.Empty;
+		}
+
 
 		private T GetData<T>(String url)
 		{

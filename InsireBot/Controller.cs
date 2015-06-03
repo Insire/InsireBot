@@ -10,6 +10,8 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Input;
 using System.Collections.Generic;
+using YoutubeService;
+using ServiceUtilities;
 
 namespace InsireBot
 {
@@ -96,11 +98,6 @@ namespace InsireBot
 			//_Playlist.MessageBufferChanged += _Playlist_MessageBufferChanged;
 		}
 
-		void _Playlist_MessageBufferChanged(object sender, MessageBufferChangedEventArgs e)
-		{
-
-		}
-
 		/// <summary>
 		/// checks, if the specific mediaplayer is initialized, initializes if not and returns false
 		/// if that failed or it cant start playback
@@ -180,7 +177,7 @@ namespace InsireBot
 
 		public void addPlayListItem(String par, String parUser)
 		{
-			_Playlist.Add(new PlayListItem(par, parUser));
+			new PlayListItem(par, parUser);
 		}
 
 		public void addPlayList(PlayList par)

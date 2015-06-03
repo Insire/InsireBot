@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0E188367-3C40-4EFB-B7E9-7EE3153AB0FF}</ProjectGuid>
+    <ProjectGuid>{AD6C1C9C-A011-4940-A85F-2A8E7A547131}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TwitchService</RootNamespace>
-    <AssemblyName>TwitchService</AssemblyName>
+    <RootNamespace>ServiceUtilities</RootNamespace>
+    <AssemblyName>ServiceUtilities</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -32,7 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -40,22 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Twitch.cs" />
+    <Compile Include="TimeParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\ChannelRoot.cs" />
-    <Compile Include="Models\FollowRoot.cs" />
-    <Compile Include="TwitchGet.cs" />
-    <Compile Include="Models\HostRoot.cs" />
-    <Compile Include="Models\TwitchObjects.cs" />
-    <Compile Include="Models\StreamRoot.cs" />
-    <Compile Include="Models\SubscribtionRoot.cs" />
-    <Compile Include="TwitchLimited.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ServiceUtilities\ServiceUtilities.csproj">
-      <Project>{ad6c1c9c-a011-4940-a85f-2a8e7a547131}</Project>
-      <Name>ServiceUtilities</Name>
-    </ProjectReference>
+    <Compile Include="URLParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

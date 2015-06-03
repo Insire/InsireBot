@@ -249,7 +249,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Resources\client_secret.json">
+    <None Include="Resources\client_secret_91015241491-lmdulb30vdqca2774irr2atqesku51f4.apps.googleusercontent.com.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="Resources\Entypo.ttf" />
@@ -270,6 +270,14 @@
     <Content Include="Resources\PastebinAPI.dll" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ServiceUtilities\ServiceUtilities.csproj">
+      <Project>{ad6c1c9c-a011-4940-a85f-2a8e7a547131}</Project>
+      <Name>ServiceUtilities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TwitchService\TwitchService.csproj">
+      <Project>{0e188367-3c40-4efb-b7e9-7ee3153ab0ff}</Project>
+      <Name>TwitchService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\YoutubeService\YoutubeService.csproj">
       <Project>{091de384-b067-46dd-b5fb-4548fb5cc718}</Project>
       <Name>YoutubeService</Name>

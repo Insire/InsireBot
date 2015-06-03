@@ -135,7 +135,7 @@ namespace InsireBot.ViewModel
 					_SelectedIndex = value;
 					NotifyPropertyChanged();
 
-					if (_SelectedIndex >= 0 & Items.Count >= SelectedIndex - 1)
+					if (_SelectedIndex >= 0 & Items.Count - 1 >= SelectedIndex)
 						SelectedItem = Items[_SelectedIndex];
 				}
 			}
@@ -214,18 +214,21 @@ namespace InsireBot.ViewModel
 		/// </summary>
 		public virtual void FillMessageCompressor(string _Key, string _Value)
 		{
-			MessageCompressor.Add(_Key, _Value);
+			if (!MessageCompressor.ContainsKey(_Value))
+				MessageCompressor.Add(_Key, _Value);
 		}
 
 		public virtual void FillMessageCompressor(BaseMessage par)
 		{
-			MessageCompressor.Add(par.Value, par.Value);
+			if (!MessageCompressor.ContainsKey(par.Value))
+				MessageCompressor.Add(par.Value, par.Value);
 			MessageBuffer.Enqueue(par);
 		}
 
 		public virtual void FillMessageCompressor(CompressedMessage par, String substitueString)
 		{
-			MessageCompressor.Add(par.Value, par.Value);
+			if (!MessageCompressor.ContainsKey(par.Value))
+				MessageCompressor.Add(par.Value, par.Value);
 			MessageBuffer.Enqueue(par);
 		}
 

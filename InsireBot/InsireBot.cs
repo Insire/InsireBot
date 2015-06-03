@@ -99,8 +99,6 @@ namespace InsireBot
 			   Password = Settings.Instance.IRC_Password
 		   };
 
-			_IrcClient.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
-
 			if (Settings.Instance.IRC_AutoConnect)
 				this.ConnectExecute();
 			if (Settings.Instance.Loaded)
@@ -249,7 +247,7 @@ namespace InsireBot
 		private void OnChannelMessageReceived(object sender, IrcMessageEventArgs e)
 		{
 			_Chat.Add(new ChatMessage(e.Source.Name, e.Text));
-			checkForCommand(e.Source, e.Text.ToLower());
+			checkForCommand(e.Source, e.Text);
 		}
 
 		/// <summary>
@@ -305,19 +303,19 @@ namespace InsireBot
 			if (_parts.Count() > 1)
 			{
 				string commandvalue = _parts[1];
-				switch (inputString)
+				switch (command.ToLower())
 				{
 					// add song 
 					case "!request":
 					case "!requestsong":
-						Controller.Instance.addPlayListItem(inputString, source.Name);
+						Controller.Instance.addPlayListItem(commandvalue, source.Name);
 						break;
 
 					//remove song by title or url
 					case "!remove":
 					case "!removesong":
 						if (checkForOperator(source))
-							Controller.Instance.removePlayListItem(inputString);
+							Controller.Instance.removePlayListItem(commandvalue);
 						break;
 
 					//forceplay command
@@ -360,7 +358,7 @@ namespace InsireBot
 
 					case "!playlist":
 
-						int dur = 0;
+						double dur = 0;
 						int count = 0;
 						string paste = String.Empty;
 						//duration
@@ -500,7 +498,6 @@ namespace InsireBot
 				return;
 
 			string server = Settings.Instance.IRC_Serveradress;
-			// Create new IRC client and connect to given server. 
 
 			_IrcClient.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
 			_IrcClient.Connected += IrcClient_Connected;

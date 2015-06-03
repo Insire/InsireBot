@@ -1,11 +1,12 @@
-﻿using InsireBot.Enums;
-using InsireBot.Util;
-using InsireBot.Objects;
-using InsireBot.Util.Collections;
-using InsireBot.ViewModel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Timers;
+
+using InsireBot.Enums;
+using InsireBot.Objects;
+using InsireBot.Util;
+using InsireBot.ViewModel;
+
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Core.Medias;
 using Vlc.DotNet.Wpf;
@@ -15,9 +16,10 @@ namespace InsireBot
 	public class MediaPlayer : IDisposable
 	{
 		internal bool Playable { get; set; }
-
+		/// <summary>
+		/// indicates if a song can be skipped, according to the SkipPreventionTimer
+		/// </summary>
 		private bool _ExcuteSongSkip { get; set; }
-
 		private bool _Buffering { get; set; }
 
 		private VlcControl _VlcPlayer { get; set; }
@@ -69,9 +71,6 @@ namespace InsireBot
 		}
 
 		#endregion Constructor
-
-		#region Init
-
 		/// <summary>
 		/// initializes the vlc player with parameters, initializes events 
 		/// </summary>
@@ -237,6 +236,7 @@ namespace InsireBot
 				Controller.Instance.Log(new ErrorLogItem(ex));
 			}
 			if (_VlcPlayer == null) return;
+
 			///events
 			_VlcPlayer.Playing += _vlcplayer_Playing;
 			_VlcPlayer.EndReached += _vlcplayer_EndReached;
@@ -253,40 +253,20 @@ namespace InsireBot
 			switch (_Type)
 			{
 				case AudioDeviceType.FollowerAlert:
-
-					#region AudioDeviceType.FollowerAlert
-
 					Controller.Instance.Log(new SystemLogItem("FollowerAlert initialized"));
 					break;
 
-					#endregion AudioDeviceType.FollowerAlert
-
 				case AudioDeviceType.MediaPlayer:
-
-					#region AudioDeviceType.MediaPlayer
-
 					Controller.Instance.Log(new SystemLogItem("Mediaplayer initialized"));
 					break;
 
-					#endregion AudioDeviceType.MediaPlayer
-
 				case AudioDeviceType.Soundboard:
-
-					#region AudioDeviceType.Soundboard
-
 					Controller.Instance.Log(new SystemLogItem("Soundboard initialized"));
 					break;
 
-					#endregion AudioDeviceType.Soundboard
-
 				case AudioDeviceType.SubscriberAlert:
-
-					#region AudioDeviceType.Soundboard
-
 					Controller.Instance.Log(new SystemLogItem("SubscriberAlert initialized"));
 					break;
-
-					#endregion AudioDeviceType.Soundboard
 
 				default:
 					throw new NotImplementedException();
@@ -294,8 +274,6 @@ namespace InsireBot
 			// voteskip 
 			_VoteSkipCounter = 0;
 		}
-
-		#endregion Init
 
 		#region Playerinteraction
 
@@ -417,7 +395,10 @@ namespace InsireBot
 				}
 			}
 		}
-
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="vote"></param>
 		public void Skip(bool vote)
 		{
 			if (vote)
@@ -603,6 +584,7 @@ namespace InsireBot
 
 		private void _skipPreventionTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
+			// TODO Option for enabling/disabling this reply apart from debug mode
 			if (Settings.Instance.DebugMode)
 				Controller.Instance.SendToChat(new ChatReply("skip available now"));
 			_SkipPreventionTimer.Stop();
@@ -626,7 +608,8 @@ namespace InsireBot
 			_VoteSkipCounter = 0;
 			if (!_Buffering)
 			{
-				Controller.Instance.SendToChat(new ChatReply(String.Format("End reached: {0}", _NowPlaying)));
+				if (Settings.Instance.DebugMode)
+					Controller.Instance.SendToChat(new ChatReply(String.Format("End reached: {0}", _NowPlaying)));
 				_NowPlaying = String.Empty;
 				UpdateSettings();
 				Next();
@@ -654,7 +637,8 @@ namespace InsireBot
 				UpdateSettings();
 				// _player is now buffering the song 
 				_NowPlaying = sender.Media.MRL;
-				Controller.Instance.SendToChat(new ChatReply(String.Format("now playing: {0}", sender.Media.MRL)));
+				if (Settings.Instance.DebugMode)
+					Controller.Instance.SendToChat(new ChatReply(String.Format("now playing: {0}", sender.Media.MRL)));
 				_Buffering = true;
 			}
 		}
@@ -667,7 +651,7 @@ namespace InsireBot
 		{
 			if (_VlcPlayer.State.Equals(Vlc.DotNet.Core.Interops.Signatures.LibVlc.Media.States.Error))
 			{
-				Controller.Instance.SendToChat(new ChatReply(String.Format("Skip because broken: {0}", _VlcPlayer.Media.Metadatas.Title)));
+				Controller.Instance.SendToChat(new ChatReply(String.Format("{0} was skipped, because of an error", _VlcPlayer.Media.Metadatas.Title)));
 
 				_Playlist.Remove(_Playlist[_Playlist.SelectedIndex]);
 				Next();
@@ -727,6 +711,8 @@ namespace InsireBot
 				_MaxSongDurationTimer.Dispose();
 			if (_SkipPreventionTimer != null)
 				_SkipPreventionTimer.Dispose();
+			if (_VlcPlayer != null)
+				_VlcPlayer.Dispose();
 		}
 
 		#endregion IDisposable Members

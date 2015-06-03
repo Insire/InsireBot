@@ -23,15 +23,8 @@ namespace InsireBot
 	{
 		private ThemeViewModel _ThemeViewModel;
 		private AccentViewModel _AccentViewModel;
-		private Controller _Controller;
 
 		private static PlayListViewModel _Playlist;
-
-		public Controller Controller
-		{
-			get { return _Controller; }
-			set { _Controller = value; }
-		}
 
 		public MainWindow()
 		{
@@ -40,6 +33,7 @@ namespace InsireBot
 			PlaylistGrid.IsEnabled = true;
 			Playlists.IsEnabled = true;
 			PlaylistItems.IsEnabled = true;
+
 			ViewModelLocator v = (ViewModelLocator)App.Current.FindResource("Locator");
 			_ThemeViewModel = v.Themes;
 			_ThemeViewModel.PropertyChanged += _ThemeViewModel_PropertyChanged;
@@ -272,8 +266,8 @@ namespace InsireBot
 		/// <param name="e">     </param>
 		private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_Controller != null)
-				_Controller.Slider_ValueChanged(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.Slider_ValueChanged(sender, e);
 		}
 
 		private void window_Loaded(object sender, RoutedEventArgs e)
@@ -282,92 +276,93 @@ namespace InsireBot
 		}
 		private void cbMediaPlayerSilent_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbMediaPlayerSilent_Unchecked(cbMediaPlayerSilent.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbMediaPlayerSilent_Unchecked(cbMediaPlayerSilent.IsChecked.Value);
 		}
 
 		private void cbMediaPlayerSilent_Checked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbMediaPlayerSilent_Checked(cbMediaPlayerSilent.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbMediaPlayerSilent_Checked(cbMediaPlayerSilent.IsChecked.Value);
 		}
 
 		private void slider_Mediaplayer_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_Controller != null)
-				_Controller.slider_Mediaplayer_ValueChanged(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.slider_Mediaplayer_ValueChanged(sender, e);
 		}
 
 		private void cbSilentFollower_Checked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbSilentFollower_Checked(cbSilentFollower.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbSilentFollower_Checked(cbSilentFollower.IsChecked.Value);
 		}
 
 		private void cbSilentFollower_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbSilentFollower_Unchecked(cbSilentFollower.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbSilentFollower_Unchecked(cbSilentFollower.IsChecked.Value);
 		}
 
 		private void slider_Follower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_Controller != null)
-				_Controller.slider_Follower_ValueChanged(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.slider_Follower_ValueChanged(sender, e);
 		}
 
 		private void cbSubscriber_Checked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbSubscriber_Checked(cbSubscriber.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbSubscriber_Checked(cbSubscriber.IsChecked.Value);
 		}
 
 		private void cbSubscriber_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbSubscriber_Unchecked(cbSubscriber.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbSubscriber_Unchecked(cbSubscriber.IsChecked.Value);
 		}
 
 		private void slider_Subscriber_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_Controller != null)
-				_Controller.slider_Subscriber_ValueChanged(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.slider_Subscriber_ValueChanged(sender, e);
 		}
 
 		private void cbSoundboard_Checked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbSoundboard_Checked(cbSoundboard.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbSoundboard_Checked(cbSoundboard.IsChecked.Value);
 		}
 
 		private void cbSoundboard_Unchecked(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.cbSoundboard_Unchecked(cbSoundboard.IsChecked.Value);
+			if (Controller.Instance != null)
+				Controller.Instance.cbSoundboard_Unchecked(cbSoundboard.IsChecked.Value);
 		}
 
 		private void slider_Soundboard_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
-			if (_Controller != null)
-				_Controller.slider_Soundboard_ValueChanged(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.slider_Soundboard_ValueChanged(sender, e);
 		}
 
 		private void bPrevious_Click(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.bPrevious_Click(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.bPrevious_Click(sender, e);
 		}
 
 		private void bPlay_Click(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.bPlay_Click(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.bPlay_Click(sender, e);
+			
 		}
 
 		private void bNext_Click(object sender, RoutedEventArgs e)
 		{
-			if (_Controller != null)
-				_Controller.bNext_Click(sender, e);
+			if (Controller.Instance != null)
+				Controller.Instance.bNext_Click(sender, e);
 		}
 		#endregion
 
@@ -393,7 +388,7 @@ namespace InsireBot
 						string text = streamReader.ReadToEnd();
 						streamReader.Close();
 
-						Controller.FeedMe(text);
+						Controller.Instance.FeedMe(text);
 					}
 				}
 				else
@@ -418,7 +413,7 @@ namespace InsireBot
 					if (result == null) //user pressed cancel
 						return;
 
-					Controller.FeedMe(result);
+					Controller.Instance.FeedMe(result);
 				}
 				else
 				{

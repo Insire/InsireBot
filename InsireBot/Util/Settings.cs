@@ -398,7 +398,7 @@ namespace InsireBot.Util
 
 			_Instance.Pastebin_DevKey = String.Empty;
 			_Instance.Pastebin_Password = "pw";
-			_Instance.Youtube_API_JSON = @"client_secret.json";
+			_Instance.Youtube_API_JSON = @"Resources\client_secret.json";
 			_Instance.DebugMode = false;
 
 			_Instance.SaveChat = false;

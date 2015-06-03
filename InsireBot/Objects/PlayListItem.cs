@@ -7,6 +7,9 @@ using System.Xml.Serialization;
 using System.ComponentModel;
 using GalaSoft.MvvmLight;
 using System.Runtime.CompilerServices;
+using YoutubeService;
+using ServiceUtilities;
+using System.Collections.Generic;
 
 namespace InsireBot
 {
@@ -35,7 +38,7 @@ namespace InsireBot
 		public string ArtistName { get; set; }
 
 		// Playtime
-		public int Duration { get; set; }
+		public double Duration { get; set; }
 
 		public String Requester { get; set; }
 
@@ -172,17 +175,21 @@ namespace InsireBot
 			parser.WorkerSupportsCancellation = true;
 			parser.WorkerReportsProgress = false;
 			parser.RunWorkerAsync(Requester);
+			//Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
+			//String s = URLParser.GetID(new Uri(this.Location), "v");
+			//UpdateProperties( yt.GetVideoByVideoID(s));
 		}
 
 		void parser_DoWork(object sender, DoWorkEventArgs e)
 		{
-			// y = new YoutubeAPI();
+			Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
 
 			BackgroundWorker bw = sender as BackgroundWorker;
 
 			// Start the time-consuming operation.
-			//e.Result = y.GetYoutubeVideo(this);
-			//y.GetYoutubeVideoData(this);
+			String s = URLParser.GetID(new Uri(this.Location), "v");
+			e.Result = yt.GetVideoByVideoID(s);
+
 			// If the operation was canceled by the user,  
 			// set the DoWorkEventArgs.Cancel property to true. 
 			if (bw.CancellationPending)
@@ -193,24 +200,37 @@ namespace InsireBot
 
 		void parser_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
 		{
-			BackgroundWorker bw = sender as BackgroundWorker;
+			//BackgroundWorker bw = sender as BackgroundWorker;
 
-			if ((e.Cancelled == true))
-			{
-				//this.tbProgress.Text = "Canceled!";
-			}
+			if (!e.Cancelled)
+				if (!(e.Error == null))
+				{
+					//TODO error handling
+				}
+				else
+				{
+					UpdateProperties(e.Result);
+				}
+		}
 
-			else if (!(e.Error == null))
-			{
-				//this.tbProgress.Text = ("Error: " + e.Error.Message);
-			}
-
-			else
-			{
-				// e.Result
-				//this.tbProgress.Text = "Done!";
-				this.Default = false;
-			}
+		private void UpdateProperties(object par)
+		{
+			var x = ((List<Google.Apis.YouTube.v3.Data.Video>)par);
+			if (x != null)
+				if (x.Count > 0)
+				{
+					Google.Apis.YouTube.v3.Data.Video vid = x[0];
+					this.Title = vid.Snippet.Title;
+					this.Duration = TimeParser.GetTimeSpan(vid.ContentDetails.Duration).TotalSeconds;
+					this.ArtistName = vid.Snippet.ChannelTitle;
+					// TODO check the region returned against the region the client is run in
+					if (vid.ContentDetails.RegionRestriction != null)
+					{
+						this.Restricted = true;
+					}
+					this.Default = false;
+					Controller.Instance.addPlayListItem(this);
+				}
 		}
 
 		#region INotifyPropertyChanged Members

@@ -170,6 +170,14 @@ namespace InsireBot.ViewModel
 			}
 		}
 
+		public Controller Controller
+		{
+			get
+			{
+				return Controller.Instance;
+			}
+		}
+
 		#endregion GetViewModel
 
 		public static void Cleanup()

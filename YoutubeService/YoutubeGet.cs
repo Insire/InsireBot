@@ -183,16 +183,7 @@ namespace YoutubeService
 
 		public List<Video> GetVideoByVideoID(String ID)
 		{
-			List<Video> items = new List<Video>();
-			try
-			{
-				items = GetVideoByVideoIDAsync(ID).Result;
-			}
-			catch (AggregateException e)
-			{
-				Console.WriteLine(e.Message);
-			}
-			return items;
+			return GetVideoByVideoIDAsync(ID).Result;
 		}
 
 		private async Task<List<Video>> GetVideoByVideoIDAsync(String ID)
@@ -205,7 +196,8 @@ namespace YoutubeService
 
 			if (response != null)
 				if (response.Items != null)
-					PlayListItems = response.Items.ToList();
+					if (response.Items.Count != 0)
+						PlayListItems = response.Items.ToList();
 
 			return PlayListItems;
 		}

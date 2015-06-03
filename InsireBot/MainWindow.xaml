@@ -206,8 +206,8 @@
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True"
                                             Controls:TextBoxHelper.Watermark="Channel Name"
                                             Text="{Binding IRC_TargetChannel, Source={x:Static Util:Settings.Instance}}" />
-                    <Grid DataContext="{Binding Controller, ElementName=window}">
-                        <Button Command="{Binding Connect}">
+                    <Grid DataContext="{Binding Controller, Mode=OneWay}">
+                        <Button Command="{Binding Connect, Mode=OneWay}">
                             <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
                                 <Rectangle.OpacityMask>
                                     <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_connect}" />
@@ -562,7 +562,7 @@
                         <DataGrid x:Name="edgBlacklist" AutoGenerateColumns="False" ItemsSource="{Binding Source={StaticResource cvsTasks}}" SelectedIndex="{Binding SelectedIndex}">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding Value}" Header="Value" />
-                                <DataGridComboBoxColumn Header="Type" ItemsSource="{Binding Mode=OneWay, Source={StaticResource BlackListItemType}, ValidatesOnExceptions=True}" SelectedValueBinding="{Binding Type}" />
+                                <DataGridComboBoxColumn Header="Type" ItemsSource="{Binding Mode=OneWay, Source={StaticResource BlackListItemType}, ValidatesOnExceptions=True}" SelectedValueBinding="{Binding Type, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" />
                                 <DataGridTextColumn Binding="{Binding Added, Converter={StaticResource DateConverter}, Mode=TwoWay, StringFormat=\{0:g\}}" Header="Date" IsReadOnly="True" SortDirection="Ascending" />
                             </DataGrid.Columns>
                         </DataGrid>
@@ -587,7 +587,7 @@
                     </WrapPanel>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, Mode=Default, NotifyOnTargetUpdated=True}">
+            <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, Mode=Default, NotifyOnTargetUpdated=True}" Visibility="Hidden">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -814,7 +814,7 @@
                 </Button>
                 <ToggleButton x:Name="bPlay" Width="50" Height="50" Margin="0"
                         Style="{DynamicResource MetroCircleToggleButtonStyle}"
-                        ToolTip="Play">
+                        ToolTip="Play" Click="bPlay_Click">
                     <Rectangle Margin="5,0,0,0" Style="{Binding Source={StaticResource ButtonStyle}}">
                         <Rectangle.OpacityMask>
                             <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_control_play}" />

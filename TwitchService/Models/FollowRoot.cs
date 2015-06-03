@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,11 +27,31 @@ namespace TwitchService
 		public bool notifications { get; set; }
 		public User user { get; set; }
 	}
-
+	// Followerlist is capped at 1600 (10th of May 2015), so one cant get all the followers if they exceed the cap
 	public class FollowRoot
 	{
-		public List<Follow> follows { get; set; }
+		private List<Follow> _follows = new List<Follow>();
+
+		public List<Follow> follows
+		{
+			get { return _follows; }
+			set
+			{
+				if (!_follows.Equals(value))
+				{
+					if (FollowsChanged != null) FollowsChanged(value, new EventArgs());
+					_follows = value;
+
+				}
+			}
+		}
 		public int _total { get; set; }
 		public Links2 _links { get; set; }
+
+		#region INotifyPropertyChanged Members
+
+		public event EventHandler FollowsChanged;
+
+		#endregion
 	}
 }

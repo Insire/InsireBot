@@ -9,16 +9,8 @@ namespace YoutubeService
 		public bool AddSongToPlaylist(string videoID, string playlistID)
 		{
 			bool Added = false;
-
-			try
-			{
-				this.AddSongToPlaylistAsync(videoID, playlistID).Wait();
-				Added = true;
-			}
-			catch (AggregateException)
-			{
-
-			}
+			this.AddSongToPlaylistAsync(videoID, playlistID).Wait();
+			Added = true;
 
 			return Added;
 		}
@@ -39,16 +31,8 @@ namespace YoutubeService
 		public bool AddPlaylist(Playlist par)
 		{
 			bool Added = false;
-
-			try
-			{
-				this.AddPlaylistAsync(par).Wait();
-				Added = true;
-			}
-			catch (AggregateException)
-			{
-
-			}
+			this.AddPlaylistAsync(par).Wait();
+			Added = true;
 
 			return Added;
 		}
@@ -56,16 +40,8 @@ namespace YoutubeService
 		public bool AddPlaylist(String Name)
 		{
 			bool Added = false;
-
-			try
-			{
-				this.AddPlaylistByNameAsync(Name).Wait();
-				Added = true;
-			}
-			catch (AggregateException)
-			{
-
-			}
+			this.AddPlaylistByNameAsync(Name).Wait();
+			Added = true;
 
 			return Added;
 		}
