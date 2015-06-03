@@ -403,16 +403,16 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
-                                        <Grid>
+                                        <Grid Margin="4,0">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="Auto"  />
+                                                <ColumnDefinition />
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
                                             <TextBlock Text="{Binding Name}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Count}" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Count}" HorizontalAlignment="Right" />
                                         </Grid>
                                     </VirtualizingStackPanel>
                                 </DataTemplate>
@@ -458,6 +458,7 @@
                                 <ContextMenu>
                                     <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
                                     <MenuItem Header="Open in Browser" />
+                                    <MenuItem Header="Clear" Command="{Binding ClearCommand}" />
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
@@ -466,20 +467,6 @@
                                 <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
                                     <Rectangle.OpacityMask>
                                         <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                            <Button x:Name="bRemove" Margin="5" Command="{Binding RemoveItem, Mode=OneWay}" ToolTip="Remove Playlistitem">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                            <Button x:Name="bClear" Margin="5" ToolTip="Clear Playlist" Command="{Binding ClearItems, Mode=OneWay}">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_delete}" />
                                     </Rectangle.OpacityMask>
                                 </Rectangle>
                             </Button>

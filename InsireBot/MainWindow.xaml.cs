@@ -406,7 +406,7 @@ namespace InsireBot
 
 			if (_Playlist.Items.Count != 0)
 			{
-				if (_Playlist.SelectedIndex > -1)
+				//if (_Playlist.SelectedIndex > -1)
 				{
 					var result = await this.ShowInputAsync("Add Youtube Playlist or Song", "Post the Link!");
 
@@ -415,10 +415,10 @@ namespace InsireBot
 
 					Controller.Instance.FeedMe(result);
 				}
-				else
-				{
-					await this.ShowMessageAsync("Playlist needed", "You need to select a Playlist to add Songs to.", MessageDialogStyle.Affirmative);
-				}
+				//else
+				//{
+				//	await this.ShowMessageAsync("Playlist needed", "You need to select a Playlist to add Songs to.", MessageDialogStyle.Affirmative);
+				//}
 			}
 
 		}

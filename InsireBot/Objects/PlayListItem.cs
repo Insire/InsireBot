@@ -13,21 +13,17 @@ using System.Collections.Generic;
 
 namespace InsireBot
 {
-	public class PlayListItem : INotifyPropertyChanged, IEquatable<PlayListItem>
+	public class PlayListItem : INotifyPropertyChanged, IEquatable<PlayListItem>, IDisposable
 	{
 		#region Properties
 		private DateTime _LastPlayed = DateTime.Now;
 		private int _PlayCount = 0;
+		private double _Duration = 0;
+
 		private string _Location = String.Empty;
 		private string _ID;
-		private bool _default = true;
-
-		[XmlIgnore]
-		public bool Default
-		{
-			get { return _default; }
-			set { _default = value; }
-		}
+		private string _ArtistName = String.Empty;
+		private string _Title = String.Empty;
 
 		private BackgroundWorker parser;
 
@@ -35,10 +31,32 @@ namespace InsireBot
 		public ICommand OpenInBrowserCommand { get; set; }
 
 		/// The artist name.
-		public string ArtistName { get; set; }
+		public string ArtistName
+		{
+			get { return _ArtistName; }
+			set
+			{
+				if (value != _ArtistName)
+				{
+					_ArtistName = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
 
 		// Playtime
-		public double Duration { get; set; }
+		public double Duration
+		{
+			get { return _Duration; }
+			set
+			{
+				if (value != _Duration)
+				{
+					_Duration = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
 
 		public String Requester { get; set; }
 
@@ -48,7 +66,18 @@ namespace InsireBot
 		/// <summary>
 		/// the song title
 		/// </summary>
-		public string Title { get; set; }
+		public string Title
+		{
+			get { return _Title; }
+			set
+			{
+				if (value != _Title)
+				{
+					_Title = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
 
 		//
 		public string ID
@@ -122,10 +151,9 @@ namespace InsireBot
 		{
 			this.Requester = Settings.Instance.IRC_Username;
 			this.ArtistName = LocalDataBase.GetRandomArtistName;
-			this.Title = LocalDataBase.GetRandomSongTitle;
+			this.Title = "XXXXXXXXXXXXXXXXXXX";
 			this.Duration = 0;
 			this.Restricted = false;
-			this.Default = true;
 
 			this.OpenInBrowserCommand = new SimpleCommand
 			{
@@ -175,9 +203,6 @@ namespace InsireBot
 			parser.WorkerSupportsCancellation = true;
 			parser.WorkerReportsProgress = false;
 			parser.RunWorkerAsync(Requester);
-			//Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
-			//String s = URLParser.GetID(new Uri(this.Location), "v");
-			//UpdateProperties( yt.GetVideoByVideoID(s));
 		}
 
 		void parser_DoWork(object sender, DoWorkEventArgs e)
@@ -188,35 +213,11 @@ namespace InsireBot
 
 			// Start the time-consuming operation.
 			String s = URLParser.GetID(new Uri(this.Location), "v");
-			e.Result = yt.GetVideoByVideoID(s);
+			//e.Result = yt.GetVideoByVideoID(s);
 
-			// If the operation was canceled by the user,  
-			// set the DoWorkEventArgs.Cancel property to true. 
-			if (bw.CancellationPending)
-			{
-				e.Cancel = true;
-			}
-		}
-
-		void parser_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			//BackgroundWorker bw = sender as BackgroundWorker;
-
-			if (!e.Cancelled)
-				if (!(e.Error == null))
-				{
-					//TODO error handling
-				}
-				else
-				{
-					UpdateProperties(e.Result);
-				}
-		}
-
-		private void UpdateProperties(object par)
-		{
-			var x = ((List<Google.Apis.YouTube.v3.Data.Video>)par);
+			List<Google.Apis.YouTube.v3.Data.Video> x = yt.GetVideoByVideoID(s);
 			if (x != null)
+			{
 				if (x.Count > 0)
 				{
 					Google.Apis.YouTube.v3.Data.Video vid = x[0];
@@ -228,8 +229,50 @@ namespace InsireBot
 					{
 						this.Restricted = true;
 					}
-					this.Default = false;
-					Controller.Instance.addPlayListItem(this);
+				}
+				else
+				{
+					this.Dispose();
+				}
+			}
+			else
+			{
+				this.Dispose();
+			}
+
+
+			// If the operation was canceled by the user,  
+			// set the DoWorkEventArgs.Cancel property to true. 
+			if (bw.CancellationPending)
+			{
+				e.Cancel = true;
+			}
+		}
+
+		void parser_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+		{
+			if (!e.Cancelled)
+				if (!(e.Error == null))
+				{
+					//TODO error handling
+				}
+				else
+				{
+					//var x = ((List<Google.Apis.YouTube.v3.Data.Video>)e.Result);
+					//if (x != null)
+					//	if (x.Count > 0)
+					//	{
+					//		Google.Apis.YouTube.v3.Data.Video vid = x[0];
+					//		this.Title = vid.Snippet.Title;
+					//		this.Duration = TimeParser.GetTimeSpan(vid.ContentDetails.Duration).TotalSeconds;
+					//		this.ArtistName = vid.Snippet.ChannelTitle;
+					//		// TODO check the region returned against the region the client is run in
+					//		if (vid.ContentDetails.RegionRestriction != null)
+					//		{
+					//			this.Restricted = true;
+					//		}
+					//		this.Default = false;
+					//	}
 				}
 		}
 
@@ -275,6 +318,27 @@ namespace InsireBot
 		public override int GetHashCode()
 		{
 			return base.GetHashCode();
+		}
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				// free managed resources
+				if (parser != null)
+					parser.Dispose();
+			}
+			// free native resources if there are any.
+
 		}
 		#endregion
 	}

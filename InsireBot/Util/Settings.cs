@@ -153,20 +153,6 @@ namespace InsireBot.Util
 
 		public string Pastebin_Password { get; set; }
 
-		private string _Youtube_Mail = string.Empty;
-
-		public string Youtube_Mail
-		{
-			get { return _Youtube_Mail; }
-			set
-			{
-				_Youtube_Mail = value;
-				if (Loaded)
-					validateEmails();
-			}
-		}
-
-
 		public string Youtube_API_JSON { get; set; }
 
 		public string Twitch_API_Token { get; set; }
@@ -287,8 +273,6 @@ namespace InsireBot.Util
 			{
 				if (_Instance.Pastebin_Mail != null | _Instance.Pastebin_Mail != String.Empty)
 					Instance.Valid_PasteBin_Mail = EmailValidator.ValidateEmails(new List<String> { Instance.Pastebin_Mail });
-				if (_Instance.Youtube_Mail != null | _Instance.Youtube_Mail != String.Empty)
-					Instance.Valid_Youtube_Mail = EmailValidator.ValidateEmails(new List<String> { Instance.Youtube_Mail });
 			}
 		}
 

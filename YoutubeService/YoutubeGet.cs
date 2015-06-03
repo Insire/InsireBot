@@ -183,7 +183,18 @@ namespace YoutubeService
 
 		public List<Video> GetVideoByVideoID(String ID)
 		{
-			return GetVideoByVideoIDAsync(ID).Result;
+			List<Video> list = new List<Video>();
+			try
+			{
+				return GetVideoByVideoIDAsync(ID).Result;
+			}
+			catch(AggregateException ex)
+			{
+#if DEBUG				
+				Console.WriteLine(ex.InnerException.InnerException.Message);
+#endif
+				return list;
+			}
 		}
 
 		private async Task<List<Video>> GetVideoByVideoIDAsync(String ID)

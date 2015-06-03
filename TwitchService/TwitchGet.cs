@@ -104,7 +104,7 @@ namespace TwitchService
 			}
 		}
 
-		public void StartAuthentication(AuthenticationObject auth)
+		internal void StartAuthentication(AuthenticationObject auth)
 		{
 			String s1 = String.Format(@"https://api.twitch.tv/kraken/oauth2/authorize?response_type={0}&client_id={1}&redirect_uri={2}&scope={3}", "token", auth.ClientID, auth.RedirectURI, auth.Scopes);
 			Process.Start(s1);

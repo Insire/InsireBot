@@ -18,7 +18,7 @@ namespace TwitchService
 		public FollowRoot FollowRoot { get; private set; }
 		public HostRoot HostRoot { get; private set; }
 
-		public TwitchLimited TwitchLimited { get; private set; }
+		internal TwitchLimited TwitchLimited { get; private set; }
 
 		public Twitch(String ChannelName, String Token)
 		{

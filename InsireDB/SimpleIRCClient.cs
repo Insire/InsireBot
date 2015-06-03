@@ -26,28 +26,17 @@ namespace InsireDB
 		}
 	}
 
-	public class SimpleIRCClient : IDisposable
+	public class SimpleIRCClient : StandardIrcClient, IDisposable
 	{
-		private static IrcClient _IrcClient;
 		private static IrcUserRegistrationInfo _IrcUserInfo;
 		private System.Timers.Timer UpdateUsers;
 		private const int _ClientQuitTimeout = 1000;
 
 		private TwitchConnection Connection { get; set; }
 
-		private bool _IsDisposed = false;
-		private bool _IsConnected = false;
-
-		public bool IsConnected
-		{
-			get { return _IsConnected; }
-			set { _IsConnected = value; }
-		}
-
 		public SimpleIRCClient()
 		{
 			Connection = new TwitchConnection();
-
 
 			this.initializeIRC();
 
@@ -59,7 +48,7 @@ namespace InsireDB
 
 		void UpdateUsers_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			foreach (var x in _IrcClient.Channels[0].Users)
+			foreach (var x in this.Channels[0].Users)
 			{
 				using (var _db = new TokenUsers())
 				{
@@ -84,28 +73,6 @@ namespace InsireDB
 			Dispose(false);
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!this._IsDisposed)
-			{
-				if (disposing)
-				{
-					if (_IrcClient != null)
-					{
-						_IrcClient.Quit(_ClientQuitTimeout, "Quit!");
-						_IrcClient.Dispose();
-					}
-				}
-			}
-			this._IsDisposed = true;
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
 		public void initializeIRC()
 		{
 			_IrcUserInfo = new IrcUserRegistrationInfo()
@@ -128,23 +95,22 @@ namespace InsireDB
 		/// <param name="e">     </param>
 		private void IrcClient_Connected(object sender, EventArgs e)
 		{
-			_IrcClient.Channels.Join(Connection.Channel);
+			this.Channels.Join(Connection.Channel);
 
-			while (_IrcClient.Channels.Count == 0)
+			while (this.Channels.Count == 0)
 			{
 				//nothing so wait on the channel count to raise above zero
 			}
 
-			if (_IrcClient.Channels.Count > 0)
+			if (this.Channels.Count > 0)
 			{
-				if (_IrcClient.Channels.Where(p => p.Name == Connection.Channel).Count() == 1)
+				if (this.Channels.Where(p => p.Name == Connection.Channel).Count() == 1)
 				{
 					Console.WriteLine(String.Format("Joined channel: {0}", Connection.Channel));
-					_IrcClient.Channels[0].MessageReceived += OnChannelMessageReceived;
+					this.Channels[0].MessageReceived += OnChannelMessageReceived;
 					UpdateUsers.Start();
 				}
 			}
-			IsConnected = true;
 		}
 
 		private void IrcClient_Registered(object sender, EventArgs e)
@@ -220,7 +186,7 @@ namespace InsireDB
 		/// </summary>
 		public void IrcClient_Disconnected(object sender, EventArgs e)
 		{
-			IsConnected = false;
+
 		}
 
 		/// <summary>
@@ -236,8 +202,8 @@ namespace InsireDB
 		public void disconnect()
 		{
 			// Disconnect IRC client that is connected to given server. 
-			_IrcClient.Quit(_ClientQuitTimeout, "Quit!");
-			_IrcClient.Dispose();
+			this.Quit(_ClientQuitTimeout, "Quit!");
+			this.Dispose();
 		}
 
 		/// <summary>
@@ -247,7 +213,7 @@ namespace InsireDB
 		/// <returns> true if yes, false if no </returns>
 		private bool checkForOperator(IIrcMessageSource pSource)
 		{
-			foreach (IrcChannelUser iUser in _IrcClient.Channels[0].Users)
+			foreach (IrcChannelUser iUser in this.Channels[0].Users)
 			{
 				if (pSource.Name.Equals(iUser.User.NickName))
 				{
@@ -265,7 +231,7 @@ namespace InsireDB
 		/// <returns> true if yes, false if no </returns>
 		private bool checkForOperator(String pSource)
 		{
-			foreach (IrcChannelUser iUser in _IrcClient.Channels[0].Users)
+			foreach (IrcChannelUser iUser in this.Channels[0].Users)
 			{
 				if (pSource.Equals(iUser.User.NickName))
 				{
@@ -278,20 +244,18 @@ namespace InsireDB
 
 		public void Send(string channel, string message)
 		{
-			if (_IrcClient != null)
-				if (_IrcClient.Channels.Count > 0)
-				{
-					_IrcClient.LocalUser.SendMessage(channel, message);
-				}
+			if (this.Channels.Count > 0)
+			{
+				this.LocalUser.SendMessage(channel, message);
+			}
 		}
 
 		public void Send(string message)
 		{
-			if (_IrcClient != null)
-				if (_IrcClient.Channels.Count > 0)
-				{
-					_IrcClient.LocalUser.SendMessage(Connection.Channel, message);
-				}
+			if (this.Channels.Count > 0)
+			{
+				this.LocalUser.SendMessage(Connection.Channel, message);
+			}
 		}
 
 
@@ -299,28 +263,22 @@ namespace InsireDB
 
 		internal void ConnectExecute()
 		{
-			if (_IrcClient != null)
-				_IrcClient.Dispose();
-
-			_IrcClient = new IrcClient();
 			if (_IrcUserInfo == null)
 				return;
-			if (_IrcClient == null)
-				return;
 
-			_IrcClient.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
-			_IrcClient.Connected += IrcClient_Connected;
-			_IrcClient.Disconnected += IrcClient_Disconnected;
-			_IrcClient.Registered += IrcClient_Registered;
-			_IrcClient.ConnectFailed += IrcClient_ConnectFailed;
-			_IrcClient.Error += _ircclient_Error;
+			this.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
+			this.Connected += IrcClient_Connected;
+			this.Disconnected += IrcClient_Disconnected;
+			this.Registered += IrcClient_Registered;
+			this.ConnectFailed += IrcClient_ConnectFailed;
+			this.Error += _ircclient_Error;
 
 
 			// Wait until connection has succeeded or timed out. 
 			using (var connectedEvent = new ManualResetEventSlim(false))
 			{
-				_IrcClient.Connected += (sender2, e2) => connectedEvent.Set();
-				_IrcClient.Connect(Connection.Server, false, _IrcUserInfo);
+				this.Connected += (sender2, e2) => connectedEvent.Set();
+				this.Connect(Connection.Server, false, _IrcUserInfo);
 			}
 		}
 

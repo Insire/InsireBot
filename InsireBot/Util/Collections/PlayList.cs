@@ -7,6 +7,9 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using InsireBot.Objects;
+using Google.Apis.YouTube.v3.Data;
+using ServiceUtilities;
+using YoutubeService;
 
 namespace InsireBot.Util.Collections
 {
@@ -15,6 +18,8 @@ namespace InsireBot.Util.Collections
 	{
 		[XmlIgnore]
 		public ICommand RemoveCommand { get; set; }
+		[XmlIgnore]
+		public ICommand ClearCommand { get; set; }
 
 		private ThreadSafeObservableCollection<PlayListItem> _Items;
 		private String _Name;
@@ -26,7 +31,13 @@ namespace InsireBot.Util.Collections
 		/// </summary>
 		public int Count
 		{
-			get { return Items.Count; }
+			get
+			{
+				if (Items != null)
+					return Items.Count;
+				else
+					return 0;
+			}
 		}
 		/// <summary>
 		/// List of Items
@@ -82,8 +93,8 @@ namespace InsireBot.Util.Collections
 				{
 					_SelectedIndex = value;
 					NotifyPropertyChanged();
-
-					SelectedItem = Items[value];
+					if (value != -1)
+						SelectedItem = Items[value];
 				}
 			}
 		}
@@ -158,13 +169,35 @@ namespace InsireBot.Util.Collections
 				ExecuteDelegate = _ => Remove(),
 				CanExecuteDelegate = _ => true
 			};
+
+			this.ClearCommand = new SimpleCommand
+			{
+				ExecuteDelegate = _ => Items.Clear(),
+				CanExecuteDelegate = _ => true
+			};
 		}
 
 		public PlayList(Uri par)
+			: this()
 		{
 			Location = par.AbsoluteUri;
 			// TODO parse the uri using the youtube service
-			throw new NotSupportedException();
+			//throw new NotSupportedException();
+			Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
+			List<Google.Apis.YouTube.v3.Data.Playlist> x = yt.GetPlaylistByID(URLParser.GetID(par, "list"));
+			if (x.Count > -1)
+			{
+				foreach (Google.Apis.YouTube.v3.Data.Playlist p in x)
+				{
+					this.Name = p.Snippet.Title;
+					foreach (Google.Apis.YouTube.v3.Data.PlaylistItem item in yt.GetPlayListItemByPlaylistID(p.Id))
+					{
+						this.Items.Add(new PlayListItem(String.Format("https://www.youtube.com/watch?v={0}", item.Snippet.ResourceId.VideoId)));
+					}
+					if (Items.Count > 0)
+						SelectedIndex = 0;
+				}
+			}
 		}
 
 		public PlayList(string Name)

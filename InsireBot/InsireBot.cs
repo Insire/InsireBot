@@ -13,11 +13,11 @@ using System.Threading;
 
 namespace InsireBot
 {
-	public class IRCBot : IDisposable
+	public class IRCBot : StandardIrcClient, IDisposable
 	{
 		#region Properties
 
-		private static IrcClient _IrcClient;
+		//private static IrcClient _IrcClient;
 		private static IrcUserRegistrationInfo _IrcUserInfo;
 
 		private static PlayListViewModel _Playlist;
@@ -28,14 +28,6 @@ namespace InsireBot
 		private static BlackListViewModel<BlackListItem> _Blacklist;
 		private const int _ClientQuitTimeout = 1000;
 
-		private bool _IsDisposed = false;
-		private bool _IsConnected = false;
-
-		public bool IsConnected
-		{
-			get { return _IsConnected; }
-			set { _IsConnected = value; }
-		}
 		#endregion Properties
 
 		#region Construction and Cleanup
@@ -67,28 +59,6 @@ namespace InsireBot
 			Dispose(false);
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
-			if (!this._IsDisposed)
-			{
-				if (disposing)
-				{
-					if (_IrcClient != null)
-					{
-						_IrcClient.Quit(_ClientQuitTimeout, Settings.Instance.IRC_QuitMessage);
-						_IrcClient.Dispose();
-					}
-				}
-			}
-			this._IsDisposed = true;
-		}
-
-		public void Dispose()
-		{
-			Dispose(true);
-			GC.SuppressFinalize(this);
-		}
-
 		public void initializeIRC()
 		{
 			_IrcUserInfo = new IrcUserRegistrationInfo()
@@ -96,7 +66,7 @@ namespace InsireBot
 			   NickName = Settings.Instance.IRC_Username,
 			   UserName = Settings.Instance.IRC_Username,
 			   RealName = Settings.Instance.IRC_Username,
-			   Password = Settings.Instance.IRC_Password
+			   Password = Settings.Instance.IRC_Password,
 		   };
 
 			if (Settings.Instance.IRC_AutoConnect)
@@ -121,23 +91,22 @@ namespace InsireBot
 				_Log.Add(new SystemLogItem(String.Format("Now connected to {0}", Settings.Instance.IRC_Serveradress)));
 				_Log.Add(new SystemLogItem(String.Format("Attempting to join: {0}", Settings.Instance.IRC_TargetChannel)));
 			}
-			_IrcClient.Channels.Join(Settings.Instance.IRC_TargetChannel);
+			this.Channels.Join(Settings.Instance.IRC_TargetChannel);
 
-			while (_IrcClient.Channels.Count == 0)
+			while (this.Channels.Count == 0)
 			{
 				//nothing so wait on the channel count to raise above zero
 			}
 
-			if (_IrcClient.Channels.Count > 0)
+			if (this.Channels.Count > 0)
 			{
-				if (_IrcClient.Channels.Where(p => p.Name == Settings.Instance.IRC_TargetChannel).Count() == 1)
+				if (this.Channels.Where(p => p.Name == Settings.Instance.IRC_TargetChannel).Count() == 1)
 				{
 					if (Settings.Instance.DebugMode)
 						_Log.Add(new SystemLogItem(String.Format("Joined channel: {0}", Settings.Instance.IRC_TargetChannel)));
-					_IrcClient.Channels[0].MessageReceived += OnChannelMessageReceived;
+					this.Channels[0].MessageReceived += OnChannelMessageReceived;
 				}
 			}
-			IsConnected = true;
 		}
 
 		private void IrcClient_Registered(object sender, EventArgs e)
@@ -268,7 +237,6 @@ namespace InsireBot
 		/// </summary>
 		public void IrcClient_Disconnected(object sender, EventArgs e)
 		{
-			IsConnected = false;
 			_Log.Add(new SystemLogItem("Disconnected"));
 		}
 
@@ -423,8 +391,8 @@ namespace InsireBot
 		public void disconnect()
 		{
 			// Disconnect IRC client that is connected to given server. 
-			_IrcClient.Quit(_ClientQuitTimeout, Settings.Instance.IRC_QuitMessage);
-			_IrcClient.Dispose();
+			this.Quit(_ClientQuitTimeout, Settings.Instance.IRC_QuitMessage);
+			this.Dispose();
 		}
 
 		/// <summary>
@@ -434,7 +402,7 @@ namespace InsireBot
 		/// <returns> true if yes, false if no </returns>
 		private bool checkForOperator(IIrcMessageSource pSource)
 		{
-			foreach (IrcChannelUser iUser in _IrcClient.Channels[0].Users)
+			foreach (IrcChannelUser iUser in this.Channels[0].Users)
 			{
 				if (pSource.Name.Equals(iUser.User.NickName))
 				{
@@ -452,7 +420,7 @@ namespace InsireBot
 		/// <returns> true if yes, false if no </returns>
 		private bool checkForOperator(String pSource)
 		{
-			foreach (IrcChannelUser iUser in _IrcClient.Channels[0].Users)
+			foreach (IrcChannelUser iUser in this.Channels[0].Users)
 			{
 				if (pSource.Equals(iUser.User.NickName))
 				{
@@ -465,22 +433,20 @@ namespace InsireBot
 
 		public void Send(string channel, string message)
 		{
-			if (_IrcClient != null)
-				if (Settings.Instance.ReplyToChat && _IrcClient.Channels.Count > 0)
-				{
-					_IrcClient.LocalUser.SendMessage(channel, message);
-					//_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
-				}
+			if (Settings.Instance.ReplyToChat && this.Channels.Count > 0)
+			{
+				this.LocalUser.SendMessage(channel, message);
+				//_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
+			}
 		}
 
 		public void Send(string message)
 		{
-			if (_IrcClient != null)
-				if (Settings.Instance.ReplyToChat && _IrcClient.Channels.Count > 0)
-				{
-					_IrcClient.LocalUser.SendMessage(Settings.Instance.IRC_TargetChannel, message);
-					//_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
-				}
+			if (Settings.Instance.ReplyToChat && this.Channels.Count > 0)
+			{
+				this.LocalUser.SendMessage(Settings.Instance.IRC_TargetChannel, message);
+				//_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
+			}
 		}
 
 
@@ -488,26 +454,20 @@ namespace InsireBot
 
 		internal void ConnectExecute()
 		{
-			if (_IrcClient != null)
-				_IrcClient.Dispose();
-
-			_IrcClient = new IrcClient();
 			if (_IrcUserInfo == null)
-				return;
-			if (_IrcClient == null)
 				return;
 
 			string server = Settings.Instance.IRC_Serveradress;
 
-			_IrcClient.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
-			_IrcClient.Connected += IrcClient_Connected;
-			_IrcClient.Disconnected += IrcClient_Disconnected;
-			_IrcClient.Registered += IrcClient_Registered;
-			_IrcClient.ConnectFailed += IrcClient_ConnectFailed;
-			_IrcClient.PongReceived += _ircclient_PongReceived;
-			_IrcClient.PingReceived += _ircclient_PingReceived;
-			_IrcClient.Error += _ircclient_Error;
-			_IrcClient.RawMessageReceived += _ircclient_RawMessageReceived;
+			this.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
+			this.Connected += IrcClient_Connected;
+			this.Disconnected += IrcClient_Disconnected;
+			this.Registered += IrcClient_Registered;
+			this.ConnectFailed += IrcClient_ConnectFailed;
+			this.PongReceived += _ircclient_PongReceived;
+			this.PingReceived += _ircclient_PingReceived;
+			this.Error += _ircclient_Error;
+			this.RawMessageReceived += _ircclient_RawMessageReceived;
 			//e.Channel.NoticeReceived += IrcClient_Channel_NoticeReceived;
 			//_ircclient.ErrorMessageReceived +=
 
@@ -517,8 +477,8 @@ namespace InsireBot
 			// Wait until connection has succeeded or timed out. 
 			using (var connectedEvent = new ManualResetEventSlim(false))
 			{
-				_IrcClient.Connected += (sender2, e2) => connectedEvent.Set();
-				_IrcClient.Connect(server, false, _IrcUserInfo);
+				this.Connected += (sender2, e2) => connectedEvent.Set();
+				this.Connect(server,false,_IrcUserInfo);
 
 				//if (Settings.Instance.DebugMode)
 				//{

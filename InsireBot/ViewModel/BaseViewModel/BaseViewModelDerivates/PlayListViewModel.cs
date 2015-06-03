@@ -96,9 +96,17 @@ namespace InsireBot.ViewModel
 				this.Add(new PlayList(par));
 		}
 
+		public void Add(Uri par, UriType type, String parRequester)
+		{
+			if (type == UriType.PlaylistItem)
+				this.Add(new PlayListItem(par,parRequester));
+			if (type == UriType.Playlist)
+				this.Add(new PlayList(par));
+		}
+
 		public void Add(PlayListItem par)
 		{
-			if (!par.Default)
+			//if (!par.Default)
 			{
 				if (!Blacklist.Check(par))
 				{
@@ -126,10 +134,10 @@ namespace InsireBot.ViewModel
 					}
 				}
 			}
-			else
-			{
-				FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlistitem created. Use !request <URL> or !songrequest <URL> to request a song.") });
-			}
+			//else
+			//{
+			//	FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlistitem created. Use !request <URL> or !songrequest <URL> to request a song.") });
+			//}
 		}
 
 		public override void Save()

@@ -3,6 +3,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace InsireBot.Util
 {
@@ -12,7 +14,7 @@ namespace InsireBot.Util
 
 		public static ThreadSafeObservableCollection<T> LoadCollection<T>(String FileName, String SubDirectory = "")
 		{
-			String path = ValidateSubDirectory(SubDirectory) + "\\" + FileName + _FILEFORMAT;
+			String path = ValidateSubDirectory(SubDirectory) + "\\" + cleanPath(FileName) + _FILEFORMAT;
 
 			if (File.Exists(path))
 			{
@@ -31,7 +33,7 @@ namespace InsireBot.Util
 						return _object;
 					}
 				}
-				catch(InvalidOperationException)
+				catch (InvalidOperationException)
 				{
 					return null;
 				}
@@ -44,7 +46,7 @@ namespace InsireBot.Util
 		{
 			if (Items.Count > 0)
 			{
-				String path = ValidateSubDirectory(SubDirectory) + "\\" + FileName + _FILEFORMAT;
+				String path = ValidateSubDirectory(SubDirectory) + "\\" + cleanPath(FileName) + _FILEFORMAT;
 
 				XmlSerializer s = new XmlSerializer(typeof(ObservableCollection<T>));
 				TextWriter writer = new StreamWriter(path);
@@ -60,7 +62,7 @@ namespace InsireBot.Util
 
 		public static void Save<T>(String FileName, T Items, String SubDirectory = "")
 		{
-			String path = ValidateSubDirectory(SubDirectory) + "\\" + FileName + _FILEFORMAT;
+			String path = ValidateSubDirectory(SubDirectory) + "\\" + cleanPath(FileName) + _FILEFORMAT;
 
 			XmlSerializer s = new XmlSerializer(typeof(T));
 			TextWriter writer = new StreamWriter(path);
@@ -68,9 +70,24 @@ namespace InsireBot.Util
 			writer.Close();
 		}
 
+		private static string cleanPath(String path)
+		{
+			List<char> chars = new List<char>();
+			chars.AddRange(Path.GetInvalidPathChars());
+			chars.AddRange(Path.GetInvalidFileNameChars());
+			chars = chars.Distinct().ToList();
+			List<char> pChars = new List<char>(path);
+			foreach (char c in pChars.Intersect(chars))
+			{
+				path = path.Replace(c.ToString(), String.Empty);
+			}
+
+			return path;
+		}
+
 		public static T Load<T>(String FileName, String SubDirectory = "") where T : new()
 		{
-			String path = ValidateSubDirectory(SubDirectory) + "\\" + FileName + _FILEFORMAT;
+			String path = ValidateSubDirectory(SubDirectory) + "\\" + cleanPath(FileName) + _FILEFORMAT;
 
 			if (File.Exists(path))
 			{

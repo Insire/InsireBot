@@ -177,7 +177,7 @@ namespace InsireBot
 
 		public void addPlayListItem(String par, String parUser)
 		{
-			new PlayListItem(par, parUser);
+			_Playlist.Add(new PlayListItem(par, parUser));
 		}
 
 		public void addPlayList(PlayList par)
@@ -243,14 +243,11 @@ namespace InsireBot
 						switch (o)
 						{
 							case "v":
-								_Playlist.Add(u, UriType.PlaylistItem);
+								_Playlist.Add(u, UriType.PlaylistItem, Settings.Instance.IRC_Username);
 								break;
 
 							case "list":
-								if (Settings.Instance.Valid_Youtube_Mail)
-								{
-									_Playlist.Add(u, UriType.Playlist);
-								}
+								_Playlist.Add(u, UriType.Playlist);
 								break;
 						}
 					}
