@@ -3,7 +3,7 @@ using InsireBot.Interfaces;
 
 namespace InsireBot.Objects
 {
-	public class AudioDevice : ObservableObject, IBaseInterface
+	public class AudioDevice : ObservableObject
 	{
 		/// <summary>
 		/// Product name in a null-terminated string 

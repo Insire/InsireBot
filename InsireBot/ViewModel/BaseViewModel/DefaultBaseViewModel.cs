@@ -391,40 +391,40 @@ namespace InsireBot.ViewModel
 			this.Params = new String[0];
 		}
 
-		public CompressedMessage(String Value, String[] par)
+		public CompressedMessage(String Value, String[] parParams)
 			: base(Value)
 		{
-			this.Params = par;
+			this.Params = parParams;
 		}
 
-		public CompressedMessage(String Value, String[] par, bool RelayToChat = false)
+		public CompressedMessage(String Value, String[] parParams, bool RelayToChat = false)
 			: base(Value, RelayToChat)
 		{
-			this.Params = par;
+			this.Params = parParams;
 		}
 
-		public CompressedMessage(String Value, String par)
+		public CompressedMessage(String Value, String parParams)
 			: base(Value)
 		{
-			this.Params = new String[] { par };
+			this.Params = new String[] { parParams };
 		}
 
-		public CompressedMessage(String Value, String par, bool RelayToChat = false)
+		public CompressedMessage(String Value, String parParams, bool RelayToChat = false)
 			: base(Value, RelayToChat)
 		{
-			this.Params = new String[] { par };
+			this.Params = new String[] { parParams };
 		}
 
-		public CompressedMessage(String Value, int par)
+		public CompressedMessage(String Value, int parParams)
 			: base(Value)
 		{
-			this.Params = new String[] { par.ToString() };
+			this.Params = new String[] { parParams.ToString() };
 		}
 
-		public CompressedMessage(String Value, int par, bool RelayToChat = false)
+		public CompressedMessage(String Value, int parParams, bool RelayToChat = false)
 			: base(Value, RelayToChat)
 		{
-			this.Params = new String[] { par.ToString() };
+			this.Params = new String[] { parParams.ToString() };
 		}
 	}
 

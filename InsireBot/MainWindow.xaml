@@ -228,9 +228,6 @@
                     <Label Content="PasteBin Password" />
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_Password, Source={x:Static Util:Settings.Instance}}" />
 
-                    <Label Content="Youtube Mail" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Youtube_Mail, Source={x:Static Util:Settings.Instance}}" />
-
                     <Label Content="Twitch API Token" />
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
 
@@ -403,16 +400,16 @@
                             <ListView.ItemTemplate>
                                 <DataTemplate>
                                     <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
-                                        <Grid Margin="4,0">
+                                        <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition />
+                                                <ColumnDefinition MinWidth="150" Width="Auto" />
+                                                <ColumnDefinition Width="40" />
                                             </Grid.ColumnDefinitions>
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
-                                            <TextBlock Text="{Binding Name}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Count}" HorizontalAlignment="Right" />
+                                            <TextBlock Text="{Binding Name}" Margin="5,0" />
+                                            <TextBlock Grid.Column="1" Text="{Binding Path=Items.Count, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="5,0" />
                                         </Grid>
                                     </VirtualizingStackPanel>
                                 </DataTemplate>
@@ -486,10 +483,9 @@
                             </Button>
                         </WrapPanel>
                     </Grid>
-
                 </Grid>
             </TabItem>
-            <TabItem x:Name="Chat" Header="Chat" DataContext="{Binding Messages}">
+            <TabItem x:Name="Chat" Header="Chat" DataContext="{Binding ChatMessages, Mode=OneWay}">
                 <ScrollViewer>
                     <ListView AlternationCount="2" BorderThickness="0" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" x:Name="ChatListView" >
                         <ListView.ItemTemplate>
@@ -498,7 +494,7 @@
                                     <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition Width="0.75*"  />
+                                            <ColumnDefinition Width="0.55*" />
                                             <ColumnDefinition Width="2*" />
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
@@ -522,6 +518,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -572,6 +569,16 @@
                             </Rectangle>
                         </Button>
                     </WrapPanel>
+                    <Grid DataContext="{Binding Messages}" x:Name="BlacklistMessagesGrid" Grid.Column="4" Grid.Row="2">
+                        <ListView x:Name="BlacklistMessages" ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" SelectedIndex="{Binding SelectedIndex}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding PlayList.Messages/Value}" />
+                                    <GridViewColumn Header="Time" DisplayMemberBinding="{Binding PlayList.Messages/Time}" />
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, Mode=Default, NotifyOnTargetUpdated=True}" Visibility="Hidden">

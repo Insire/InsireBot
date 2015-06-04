@@ -169,8 +169,6 @@ namespace InsireBot.Util
 
 		public bool SaveLog { get; set; }
 
-		public bool AutoConnect { get; set; }
-
 		public bool ReplyToChat { get; set; }
 
 		public bool SaveChat { get; set; }
@@ -184,12 +182,12 @@ namespace InsireBot.Util
 			configFilePath = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\DocBot";
 		}
 
-		~Settings()
-		{
-			if (!IsDefaultConfig)
-				saveConfigFile();
+		//~Settings()
+		//{
+		//	if (!IsDefaultConfig)
+		//		saveConfigFile();
 
-		}
+		//}
 
 		#endregion Construction
 
@@ -288,7 +286,7 @@ namespace InsireBot.Util
 			}
 		}
 
-		public bool LoadConfig()
+		internal bool LoadConfig()
 		{
 			String path = Instance.configFilePath + "\\" + _ConfigFileName;
 			//check for config file, if exists: import config file
@@ -311,7 +309,7 @@ namespace InsireBot.Util
 			}
 		}
 
-		public bool LoadConfig(string path)
+		internal bool LoadConfig(string path)
 		{
 			lock (_OSyncRoot)
 			{
@@ -342,8 +340,9 @@ namespace InsireBot.Util
 			return true;
 		}
 
-		private void saveConfigFile()
+		internal void saveConfigFile()
 		{
+			if (IsDefaultConfig) return;
 			Validate();
 
 			XmlWriterSettings settings = new XmlWriterSettings();

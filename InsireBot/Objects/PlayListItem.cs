@@ -10,6 +10,8 @@ using System.Runtime.CompilerServices;
 using YoutubeService;
 using ServiceUtilities;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Google.Apis.YouTube.v3.Data;
 
 namespace InsireBot
 {
@@ -24,8 +26,6 @@ namespace InsireBot
 		private string _ID;
 		private string _ArtistName = String.Empty;
 		private string _Title = String.Empty;
-
-		private BackgroundWorker parser;
 
 		[XmlIgnore]
 		public ICommand OpenInBrowserCommand { get; set; }
@@ -190,90 +190,65 @@ namespace InsireBot
 			GetMetaData();
 		}
 
+		public PlayListItem(Video video, String Requester = "")
+		{
+			updateWithVideo(video, Requester);
+		}
+
+		public PlayListItem(PlaylistItem item, String Requester = "")
+		{
+			updateWithPlaylistItem(item, Requester);
+		}
+
 		#endregion
+
+		private void updateWithPlaylistItem(PlaylistItem item, String Requester)
+		{
+			this.Location = String.Format("https://www.youtube.com/watch?v={0}", item.Snippet.ResourceId.VideoId);
+			this.Title = item.Snippet.Title;
+			this.ArtistName = item.Snippet.ChannelTitle;
+
+			if (String.IsNullOrEmpty(Requester))
+				this.Requester = Settings.Instance.IRC_Username;
+			else
+				this.Requester = Requester;
+		}
+
+		private void updateWithVideo(Video video, String Requester = "")
+		{
+			this.Location = String.Format("https://www.youtube.com/watch?v={0}", video.Id);
+			this.Duration = TimeParser.GetTimeSpan(video.ContentDetails.Duration).TotalSeconds;
+			this.Title = video.Snippet.Title;
+			this.ArtistName = video.Snippet.ChannelTitle;
+
+			if (String.IsNullOrEmpty(Requester))
+				this.Requester = Settings.Instance.IRC_Username;
+			else
+				this.Requester = Requester;
+
+			if (video.ContentDetails.RegionRestriction != null)
+				this.Restricted = true;
+		}
 
 		private void GetMetaData(String Requester = "")
 		{
 			if (String.IsNullOrEmpty(Requester))
 				Requester = Settings.Instance.IRC_Username;
 
-			parser = new BackgroundWorker();
-			parser.DoWork += parser_DoWork;
-			parser.RunWorkerCompleted += parser_RunWorkerCompleted;
-			parser.WorkerSupportsCancellation = true;
-			parser.WorkerReportsProgress = false;
-			parser.RunWorkerAsync(Requester);
-		}
-
-		void parser_DoWork(object sender, DoWorkEventArgs e)
-		{
-			Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
-
-			BackgroundWorker bw = sender as BackgroundWorker;
-
-			// Start the time-consuming operation.
-			String s = URLParser.GetID(new Uri(this.Location), "v");
-			//e.Result = yt.GetVideoByVideoID(s);
-
-			List<Google.Apis.YouTube.v3.Data.Video> x = yt.GetVideoByVideoID(s);
-			if (x != null)
+			Task t = new Task(() =>
 			{
-				if (x.Count > 0)
+				Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
+				List<Video> x = yt.GetVideoByVideoID(URLParser.GetID(new Uri(this.Location), "v"));
+
+				if (x != null)
 				{
-					Google.Apis.YouTube.v3.Data.Video vid = x[0];
-					this.Title = vid.Snippet.Title;
-					this.Duration = TimeParser.GetTimeSpan(vid.ContentDetails.Duration).TotalSeconds;
-					this.ArtistName = vid.Snippet.ChannelTitle;
-					// TODO check the region returned against the region the client is run in
-					if (vid.ContentDetails.RegionRestriction != null)
+					if (x.Count > 0)
 					{
-						this.Restricted = true;
+						updateWithVideo(x[0], Requester);
 					}
 				}
-				else
-				{
-					this.Dispose();
-				}
-			}
-			else
-			{
-				this.Dispose();
-			}
-
-
-			// If the operation was canceled by the user,  
-			// set the DoWorkEventArgs.Cancel property to true. 
-			if (bw.CancellationPending)
-			{
-				e.Cancel = true;
-			}
-		}
-
-		void parser_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-		{
-			if (!e.Cancelled)
-				if (!(e.Error == null))
-				{
-					//TODO error handling
-				}
-				else
-				{
-					//var x = ((List<Google.Apis.YouTube.v3.Data.Video>)e.Result);
-					//if (x != null)
-					//	if (x.Count > 0)
-					//	{
-					//		Google.Apis.YouTube.v3.Data.Video vid = x[0];
-					//		this.Title = vid.Snippet.Title;
-					//		this.Duration = TimeParser.GetTimeSpan(vid.ContentDetails.Duration).TotalSeconds;
-					//		this.ArtistName = vid.Snippet.ChannelTitle;
-					//		// TODO check the region returned against the region the client is run in
-					//		if (vid.ContentDetails.RegionRestriction != null)
-					//		{
-					//			this.Restricted = true;
-					//		}
-					//		this.Default = false;
-					//	}
-				}
+			});
+			t.Start();
 		}
 
 		#region INotifyPropertyChanged Members
@@ -334,8 +309,6 @@ namespace InsireBot
 			if (disposing)
 			{
 				// free managed resources
-				if (parser != null)
-					parser.Dispose();
 			}
 			// free native resources if there are any.
 

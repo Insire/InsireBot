@@ -181,18 +181,17 @@ namespace InsireBot.Util.Collections
 			: this()
 		{
 			Location = par.AbsoluteUri;
-			// TODO parse the uri using the youtube service
-			//throw new NotSupportedException();
+
 			Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
-			List<Google.Apis.YouTube.v3.Data.Playlist> x = yt.GetPlaylistByID(URLParser.GetID(par, "list"));
+			List<Playlist> x = yt.GetPlaylistByID(URLParser.GetID(par, "list"));
 			if (x.Count > -1)
 			{
-				foreach (Google.Apis.YouTube.v3.Data.Playlist p in x)
+				foreach (Playlist p in x)
 				{
 					this.Name = p.Snippet.Title;
-					foreach (Google.Apis.YouTube.v3.Data.PlaylistItem item in yt.GetPlayListItemByPlaylistID(p.Id))
+					foreach (PlaylistItem item in yt.GetPlayListItemByPlaylistID(p.Id))
 					{
-						this.Items.Add(new PlayListItem(String.Format("https://www.youtube.com/watch?v={0}", item.Snippet.ResourceId.VideoId)));
+						this.Items.Add(new PlayListItem(String.Format("https://www.youtube.com/watch?v={0}", item.Id)));
 					}
 					if (Items.Count > 0)
 						SelectedIndex = 0;

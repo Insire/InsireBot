@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -37,6 +38,13 @@ namespace YoutubeService
 		public List<PlaylistItem> GetPlayListItemByPlaylistID(String ID)
 		{
 			return GetPlayListItemByPlaylistIDAsync(ID).Result;
+		}
+
+		public ConcurrentQueue<PlaylistItem> GetConcurrentPlayListItemByPlaylistID(String ID)
+		{
+			ConcurrentQueue<PlaylistItem> queue = new ConcurrentQueue<PlaylistItem>();
+			GetPlayListItemByPlaylistIDAsync(ID).Result.ForEach(item => queue.Enqueue(item));
+			return queue;
 		}
 
 		public List<PlaylistItem> GetPlayListItemByPlaylistitemID(String ID)
@@ -139,8 +147,6 @@ namespace YoutubeService
 		{
 			List<PlaylistItem> PlayListItems = new List<PlaylistItem>();
 			YouTubeService youtubeService = await this.GetYouTubeService();
-			var channelsListRequest = youtubeService.Channels.List("contentDetails");
-			channelsListRequest.Mine = false;
 			var nextPageToken = "";
 			while (nextPageToken != null)
 			{
@@ -188,10 +194,11 @@ namespace YoutubeService
 			{
 				return GetVideoByVideoIDAsync(ID).Result;
 			}
-			catch(AggregateException ex)
+			catch (Exception ex)
 			{
-#if DEBUG				
-				Console.WriteLine(ex.InnerException.InnerException.Message);
+#if DEBUG
+				while (ex.InnerException != null) ex = ex.InnerException;
+				Console.WriteLine(ex.Message);
 #endif
 				return list;
 			}

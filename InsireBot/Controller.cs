@@ -1,17 +1,19 @@
-﻿using GalaSoft.MvvmLight.Command;
-using InsireBot.ViewModel;
-using InsireBot.Enums;
-using InsireBot.Objects;
-using InsireBot.Util.Collections;
-using InsireBot.Util;
-using System;
-using System.Text.RegularExpressions;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
-using System.Collections.Generic;
-using YoutubeService;
+
+using GalaSoft.MvvmLight.Command;
+
+using InsireBot.Enums;
+using InsireBot.Objects;
+using InsireBot.Util;
+using InsireBot.Util.Collections;
+using InsireBot.ViewModel;
 using ServiceUtilities;
+using YoutubeService;
 
 namespace InsireBot
 {
@@ -31,6 +33,7 @@ namespace InsireBot
 		private bool _Playing = false; // if the vlc player is playing a song
 		private static object _oSyncRoot = new Object();
 		private static volatile Controller _instance = null;
+		private Queue<Uri> _URLs = new Queue<Uri>();
 
 		private MediaPlayer _Player;
 		private MediaPlayer _FollowerAlert;
@@ -185,11 +188,6 @@ namespace InsireBot
 			_Playlist.Add(par);
 		}
 
-		public void addPlayList(Uri par)
-		{
-			_Playlist.Add(par, UriType.Playlist);
-		}
-
 		public void removePlayListItem()
 		{
 			_Playlist.Remove();
@@ -211,12 +209,12 @@ namespace InsireBot
 		}
 
 		/// <summary>
-		/// parses par for valid youtubeurls and calls the fitting add method
+		/// parses parURL for valid youtubeurls and calls the fitting add method
 		/// </summary>
-		/// <param name="par"></param>
-		public void FeedMe(String par)
+		/// <param name="parURL"></param>
+		public void FeedMe(String parURL, String Username = "")
 		{
-			foreach (String s in par.Split(' '))
+			foreach (String s in parURL.Split(' '))
 			{
 				Uri u = null;
 				try
@@ -231,7 +229,7 @@ namespace InsireBot
 				}
 				catch (UriFormatException)
 				{
-					_Log.FillMessageCompressor(new CompressedMessage { Value = "The supplied URL wasn't valid", Time = DateTime.Now, Params = new String[] { par } }, "The supplied URLs weren't valid");
+					_Log.FillMessageCompressor(new CompressedMessage { Value = "The supplied URL wasn't valid", Time = DateTime.Now, Params = new String[] { parURL } }, "The supplied URLs weren't valid");
 					return;
 				}
 
@@ -243,15 +241,69 @@ namespace InsireBot
 						switch (o)
 						{
 							case "v":
-								_Playlist.Add(u, UriType.PlaylistItem, Settings.Instance.IRC_Username);
+								if (String.IsNullOrEmpty(Username))
+									parse(u, UriType.PlaylistItem, Settings.Instance.IRC_Username);
+								else
+									parse(u, UriType.PlaylistItem, Username);
 								break;
 
 							case "list":
-								_Playlist.Add(u, UriType.Playlist);
+								if (String.IsNullOrEmpty(Username))
+									parse(u, UriType.Playlist, Settings.Instance.IRC_Username);
+								else
+									if (Username.ToLower() == Settings.Instance.IRC_Username.ToLower() | Username == Settings.Instance.IRC_TargetChannel.ToLower().Replace("#", ""))
+										parse(u, UriType.Playlist, Username);
+									else
+									{
+										_Log.FillMessageCompressor(new BaseMessage { Value = "Only the Channelowner can request Playlists", Time = DateTime.Now, RelayToChat = true });
+									}
 								break;
 						}
 					}
 				}
+			}
+		}
+
+		private void parse(Uri u, UriType type, String Username = "")
+		{
+			Youtube youtube = new Youtube(Settings.Instance.Youtube_API_JSON);
+			Task t;
+			switch (type)
+			{
+				case UriType.PlaylistItem:
+					if (String.IsNullOrEmpty(Username))
+						Username = Settings.Instance.IRC_Username;
+
+					t = new Task(() =>
+					{
+						youtube.GetVideoByVideoID(URLParser.GetID(u, "v")).
+							ForEach(video => addPlayListItem(new PlayListItem(video, Username)));
+					});
+					t.Start();
+
+					break;
+				case UriType.Playlist:
+					if (String.IsNullOrEmpty(Username))
+						Username = Settings.Instance.IRC_Username;
+
+					t = new Task(() =>
+					{
+						youtube.GetPlaylistByID(URLParser.GetID(u, "list")).
+							ForEach(playlist =>
+							{
+								PlayList local = new PlayList();
+								local.Name = playlist.Snippet.Title;
+								local.Location = u.OriginalString;
+								local.ID = playlist.Id;
+
+								youtube.GetPlayListItemByPlaylistID(playlist.Id).
+									ForEach(item => youtube.GetVideoByVideoID(item.Snippet.ResourceId.VideoId).
+										ForEach(video => local.Add(new PlayListItem(video, Username))));
+								addPlayList(local);
+							});
+					});
+					t.Start();
+					break;
 			}
 		}
 

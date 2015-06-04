@@ -276,7 +276,7 @@ namespace InsireBot
 					// add song 
 					case "!request":
 					case "!requestsong":
-						Controller.Instance.addPlayListItem(commandvalue, source.Name);
+						Controller.Instance.FeedMe(commandvalue, source.Name);
 						break;
 
 					//remove song by title or url
@@ -478,7 +478,7 @@ namespace InsireBot
 			using (var connectedEvent = new ManualResetEventSlim(false))
 			{
 				this.Connected += (sender2, e2) => connectedEvent.Set();
-				this.Connect(server,false,_IrcUserInfo);
+				this.Connect(server, false, _IrcUserInfo);
 
 				//if (Settings.Instance.DebugMode)
 				//{

@@ -72,9 +72,9 @@ namespace InsireBot.ViewModel
 		public bool Check(PlayListItem par, bool Add = false)
 		{
 			int check = 0;
-			if (Check(new BlackListItem { Added = DateTime.Now, Type = BlackListItemType.Keyword, Value = par.Title }, Add)) check++;
-			if (Check(new BlackListItem { Added = DateTime.Now, Type = BlackListItemType.Song, Value = par.Title }, Add)) check++;
-			if (Check(new BlackListItem { Added = DateTime.Now, Type = BlackListItemType.User, Value = par.Requester }, Add)) check++;
+			if (Check(new BlackListItem(par.Title, BlackListItemType.Keyword), Add)) check++;
+			if (Check(new BlackListItem(par.Title, BlackListItemType.Song), Add)) check++;
+			if (Check(new BlackListItem(par.Requester, BlackListItemType.User), Add)) check++;
 
 			if (check > 0)
 				return true;

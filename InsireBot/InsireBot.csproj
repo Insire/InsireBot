@@ -170,7 +170,6 @@
     <Compile Include="InsireBot.cs" />
     <Compile Include="MediaPlayer.cs" />
     <Compile Include="Interfaces\IAudioDeviceInterface.cs" />
-    <Compile Include="Interfaces\IBaseInterface.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>

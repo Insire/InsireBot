@@ -88,77 +88,60 @@ namespace InsireBot.ViewModel
 			}
 		}
 
-		public void Add(Uri par, UriType type)
-		{
-			if (type == UriType.PlaylistItem)
-				this.Add(new PlayListItem(par));
-			if (type == UriType.Playlist)
-				this.Add(new PlayList(par));
-		}
-
-		public void Add(Uri par, UriType type, String parRequester)
-		{
-			if (type == UriType.PlaylistItem)
-				this.Add(new PlayListItem(par,parRequester));
-			if (type == UriType.Playlist)
-				this.Add(new PlayList(par));
-		}
-
 		public void Add(PlayListItem par)
 		{
-			//if (!par.Default)
+			if (!Blacklist.Check(par))
 			{
-				if (!Blacklist.Check(par))
+				if (Items.Count != 0)
 				{
-					if (Items.Count != 0)
-					{
-						if (SelectedIndex == -1) SelectedIndex = 0;
+					if (SelectedIndex == -1) SelectedIndex = 0;
 
-						if (!Items[SelectedIndex].Check(par))
+					if (!Items[SelectedIndex].Check(par))
+					{
+						if (Items[SelectedIndex].Add(par))
 						{
-							if (Items[SelectedIndex].Add(par))
-							{
-								FillMessageCompressor(new CompressedMessage { Value = "{0} was added to the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were added to the Playlist");
-							}
-						}
-						else
-						{
-							// Message: no playlist selected
-							FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlist selected.") });
+							FillMessageCompressor(new CompressedMessage { Value = "{0} was added to the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were added to the Playlist");
 						}
 					}
 					else
 					{
-						// Message: no playists in collections. no items can be added
-						FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
+						// Message: no playlist selected
+						FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlist selected.") });
 					}
 				}
+				else
+				{
+					// Message: no playists in collections. no items can be added
+					FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlists created. Add Playlists to add Items to.") });
+				}
 			}
-			//else
-			//{
-			//	FillMessageCompressor(new BaseMessage { Value = String.Format("No Playlistitem created. Use !request <URL> or !songrequest <URL> to request a song.") });
-			//}
+			else
+			{
+				FillMessageCompressor(new CompressedMessage { Value = "{0} is blacklisted. Please try a diffrent one.", Params = new String[] { par.Title }, RelayToChat = true, Time = DateTime.Now }, "{0} Items were blacklisted.");
+			}
 		}
 
 		public override void Save()
 		{
-			foreach (PlayList p in Items)
-			{
-				ObjectSerializer.Save<PlayList>(p.Name, p);
-				if (!Settings.Instance.PlaylistNames.Contains(p.Name))
-					Settings.Instance.PlaylistNames.Add(p.Name);
-			}
+			// save each playlist to xml
+			Items.ToList().ForEach(p => ObjectSerializer.Save<PlayList>(p.Name, p));
+			// add all playlistnames to the settings.xml
+			Settings.Instance.PlaylistNames.AddRange(Items.Select(p => p.Name));
+			// remove duplicates
+			Settings.Instance.PlaylistNames = Settings.Instance.PlaylistNames.Distinct().ToList();
 
 			// cast to list so that we can iterate it and remove the deleted items from it
-			foreach (String s in Settings.Instance.PlaylistNames.Except(Items.Select(p => p.Name)).ToList())
+			foreach (String playlistname in Settings.Instance.PlaylistNames.Except(Items.Select(p => p.Name)).ToList())
 			{
 				// before removing the playlistname, the corresponding playlist xml files should be deleted first
-				if (File.Exists(String.Format("{1}\\{0}.xml", s, Settings.Instance.configFilePath)))
+				if (File.Exists(String.Format("{1}\\{0}.xml", playlistname, Settings.Instance.configFilePath)))
 				{
-					File.Delete(String.Format("{1}\\{0}.xml", s, Settings.Instance.configFilePath));
+					File.Delete(String.Format("{1}\\{0}.xml", playlistname, Settings.Instance.configFilePath));
 				}
-				Settings.Instance.PlaylistNames.Remove(s);
+				Settings.Instance.PlaylistNames.Remove(playlistname);
 			}
+			Settings.Instance.saveConfigFile();
+
 		}
 
 		public override bool Load()
