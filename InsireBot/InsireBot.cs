@@ -266,125 +266,127 @@ namespace InsireBot
 
 			//split the string into it's parts
 			String[] _parts = inputString.Split(new char[] { ' ' }, 2);
-
-			string command = _parts[0];
-			if (_parts.Count() > 1)
+			if (_parts.Count() > 0)
 			{
-				string commandvalue = _parts[1];
-				switch (command.ToLower())
+				string command = _parts[0];
+				switch (_parts.Count())
 				{
-					// add song 
-					case "!request":
-					case "!requestsong":
-						Controller.Instance.FeedMe(commandvalue, source.Name);
+					case 1:
+						_CustomCommands.Items.Where(p => p.Command == command).Distinct().ToList().ForEach(item=>this.Send(item.Response));
 						break;
-
-					//remove song by title or url
-					case "!remove":
-					case "!removesong":
-						if (checkForOperator(source))
-							Controller.Instance.removePlayListItem(commandvalue);
-						break;
-
-					//forceplay command
-					case "!forceplay":
-					case "!force":
-						break;
-
-					//skip command
-					case "!skipsong":
-					case "!skip":
-						break;
-
-					//skip command
-					case "!voteskip":
-						break;
-
-					case "!banuser":
-						break;
-
-					case "!bansong":
-						break;
-
-					case "!bankeyword":
-						break;
-
-					case "!unbanuser":
-						break;
-
-					case "!unbansong":
-						break;
-
-					case "!unbankeyword":
-						break;
-
-					case "!check":
-					case "!checkuser":
-					case "!checksong":
-					case "!checkkeyword":
-						break;
-
-					case "!playlist":
-
-						double dur = 0;
-						int count = 0;
-						string paste = String.Empty;
-						//duration
-						foreach (PlayListItem p in _Playlist.Items[_Playlist.SelectedIndex])
+					case 2:
+						string commandvalue = _parts[1];
+						switch (command.ToLower())
 						{
-							dur += p.Duration;
-							count++;
+							// add song 
+							case "!request":
+							case "!requestsong":
+								Controller.Instance.FeedMe(commandvalue, source.Name);
+								break;
 
-							paste = paste + p.Title + " " + p.Duration + " " + p.Location + " " + p.Duration + Environment.NewLine;
+							//remove song by title or url
+							case "!remove":
+							case "!removesong":
+								if (checkForOperator(source))
+									Controller.Instance.removePlayListItem(commandvalue);
+								break;
+
+							//forceplay command
+							case "!forceplay":
+							case "!force":
+								break;
+
+							//skip command
+							case "!skipsong":
+							case "!skip":
+								break;
+
+							//skip command
+							case "!voteskip":
+								break;
+
+							case "!banuser":
+								break;
+
+							case "!bansong":
+								break;
+
+							case "!bankeyword":
+								break;
+
+							case "!unbanuser":
+								break;
+
+							case "!unbansong":
+								break;
+
+							case "!unbankeyword":
+								break;
+
+							case "!check":
+							case "!checkuser":
+							case "!checksong":
+							case "!checkkeyword":
+								break;
+
+							case "!playlist":
+
+								double dur = 0;
+								int count = 0;
+								string paste = String.Empty;
+								//duration
+								foreach (PlayListItem p in _Playlist.Items[_Playlist.SelectedIndex])
+								{
+									dur += p.Duration;
+									count++;
+
+									paste = paste + p.Title + " " + p.Duration + " " + p.Location + " " + p.Duration + Environment.NewLine;
+								}
+								InsireBot.Util.Services.PastebinAPI.getPasteURL(paste);
+								break;
+							case "!streamstats":
+							case "!stats":
+								//get channelname from settings
+								String ch = Settings.Instance.IRC_TargetChannel.Replace("#", "");
+
+								//get metadata
+								TwitchDataObject st = TwitchAPI.getStreamMetaData(ch);
+
+								//build response string
+								String _online = String.Empty;
+								String _viewers = String.Empty;
+								String _followers = String.Empty;
+								String _views = String.Empty;
+
+								//stream online
+								if (st._stream.stream != null)
+								{
+									_online = "online";
+									_viewers = st._stream.stream.viewers.ToString();
+									_followers = st._stream.stream.channel.followers.ToString();
+									_views = st._stream.stream.channel.views.ToString();
+								}
+								// stream offline 
+								else
+								{
+									_online = "offline";
+									if (st._channel != null)
+									{
+										_viewers = "0";
+										_followers = st._channel.followers.ToString();
+										_views = st._channel.views.ToString();
+									}
+								}
+								break;
+
+							case "!botstatus":
+							case "!status":
+
+								break;
+
 						}
-						InsireBot.Util.Services.PastebinAPI.getPasteURL(paste);
-						break;
-					case "!streamstats":
-					case "!stats":
-						//get channelname from settings
-						String ch = Settings.Instance.IRC_TargetChannel.Replace("#", "");
-
-						//get metadata
-						TwitchDataObject st = TwitchAPI.getStreamMetaData(ch);
-
-						//build response string
-						String _online = String.Empty;
-						String _viewers = String.Empty;
-						String _followers = String.Empty;
-						String _views = String.Empty;
-
-						//stream online
-						if (st._stream.stream != null)
-						{
-							_online = "online";
-							_viewers = st._stream.stream.viewers.ToString();
-							_followers = st._stream.stream.channel.followers.ToString();
-							_views = st._stream.stream.channel.views.ToString();
-						}
-						// stream offline 
-						else
-						{
-							_online = "offline";
-							if (st._channel != null)
-							{
-								_viewers = "0";
-								_followers = st._channel.followers.ToString();
-								_views = st._channel.views.ToString();
-							}
-						}
-						break;
-
-					case "!botstatus":
-					case "!status":
-
 						break;
 				}
-
-				foreach (CustomCommand c in _CustomCommands.Items)
-					if (c.Command == command)
-					{
-
-					}
 			}
 		}
 
@@ -431,21 +433,12 @@ namespace InsireBot
 			return false;
 		}
 
-		public void Send(string channel, string message)
-		{
-			if (Settings.Instance.ReplyToChat && this.Channels.Count > 0)
-			{
-				this.LocalUser.SendMessage(channel, message);
-				//_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
-			}
-		}
-
 		public void Send(string message)
 		{
 			if (Settings.Instance.ReplyToChat && this.Channels.Count > 0)
 			{
 				this.LocalUser.SendMessage(Settings.Instance.IRC_TargetChannel, message);
-				//_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
+				_Chat.Items.Add(new ChatMessage(Settings.Instance.IRC_Username, message));
 			}
 		}
 

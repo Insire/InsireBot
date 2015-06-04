@@ -682,14 +682,14 @@
                     </WrapPanel>
                 </Grid>
             </TabItem>
-            <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, Mode=Default, NotifyOnTargetUpdated=True}" Visibility="Hidden">
+            <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, NotifyOnTargetUpdated=True}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <ScrollViewer>
-                        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" AlternationCount="2" SelectionUnit="Cell">
+                        <DataGrid AutoGenerateColumns="False" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" AlternationCount="2" >
                             <DataGrid.Columns>
                                 <DataGridTextColumn Binding="{Binding Command, Mode=TwoWay, NotifyOnTargetUpdated=True}" Header="Command" />
                                 <DataGridTextColumn Binding="{Binding Response, Mode=TwoWay, NotifyOnTargetUpdated=True}" Header="Response" />
