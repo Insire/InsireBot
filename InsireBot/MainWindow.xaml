@@ -599,6 +599,7 @@
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="0.55*" />
                                             <ColumnDefinition Width="2*" />
+                                            <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="Auto" />
@@ -606,6 +607,13 @@
                                         <TextBlock Margin="5,2" Text="{Binding Time, StringFormat=\{0:g\}}" />
                                         <TextBlock Grid.Column="1" Margin="5,2" Text="{Binding User}" TextAlignment="Right" />
                                         <TextBlock Grid.Column="2" Margin="5,2" Text="{Binding Value}" />
+                                        <TextBlock Grid.Column="3" TextWrapping="Wrap">
+                                            <Run>Some text.</Run>
+                                            <InlineUIContainer>
+                                                <Image Source="http://sstatic.net/stackoverflow/img/apple-touch-icon.png" Height="20"></Image>
+                                            </InlineUIContainer>
+                                            <Run>Some more text.</Run>
+                                        </TextBlock>
                                     </Grid>
                                 </VirtualizingStackPanel>
                             </DataTemplate>
@@ -672,16 +680,6 @@
                             </Rectangle>
                         </Button>
                     </WrapPanel>
-                    <Grid DataContext="{Binding Messages}" x:Name="BlacklistMessagesGrid" Grid.Column="4" Grid.Row="2">
-                        <ListView x:Name="BlacklistMessages" ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" SelectedIndex="{Binding SelectedIndex}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding PlayList.Messages/Value}" />
-                                    <GridViewColumn Header="Time" DisplayMemberBinding="{Binding PlayList.Messages/Time}" />
-                                </GridView>
-                            </ListView.View>
-                        </ListView>
-                    </Grid>
                 </Grid>
             </TabItem>
             <TabItem x:Name="CustomCommands" Header="Custom Commands" DataContext="{Binding Commands, Mode=Default, NotifyOnTargetUpdated=True}" Visibility="Hidden">
@@ -723,17 +721,44 @@
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
-                                    <Grid>
+                                    <Grid Name="myGrid">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
+                                        <Rectangle x:Name="Type" Grid.Column="1" Style="{Binding Source={StaticResource DefaultRectangle}}" Tag="{Binding Type, NotifyOnTargetUpdated=True}">
+                                            <Rectangle.OpacityMask>
+                                                <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_link}" />
+                                            </Rectangle.OpacityMask>
+                                        </Rectangle>
                                         <TextBlock Margin="5,2" Text="{Binding Time, Converter={StaticResource DateConverter}, NotifyOnTargetUpdated=True}" />
-                                        <TextBlock Grid.Column="1" Margin="5,2" Text="{Binding Type, NotifyOnTargetUpdated=True}" />
                                         <TextBlock Grid.Column="2" Margin="5,2" Text="{Binding Message, NotifyOnTargetUpdated=True}" />
                                     </Grid>
                                 </VirtualizingStackPanel>
+                                <DataTemplate.Triggers>
+                                    <Trigger SourceName="Type" Property="Tag" Value="InsireBot.Objects.ErrorLogItem">
+                                        <Setter TargetName="Type" Property="OpacityMask" >
+                                            <Setter.Value>
+                                                <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_cancel}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger SourceName="Type" Property="Tag" Value="InsireBot.Objects.SystemLogItem">
+                                        <Setter TargetName="Type" Property="OpacityMask" >
+                                            <Setter.Value>
+                                                <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_bug}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <Trigger SourceName="Type" Property="Tag" Value="InsireBot.Objects.ChatLogItem">
+                                        <Setter TargetName="Type" Property="OpacityMask" >
+                                            <Setter.Value>
+                                                <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_chat}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                </DataTemplate.Triggers>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                         <ListView.Resources>
