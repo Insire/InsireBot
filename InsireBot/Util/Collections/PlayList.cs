@@ -20,6 +20,8 @@ namespace InsireBot.Util.Collections
 		public ICommand RemoveCommand { get; set; }
 		[XmlIgnore]
 		public ICommand ClearCommand { get; set; }
+		[XmlIgnore]
+		public ICommand OpenInBrowser { get; set; }
 
 		private ThreadSafeObservableCollection<PlayListItem> _Items;
 		private String _Name;
@@ -173,6 +175,19 @@ namespace InsireBot.Util.Collections
 			this.ClearCommand = new SimpleCommand
 			{
 				ExecuteDelegate = _ => Items.Clear(),
+				CanExecuteDelegate = _ => true
+			};
+
+			this.OpenInBrowser = new SimpleCommand
+			{
+				ExecuteDelegate = _ =>
+				{
+					if (Items != null)
+						if (Items.Count > 0)
+							if (SelectedIndex > -1)
+								if (this.Items[SelectedIndex].Location != null)
+									System.Diagnostics.Process.Start(this.Items[SelectedIndex].Location);
+				},
 				CanExecuteDelegate = _ => true
 			};
 		}

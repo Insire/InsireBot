@@ -27,9 +27,6 @@ namespace InsireBot
 		private string _ArtistName = String.Empty;
 		private string _Title = String.Empty;
 
-		[XmlIgnore]
-		public ICommand OpenInBrowserCommand { get; set; }
-
 		/// The artist name.
 		public string ArtistName
 		{
@@ -154,12 +151,6 @@ namespace InsireBot
 			this.Title = "XXXXXXXXXXXXXXXXXXX";
 			this.Duration = 0;
 			this.Restricted = false;
-
-			this.OpenInBrowserCommand = new SimpleCommand
-			{
-				ExecuteDelegate = _ => System.Diagnostics.Process.Start(this.Location),
-				CanExecuteDelegate = _ => true
-			};
 		}
 
 		public PlayListItem(String URL)

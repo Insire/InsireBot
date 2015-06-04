@@ -295,6 +295,7 @@ namespace InsireBot
 								local.Name = playlist.Snippet.Title;
 								local.Location = u.OriginalString;
 								local.ID = playlist.Id;
+								local.Location = u.OriginalString;
 
 								youtube.GetPlayListItemByPlaylistID(playlist.Id).
 									ForEach(item => youtube.GetVideoByVideoID(item.Snippet.ResourceId.VideoId).

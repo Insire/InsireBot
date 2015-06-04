@@ -16,7 +16,14 @@ namespace InsireBot.ViewModel
 	public class PlayListViewModel : BaseViewModel<PlayList>
 	{
 		[XmlIgnore]
-		public ICommand CopyURLsCommand { get; set; }
+		public ICommand CopyURLs { get; set; }
+
+		[XmlIgnore]
+		public ICommand CopyPlaylistURL { get; set; }
+
+		[XmlIgnore]
+		public ICommand OpenInBrowser { get; set; }
+
 		private BlackListViewModel<BlackListItem> _Blacklist;
 
 		public BlackListViewModel<BlackListItem> Blacklist
@@ -38,22 +45,56 @@ namespace InsireBot.ViewModel
 			Name = "PlaylistLibrary";
 			Items = new ThreadSafeObservableCollection<PlayList>();
 
-			this.CopyURLsCommand = new SimpleCommand
+			this.CopyURLs = new SimpleCommand
 			{
 				ExecuteDelegate = _ =>
 				{
 					string s = String.Empty;
-					if (SelectedIndex > 0)
-						foreach (PlayListItem p in Items[SelectedIndex].Items)
-						{
-							s += " " + p.Location;
-						}
+					if (Items != null)
+						if (Items.Count > 0)
+							if (SelectedIndex > -1)
+								foreach (PlayListItem p in Items[SelectedIndex].Items)
+								{
+									s += " " + p.Location;
+								}
 
-					if (s != String.Empty)
+					if (!String.IsNullOrEmpty(s))
 					{
 						Clipboard.Clear();
 						Clipboard.SetDataObject(s);
 					}
+				},
+				CanExecuteDelegate = _ => true
+			};
+
+			this.CopyPlaylistURL = new SimpleCommand
+			{
+				ExecuteDelegate = _ =>
+				{
+					string s = String.Empty;
+					if (Items != null)
+						if (Items.Count > 0)
+							if (SelectedIndex > -1)
+								s = Items[SelectedIndex].Location;
+
+					if (!String.IsNullOrEmpty(s))
+					{
+						Clipboard.Clear();
+						Clipboard.SetDataObject(s);
+					}
+				},
+				CanExecuteDelegate = _ => true
+			};
+
+			this.OpenInBrowser = new SimpleCommand
+			{
+				ExecuteDelegate = _ =>
+				{
+					if (Items != null)
+						if (Items.Count > 0)
+							if (SelectedIndex > -1)
+								if (this.Items[SelectedIndex].Location != null)
+									System.Diagnostics.Process.Start(this.Items[SelectedIndex].Location);
 				},
 				CanExecuteDelegate = _ => true
 			};

@@ -356,7 +356,7 @@ namespace InsireBot
 		{
 			if (Controller.Instance != null)
 				Controller.Instance.bPlay_Click(sender, e);
-			
+
 		}
 
 		private void bNext_Click(object sender, RoutedEventArgs e)
@@ -406,19 +406,12 @@ namespace InsireBot
 
 			if (_Playlist.Items.Count != 0)
 			{
-				//if (_Playlist.SelectedIndex > -1)
-				{
-					var result = await this.ShowInputAsync("Add Youtube Playlist or Song", "Post the Link!");
+				var result = await this.ShowInputAsync("Add Youtube Playlist or Song", "Paste your Link!");
 
-					if (result == null) //user pressed cancel
-						return;
+				if (result == null) //user pressed cancel
+					return;
 
-					Controller.Instance.FeedMe(result);
-				}
-				//else
-				//{
-				//	await this.ShowMessageAsync("Playlist needed", "You need to select a Playlist to add Songs to.", MessageDialogStyle.Affirmative);
-				//}
+				Controller.Instance.FeedMe(result);
 			}
 
 		}

@@ -380,7 +380,6 @@
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition />
-                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid DataContext="{Binding PlayList}" x:Name="PlaylistGrid">
                         <Grid.RowDefinitions>
@@ -393,8 +392,96 @@
                             SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
                             <ListView.ContextMenu>
                                 <ContextMenu >
-                                    <MenuItem Header="CopyToClipboard" />
-                                    <MenuItem Header="Remove" />
+                                    <MenuItem Header="Copy">
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_page_copy}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                        <MenuItem Header="All URLs" Command="{Binding CopyURLs}">
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_list}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="URL of Playlist" Command="{Binding CopyPlaylistURL}">
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_link}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </MenuItem>
+                                    <MenuItem Header="Add">
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                        <MenuItem Header="From URL" Click="bAddPlayListItem_Click">
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_link}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="new Playlist" Click="bAddPlaylist_Click">
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_new}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </MenuItem>
+                                    <MenuItem Header="Remove">
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_delete}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                        <MenuItem Header="All" Command="{Binding ClearItems}" >
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_list_delete_inline}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Selected" Command="{Binding RemoveItem}" >
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </MenuItem>
+                                    <MenuItem Header="Open in Browser" Command="{Binding OpenInBrowser}" >
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_globe}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                             <ListView.ItemTemplate>
@@ -415,30 +502,12 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        <WrapPanel Grid.Row="1" Style="{Binding Source={StaticResource ButtonWrap}}" >
-                            <Button x:Name="bAddPlayList" Margin="5" Click="bAddPlaylist_Click" ToolTip="Add Playlist">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                            <Button x:Name="bRemovePlaylist" Margin="5" Command="{Binding RemoveItem}" ToolTip="Remove Playlist">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                        </WrapPanel>
                     </Grid>
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" Grid.RowSpan="2"/>
                     <Grid Grid.Column="2" DataContext="{Binding PlayList.SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" x:Name="PlaylistItemsGrid" >
                         <Grid.RowDefinitions>
                             <RowDefinition />
-                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-
                         <ListView x:Name="PlaylistItems"
                             Grid.Column="2" ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" SelectedIndex="{Binding SelectedIndex}">
                             <ListView.View>
@@ -448,40 +517,74 @@
                                     <GridViewColumn Header="Requester" DisplayMemberBinding="{Binding Requester}" />
                                 </GridView>
                             </ListView.View>
-                            <ListView.Resources>
-                                <Util:BindingProxy x:Key="DataContextProxy" Data="{Binding}"/>
-                            </ListView.Resources>
                             <ListView.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Remove" Command="{Binding RemoveCommand}" />
-                                    <MenuItem Header="Open in Browser" />
-                                    <MenuItem Header="Clear" Command="{Binding ClearCommand}" />
+                                    <MenuItem Header="Add">
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                        <MenuItem Header="From URL" Click="bAddPlayListItem_Click">
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_link}"  />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="From File" Click="bLoadFromFile_Click">
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_cabinet_files}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </MenuItem>
+                                    <MenuItem Header="Remove">
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_delete}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                        <MenuItem Header="All" Command="{Binding ClearCommand}" >
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_list_delete_inline}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Selected" Command="{Binding RemoveCommand}" >
+                                            <MenuItem.Icon>
+                                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                    <Rectangle.OpacityMask>
+                                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_minus}" />
+                                                    </Rectangle.OpacityMask>
+                                                </Rectangle>
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </MenuItem>
+                                    <MenuItem Header="Open in Browser" Command="{Binding OpenInBrowser}" >
+                                        <MenuItem.Icon>
+                                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_globe}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                        </MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </ListView.ContextMenu>
                         </ListView>
-                        <WrapPanel Grid.Row="1" Style="{Binding Source={StaticResource ButtonWrap}}" DataContext="{Binding PlayList, Mode=OneWay, Source={StaticResource Locator}}">
-                            <Button x:Name="bAddPlayListItem" Margin="5" Click="bAddPlayListItem_Click" ToolTip="Add Playlistitem">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add}" />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                            <Button x:Name="bLoadFromFile" Margin="5" Click="bLoadFromFile_Click" ToolTip="Load from File">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_add_multiple}"  />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                            <Button x:Name="bCopyToClipboard" Margin="5" ToolTip="Copy URLs to Clipboard" Command="{Binding CopyURLsCommand}">
-                                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
-                                    <Rectangle.OpacityMask>
-                                        <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_clipboard}"  />
-                                    </Rectangle.OpacityMask>
-                                </Rectangle>
-                            </Button>
-                        </WrapPanel>
                     </Grid>
                 </Grid>
             </TabItem>
