@@ -20,6 +20,8 @@ namespace InsireBot
 	public class Controller
 	{
 		public ICommand Connect { get { return new RelayCommand(_Bot.ConnectExecute, _Bot.CanConnectExecute); } }
+		public ICommand Disconnect { get { return new RelayCommand(_Bot.ConnectExecute, _Bot.CanConnectExecute); } }
+
 
 		private IRCBot _Bot = new IRCBot();
 		private Timer _MessageTimer = new Timer();

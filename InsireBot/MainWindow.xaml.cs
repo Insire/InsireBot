@@ -29,7 +29,7 @@ namespace InsireBot
 		public MainWindow()
 		{
 			InitializeComponent();
-			//_Controller.InitializedMainWindow = true;
+
 			PlaylistGrid.IsEnabled = true;
 			Playlists.IsEnabled = true;
 			PlaylistItems.IsEnabled = true;
@@ -218,11 +218,6 @@ namespace InsireBot
 		}
 
 		#region Events
-
-		//private void window_Initialized(object sender, EventArgs e)
-		//{
-		//	_Controller = new Controller();
-		//}
 
 		private void BlacklistFilter_Changed(object sender, RoutedEventArgs e)
 		{

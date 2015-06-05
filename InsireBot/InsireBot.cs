@@ -272,7 +272,7 @@ namespace InsireBot
 				switch (_parts.Count())
 				{
 					case 1:
-						_CustomCommands.Items.Where(p => p.Command == command).Distinct().ToList().ForEach(item=>this.Send(item.Response));
+						_CustomCommands.Items.Where(p => p.Command == command).Distinct().ToList().ForEach(item => this.Send(item.Response));
 						break;
 					case 2:
 						string commandvalue = _parts[1];
@@ -472,49 +472,56 @@ namespace InsireBot
 			{
 				this.Connected += (sender2, e2) => connectedEvent.Set();
 				this.Connect(server, false, _IrcUserInfo);
+			}
+		}
 
-				//if (Settings.Instance.DebugMode)
-				//{
-				//	if (!connectedEvent.Wait(10000))
-				//	{
-				//		_IrcClient.Dispose();
-				//		_Log.Add(new LogItem { Value = "Connection to " + server + " timed out.", Origin = Settings.Instance.IRC_Username });
-				//		return;
-				//	}
-				//}
+		internal void DisconnectExecute()
+		{
 
+			this.FloodPreventer = new IrcStandardFloodPreventer(4, 2000);
+			this.Connected -= IrcClient_Connected;
+			this.Disconnected -= IrcClient_Disconnected;
+			this.Registered -= IrcClient_Registered;
+			this.ConnectFailed -= IrcClient_ConnectFailed;
+			this.PongReceived -= _ircclient_PongReceived;
+			this.PingReceived -= _ircclient_PingReceived;
+			this.Error -= _ircclient_Error;
+			this.RawMessageReceived -= _ircclient_RawMessageReceived;
+
+			if (Settings.Instance.DebugMode)
+				if (!Settings.Instance.Loaded)
+					_Log.Add(new SystemLogItem("disconnecting..."));
+			// Wait until connection has succeeded or timed out. 
+			using (var connectedEvent = new ManualResetEventSlim(false))
+			{
+				this.Connected -= (sender2, e2) => connectedEvent.Set();
+				this.disconnect();
 			}
 		}
 
 		private void _ircclient_RawMessageReceived(object sender, IrcRawMessageEventArgs e)
 		{
-			if (Settings.Instance.DebugMode)
-			{
-				//#if DEBUG
-				//				if (e.RawContent != null)
-				//					if (e.RawContent != String.Empty)
-				//						Debug.WriteLine("RAW: " + e.Message + " ");
+			Console.WriteLine(e.Message);
+			if (e.Message.Parameters != null)
+				foreach (String s in e.Message.Parameters)
+				{
+					if (s != null)
+						if (s != String.Empty & s.Length > 1)
+						{
+							if (s != "#"+Settings.Instance.IRC_Username.ToLower())
+								if (!Settings.Instance.Loaded)
+									_Log.Add(new SystemLogItem(s));
+						}
+				}
 
-				//				if (e.Message.Prefix != null)
-				//					if (e.Message.Prefix != String.Empty)
-				//						Debug.Write("PREFIX: " + e.Message.Prefix + " ");
+		}
 
-				//				if (e.Message.Command != null)
-				//					if (e.Message.Command != String.Empty)
-				//						Debug.Write("COMMAND: " + e.Message.Command + " ");
-				//#endif
-				if (e.Message.Parameters != null)
-					foreach (String s in e.Message.Parameters)
-					{
-						if (s != null)
-							if (s != String.Empty & s.Length > 1)
-							{
-								if (s != Settings.Instance.IRC_Username.ToLower())
-									if (!Settings.Instance.Loaded)
-										_Log.Add(new SystemLogItem(s));
-							}
-					}
-			}
+		internal bool CanDisconnectExecute()
+		{
+			if (IsConnected != true)
+				return false;
+			else
+				return true;
 		}
 
 		internal bool CanConnectExecute()

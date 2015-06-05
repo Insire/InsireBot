@@ -16,8 +16,8 @@
             x:Name="window" Title="InsireBot" 
             mc:Ignorable="d" WindowStartupLocation="Manual" MinWidth="700" MinHeight="500" 
             GlowBrush="{DynamicResource AccentColorBrush}"
-            SizeToContent="Width" SaveWindowPosition="True" 
-            Loaded="window_Loaded" ResizeMode="CanResizeWithGrip">
+            SizeToContent="Manual" SaveWindowPosition="True" ShowIconOnTitleBar="False"
+            Loaded="window_Loaded" ResizeMode="CanResizeWithGrip" Icon="Resources/pound.ico">
     <Controls:MetroWindow.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -128,7 +128,7 @@
         <Controls:FlyoutsControl DataContext="{Binding Source={StaticResource Locator}}">
             <Controls:Flyout Header="Options" Position="Right" Theme="Accent" Width="300" >
                 <StackPanel Margin="10,0">
-                    <Controls:ToggleSwitch x:Name="checkBox" Header="Debug" IsChecked="{Binding DebugMode, Source={x:Static Util:Settings.Instance}}" />
+                    <Controls:ToggleSwitch Header="Debug" IsChecked="{Binding DebugMode, Source={x:Static Util:Settings.Instance}}" />
                     <Controls:ToggleSwitch Header="AutoConnect" IsChecked="{Binding IRC_AutoConnect, Source={x:Static Util:Settings.Instance}}" />
                     <Controls:ToggleSwitch Header="Save Chat" IsChecked="{Binding SaveChat, Source={x:Static Util:Settings.Instance}}" />
                     <Controls:ToggleSwitch Header="Save Log" IsChecked="{Binding SaveLog, Source={x:Static Util:Settings.Instance}}" />
@@ -200,13 +200,9 @@
                                             Text="{Binding IRC_Serverport, Source={x:Static Util:Settings.Instance}}" />
 
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True"
-                                            Controls:TextBoxHelper.Watermark="Quit Message"
-                                            Text="{Binding IRC_QuitMessage, Source={x:Static Util:Settings.Instance}}" />
-
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True"
                                             Controls:TextBoxHelper.Watermark="Channel Name"
                                             Text="{Binding IRC_TargetChannel, Source={x:Static Util:Settings.Instance}}" />
-                    <Grid DataContext="{Binding Controller, Mode=OneWay}">
+                    <WrapPanel DataContext="{Binding Controller, Mode=OneWay}">
                         <Button Command="{Binding Connect, Mode=OneWay}">
                             <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
                                 <Rectangle.OpacityMask>
@@ -214,7 +210,14 @@
                                 </Rectangle.OpacityMask>
                             </Rectangle>
                         </Button>
-                    </Grid>
+                        <Button Command="{Binding Disconnect, Mode=OneWay}">
+                            <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                <Rectangle.OpacityMask>
+                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_disconnect}" />
+                                </Rectangle.OpacityMask>
+                            </Rectangle>
+                        </Button>
+                    </WrapPanel>
                 </StackPanel>
             </Controls:Flyout>
             <Controls:Flyout Header="Accounts" Position="Right" Theme="Accent" Width="300" >
@@ -505,18 +508,52 @@
                     </Grid>
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" Grid.RowSpan="2"/>
                     <Grid Grid.Column="2" DataContext="{Binding PlayList.SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" x:Name="PlaylistItemsGrid" >
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                        </Grid.RowDefinitions>
                         <ListView x:Name="PlaylistItems"
                             Grid.Column="2" ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" SelectedIndex="{Binding SelectedIndex}">
-                            <ListView.View>
-                                <GridView>
-                                    <GridViewColumn Header="Title" DisplayMemberBinding="{Binding Title}" />
-                                    <GridViewColumn Header="Duration" DisplayMemberBinding="{Binding Duration, Converter={StaticResource DurationConverter}}" />
-                                    <GridViewColumn Header="Requester" DisplayMemberBinding="{Binding Requester}" />
-                                </GridView>
-                            </ListView.View>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="0.5*" />
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="2*" />
+                                            </Grid.ColumnDefinitions>
+                                            <Rectangle Margin="5,2" Style="{Binding Source={StaticResource DefaultRectangle}}" Tag="{Binding Requester}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_youtube_play}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                            <TextBlock Grid.Column="1" Margin="5,2,10,2" Text="{Binding Title}"  />
+                                            <TextBlock Grid.Column="2" Margin="5,2" Text="{Binding Duration, Converter={StaticResource DurationConverter}}" />
+                                            <Rectangle x:Name="Type" Grid.Column="3" Margin="5,2" Style="{Binding Source={StaticResource DefaultRectangle}}">
+                                                <Rectangle.OpacityMask>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_user}" />
+                                                </Rectangle.OpacityMask>
+                                            </Rectangle>
+                                            <TextBlock Name="Requester" Grid.Column="4" Margin="5,2" Text="{Binding Requester}" />
+                                        </Grid>
+                                    </VirtualizingStackPanel>
+                                    <DataTemplate.Triggers>
+                                        <Trigger SourceName="Requester" Property="Text" Value="InsireThomson">
+                                            <Setter TargetName="Type" Property="OpacityMask" >
+                                                <Setter.Value>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_user_tie}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger SourceName="Requester" Property="Text" Value="InsireBot">
+                                            <Setter TargetName="Type" Property="OpacityMask" >
+                                                <Setter.Value>
+                                                    <VisualBrush Stretch="Uniform" Visual="{DynamicResource appbar_chess_king}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </DataTemplate.Triggers>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
                             <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Add">
@@ -590,7 +627,7 @@
             </TabItem>
             <TabItem x:Name="Chat" Header="Chat" DataContext="{Binding ChatMessages, Mode=OneWay}">
                 <ScrollViewer>
-                    <ListView AlternationCount="2" BorderThickness="0" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}" x:Name="ChatListView" >
+                    <ListView BorderThickness="0" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
@@ -716,15 +753,14 @@
             </TabItem>
             <TabItem Header="Log" DataContext="{Binding Log, Mode=Default, NotifyOnTargetUpdated=True}">
                 <ScrollViewer>
-                    <ListView AlternationCount="2" BorderThickness="0" x:Name="LogListView"
-                        ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}">
+                    <ListView BorderThickness="0" x:Name="LogListView" ItemsSource="{Binding Items}" SelectedIndex="{Binding SelectedIndex}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
                                 <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
-                                    <Grid Name="myGrid">
+                                    <Grid>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto" />
-                                            <ColumnDefinition />
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition />
                                         </Grid.ColumnDefinitions>
                                         <Rectangle x:Name="Type" Grid.Column="1" Style="{Binding Source={StaticResource DefaultRectangle}}" Tag="{Binding Type, NotifyOnTargetUpdated=True}">
@@ -761,16 +797,11 @@
                                 </DataTemplate.Triggers>
                             </DataTemplate>
                         </ListView.ItemTemplate>
-                        <ListView.Resources>
-                            <ContextMenu x:Key="ItemContextMenu">
-                                <MenuItem Header="Copy" Command="{Binding Path=DataContext.SelectedItem.CopyCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"/>
+                        <ListView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Copy" Command="{Binding CopyItem}"/>
                             </ContextMenu>
-                        </ListView.Resources>
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="{x:Type ListViewItem}" >
-                                <Setter Property="ContextMenu" Value="{StaticResource ItemContextMenu}" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                        </ListView.ContextMenu>
                     </ListView>
                 </ScrollViewer>
             </TabItem>

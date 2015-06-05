@@ -183,7 +183,6 @@
     <Compile Include="Util\Collections\NotifyingQueue.cs" />
     <Compile Include="Util\Collections\PlayList.cs" />
     <Compile Include="Util\Collections\ThreadSaveObservableCollection.cs" />
-    <Compile Include="Util\DatabindingDebugConverter.cs" />
     <Compile Include="Util\DateConverter.cs" />
     <Compile Include="Util\DurationConverter.cs" />
     <Compile Include="Util\EmailValidator.cs" />
@@ -264,9 +263,8 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\logo_v2.png" />
-  </ItemGroup>
-  <ItemGroup>
+    <Resource Include="Resources\pound.ico" />
+    <Resource Include="Resources\irc client.ico" />
     <Content Include="Resources\PastebinAPI.dll" />
   </ItemGroup>
   <ItemGroup>
