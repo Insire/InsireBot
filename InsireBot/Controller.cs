@@ -22,7 +22,6 @@ namespace InsireBot
 		public ICommand Connect { get { return new RelayCommand(_Bot.ConnectExecute, _Bot.CanConnectExecute); } }
 		public ICommand Disconnect { get { return new RelayCommand(_Bot.ConnectExecute, _Bot.CanConnectExecute); } }
 
-
 		private IRCBot _Bot = new IRCBot();
 		private Timer _MessageTimer = new Timer();
 
@@ -100,7 +99,13 @@ namespace InsireBot
 			_Customcommands = v.Commands;
 			_Log = v.Log;
 			_Playlist = v.PlayList;
-			//_Playlist.MessageBufferChanged += _Playlist_MessageBufferChanged;
+
+			_Playlist.MessageBufferChanged += _Playlist_MessageBufferChanged;
+		}
+
+		void _Playlist_MessageBufferChanged(object sender, MessageBufferChangedEventArgs e)
+		{
+			Console.WriteLine(e.Value);
 		}
 
 		/// <summary>
@@ -126,13 +131,13 @@ namespace InsireBot
 		public void RequestSongSkip(bool vote)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.Skip(vote);
+				Player.Skip(vote);
 		}
 
 		public void ForceSongPlay(string url)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.play(url);
+				Player.play(url);
 		}
 
 		/// <summary>
@@ -143,7 +148,7 @@ namespace InsireBot
 		public void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.setPosition((float)e.NewValue);
+				Player.setPosition((float)e.NewValue);
 		}
 
 		public void addPlayListItems(List<PlayListItem> list)
@@ -226,12 +231,12 @@ namespace InsireBot
 				}
 				catch (ArgumentNullException)
 				{
-					_Log.FillMessageCompressor(new CompressedMessage { Value = "The supplied URL was empty", Time = DateTime.Now }, "The supplied URLs were empty");
+					Log(new SystemLogItem("The supplied URL was empty"));
 					return;
 				}
 				catch (UriFormatException)
 				{
-					_Log.FillMessageCompressor(new CompressedMessage { Value = "The supplied URL wasn't valid", Time = DateTime.Now, Params = new String[] { parURL } }, "The supplied URLs weren't valid");
+					Log(new SystemLogItem("The supplied URL wasn't valid"));
 					return;
 				}
 
@@ -257,7 +262,7 @@ namespace InsireBot
 										parse(u, UriType.Playlist, Username);
 									else
 									{
-										_Log.FillMessageCompressor(new BaseMessage { Value = "Only the Channelowner can request Playlists", Time = DateTime.Now, RelayToChat = true });
+										SendToChat("Only the Channelowner can request Playlists");
 									}
 								break;
 						}
@@ -324,7 +329,7 @@ namespace InsireBot
 
 		public void Log(LogItem par)
 		{
-			_Log.Add(par);
+			_Log.Items.Add(par);
 		}
 
 		#region MediaPlayerGUIEvents
@@ -334,12 +339,12 @@ namespace InsireBot
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
 				if (!_Playing)
 				{
-					_Player.play();
+					Player.play();
 					_Playing = true;
 				}
 				else
 				{
-					_Player.Stop();
+					Player.Stop();
 					_Playing = false;
 				}
 		}
@@ -347,49 +352,49 @@ namespace InsireBot
 		public void bPrevious_Click(object sender, RoutedEventArgs e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.Previous();
+				Player.Previous();
 		}
 
 		public void bStop_Click(object sender, RoutedEventArgs e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.Stop();
+				Player.Stop();
 		}
 
 		public void bRandom_Click(object sender, RoutedEventArgs e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.Random();
+				Player.Random();
 		}
 
 		public void bNext_Click(object sender, RoutedEventArgs e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.Next();
+				Player.Next();
 		}
 
 		public void slider_Mediaplayer_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.setVolume(e.NewValue);
+				Player.setVolume(e.NewValue);
 		}
 
 		public void cbMediaPlayerSilent_Checked(bool par)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.setSilent(par);
+				Player.setSilent(par);
 		}
 
 		public void cbMediaPlayerSilent_Unchecked(bool par)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.setSilent(par);
+				Player.setSilent(par);
 		}
 
 		public void MediaPlayerSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (checkVLC(ref _Player, AudioDeviceType.MediaPlayer))
-				_Player.setVolume(e.NewValue);
+				Player.setVolume(e.NewValue);
 		}
 
 		#endregion MediaPlayerGUIEvents
@@ -399,19 +404,19 @@ namespace InsireBot
 		public void cbSilentFollower_Checked(bool par)
 		{
 			if (checkVLC(ref _FollowerAlert, AudioDeviceType.FollowerAlert))
-				_FollowerAlert.setSilent(par);
+				FollowerAlert.setSilent(par);
 		}
 
 		public void cbSilentFollower_Unchecked(bool par)
 		{
 			if (checkVLC(ref _FollowerAlert, AudioDeviceType.FollowerAlert))
-				_FollowerAlert.setSilent(par);
+				FollowerAlert.setSilent(par);
 		}
 
 		public void slider_Follower_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (checkVLC(ref _FollowerAlert, AudioDeviceType.FollowerAlert))
-				_FollowerAlert.setVolume(e.NewValue);
+				FollowerAlert.setVolume(e.NewValue);
 		}
 
 		#endregion FollowerGUIEvents
@@ -421,19 +426,19 @@ namespace InsireBot
 		public void cbSubscriber_Checked(bool par)
 		{
 			if (checkVLC(ref _SubscriberAlert, AudioDeviceType.SubscriberAlert))
-				_SubscriberAlert.setSilent(par);
+				SubscriberAlert.setSilent(par);
 		}
 
 		public void cbSubscriber_Unchecked(bool par)
 		{
 			if (checkVLC(ref _SubscriberAlert, AudioDeviceType.SubscriberAlert))
-				_SubscriberAlert.setSilent(par);
+				SubscriberAlert.setSilent(par);
 		}
 
 		public void slider_Subscriber_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
 		{
 			if (checkVLC(ref _SubscriberAlert, AudioDeviceType.SubscriberAlert))
-				_SubscriberAlert.setVolume(e.NewValue);
+				SubscriberAlert.setVolume(e.NewValue);
 		}
 
 		#endregion SubscriberGUIEvents

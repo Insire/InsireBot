@@ -9,15 +9,13 @@ using System.Windows;
 namespace InsireBot.ViewModel
 {
 	[XmlInclude(typeof(LogItem))]
-	public class LogViewModel : BaseViewModel<LogItem>
+	public class LogViewModel : TierTwoViewModel<LogItem>
 	{
 		[XmlIgnore]
 		public ICommand CopyItem { get; set; }
 
 		public LogViewModel()
 		{
-			Name = "Log";
-
 			this.CopyItem = new SimpleCommand
 			{
 				ExecuteDelegate = _ =>
@@ -40,43 +38,24 @@ namespace InsireBot.ViewModel
 			if (IsInDesignMode)
 			{
 				// Code runs in Blend --> create design time data. 
-				if (!Load(Settings.Instance.SaveLog))
+
+				for (int i = 0; i < 5; i++)
 				{
-					for (int i = 0; i < 5; i++)
-					{
-						SystemLogItem b = new SystemLogItem();
-						if (!Check(new SystemLogItem()))
-							Items.Add(b);
-					}
-					for (int i = 0; i < 5; i++)
-					{
-						ChatLogItem b = new ChatLogItem();
-						if (!Check(b))
-							Items.Add(b);
-					}
+					SystemLogItem b = new SystemLogItem();
+					if (!Check(new SystemLogItem()))
+						Items.Add(b);
 				}
-			}
-			else
-			{
-				UpdateExecute();
-			}
-		}
+				for (int i = 0; i < 5; i++)
+				{
+					ChatLogItem b = new ChatLogItem();
+					if (!Check(b))
+						Items.Add(b);
+				}
 
-		~LogViewModel()
-		{
-			if (!IsInDesignMode)
-			{
-				if (Settings.Instance.SaveLog)
-					Save();
 			}
 		}
 
-		public override bool Load()
-		{
-			return Load(Settings.Instance.SaveLog);
-		}
-
-		public override bool Check(LogItem par)
+		public bool Check(LogItem par)
 		{
 			foreach (LogItem v in Items)
 			{

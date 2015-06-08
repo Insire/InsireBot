@@ -1,9 +1,11 @@
 ﻿using InsireBot.Util;
 using MahApps.Metro;
+using System.Linq;
+using System;
 
 namespace InsireBot.ViewModel
 {
-	public class ThemeViewModel : BaseViewModel<AppTheme>
+	public class ThemeViewModel : TierZeroViewModel<AppTheme>
 	{
 		public ThemeViewModel()
 		{
@@ -29,6 +31,16 @@ namespace InsireBot.ViewModel
 				if (Settings.Instance.MetroTheme == at.Name)
 					SelectedIndex = i;
 				i++;
+			}
+		}
+
+		public override void FilterExecute()
+		{
+			if (!String.IsNullOrEmpty(Filter))
+				Items.Where(p => p.Name == Filter).ToList().ForEach(item => FilteredItems.Add(item));
+			else
+			{
+				Items.ToList().ForEach(item => FilteredItems.Add(item));
 			}
 		}
 	}

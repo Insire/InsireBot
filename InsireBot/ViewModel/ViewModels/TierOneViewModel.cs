@@ -12,19 +12,14 @@ using InsireBot.Util.Services;
 
 namespace InsireBot.ViewModel
 {
-	public abstract class DefaultBaseViewModel<T> : ViewModelBase, INotifyPropertyChanged
+	/// <summary>
+	/// supports the MessageSystem
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	public abstract class TierOneViewModel<T> : TierTwoViewModel<T>
 	{
-		new public event PropertyChangedEventHandler PropertyChanged;
 		public event EventHandler<MessageBufferChangedEventArgs> MessageBufferChanged;
 
-		private readonly String _FILEFORMAT = ".xml";
-
-		private string _Name;
-		private int _SelectedIndex = -1;
-		private T _SelectedItem;
-		private String _FileName;
-
-		private ThreadSafeObservableCollection<T> _Items = new ThreadSafeObservableCollection<T>();
 		private ThreadSafeObservableCollection<DefaultMessage> _Messages = new ThreadSafeObservableCollection<DefaultMessage>();
 		private NotifyingQueue<DefaultMessage> _MessageBuffer = new NotifyingQueue<DefaultMessage>();
 		private Dictionary<String, String> _MessageCompressor = new Dictionary<string, String>();
@@ -84,97 +79,9 @@ namespace InsireBot.ViewModel
 			}
 		}
 
-		/// <summary>
-		/// fileextension for to file serialization
-		/// </summary>
-		public String FILEFORMAT
-		{
-			get { return _FILEFORMAT; }
-		}
-
-		/// <summary>
-		/// viewmodelname
-		/// </summary>
-		public string Name
-		{
-			get { return _Name; }
-			set
-			{
-				if (value != _Name)
-				{
-					_Name = value;
-					FileName = value;
-					NotifyPropertyChanged();
-				}
-			}
-		}
-
-		/// <summary>
-		/// FileName
-		/// </summary>
-		public String FileName
-		{
-			get { return _FileName; }
-			set
-			{
-				if (value != _FileName)
-				{
-					_FileName = value;
-					NotifyPropertyChanged();
-				}
-			}
-		}
-
-		public int SelectedIndex
-		{
-			get { return _SelectedIndex; }
-			set
-			{
-				if (value != _SelectedIndex)
-				{
-					_SelectedIndex = value;
-					NotifyPropertyChanged();
-
-					if (_SelectedIndex >= 0 & Items.Count - 1 >= SelectedIndex)
-						SelectedItem = Items[_SelectedIndex];
-				}
-			}
-		}
-
-		public T SelectedItem
-		{
-			get { return _SelectedItem; }
-			set
-			{
-				_SelectedItem = value;
-				NotifyPropertyChanged();
-			}
-		}
-
-		public ThreadSafeObservableCollection<T> Items
-		{
-			get { return _Items; }
-			set
-			{
-				if (value != _Items)
-				{
-					_Items = value;
-					NotifyPropertyChanged();
-					if (_Items.Count > 0)
-					{
-						SelectedIndex = 0;
-					}
-					else
-					{
-						SelectedIndex = -1;
-					}
-				}
-			}
-		}
-
 		#endregion Properties
 
-		public DefaultBaseViewModel()
+		public TierOneViewModel()
 		{
 			DisableMessageCaching = false;
 
@@ -184,16 +91,6 @@ namespace InsireBot.ViewModel
 		}
 
 		#region Events
-		// This method is called by the Set accessor of each property. The CallerMemberName
-		// attribute that is applied to the optional propertyName parameter causes the property name
-		// of the caller to be substituted as an argument.
-		public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-		{
-			if (PropertyChanged != null)
-			{
-				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
 
 		void _Changes_Elapsed(object sender, ElapsedEventArgs e)
 		{
@@ -288,31 +185,6 @@ namespace InsireBot.ViewModel
 					{
 						Messages.Add(_MessageBuffer.Dequeue());
 					}
-		}
-
-		public int Count()
-		{
-			return Items.Count;
-		}
-
-		public virtual bool Remove()
-		{
-			if (SelectedIndex > -1)
-				return Remove(Items[SelectedIndex]);
-			else return false;
-		}
-
-		public virtual bool Remove(T par)
-		{
-			return Items.Remove(par);
-		}
-
-		public T this[int index]
-		{
-			get
-			{
-				return Items[index];
-			}
 		}
 	}
 

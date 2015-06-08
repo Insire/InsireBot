@@ -11,7 +11,7 @@ namespace InsireBot.ViewModel
 	/// </summary>
 	/// <typeparam name="T">The CollectionObject</typeparam>
 	/// <typeparam name="S">The MessageObject</typeparam>
-	public abstract class BaseViewModel<T> : DefaultBaseViewModel<T>
+	public abstract class TierZeroViewModel<T> : TierOneIOViewModel<T>
 	{
 		public ICommand ClearItems { get; set; }
 
@@ -19,7 +19,11 @@ namespace InsireBot.ViewModel
 
 		public ICommand UpdateItems { get; set; }
 
-		public BaseViewModel()
+		public ICommand FilterByString { get; set; }
+
+		public String Filter { get; set; }
+
+		public TierZeroViewModel()
 		{
 			this.ClearItems = new SimpleCommand
 			{
@@ -38,36 +42,12 @@ namespace InsireBot.ViewModel
 				ExecuteDelegate = _ => UpdateExecute(),
 				CanExecuteDelegate = _ => true
 			};
-		}
 
-		public virtual bool Load()
-		{
-			Items = ObjectSerializer.LoadCollection<T>(FileName, "");
-			if (Items != null) return true;
-			else
+			this.FilterByString = new SimpleCommand
 			{
-				Items = new ThreadSafeObservableCollection<T>();
-				return false;
-			}
-		}
-
-		public virtual bool Load(bool b)
-		{
-			if (b)
-			{
-				Items = ObjectSerializer.LoadCollection<T>(FileName, "");
-			}
-			if (Items != null) return true;
-			else
-			{
-				Items = new ThreadSafeObservableCollection<T>();
-				return false;
-			}
-		}
-
-		public virtual void Save()
-		{
-			ObjectSerializer.Save(FileName, Items, "");
+				ExecuteDelegate = _ => FilterExecute(),
+				CanExecuteDelegate = _ => true
+			};
 		}
 
 		public bool Add(T par)
@@ -127,6 +107,9 @@ namespace InsireBot.ViewModel
 				Items = new ThreadSafeObservableCollection<T>();
 			}
 		}
+
+		public abstract void FilterExecute();
+
 		#endregion CommandMethods
 	}
 }

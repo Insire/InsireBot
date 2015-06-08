@@ -195,26 +195,29 @@
     <Compile Include="Util\Settings.cs" />
     <Compile Include="Util\SimpleCommand.cs" />
     <Compile Include="Util\VisibilityConverter.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\AccentViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\BlackListViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\FollowerAudioDeviceViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\MediaPlayerAudioDeviceViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\SoundboardAudioDeviceViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\AudioDeviceViewModels\SubscriberAudioDeviceViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\BlackListTypeViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\CustomCommandViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\LogViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\ChatViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\DefaultBaseViewModelDerivates\PlayBackTypeViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\PlayListViewModel.cs" />
-    <Compile Include="ViewModel\BaseViewModel\BaseViewModelDerivates\ThemeViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierTwoViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierZeroViewModelDerivates\AccentViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierZeroViewModelDerivates\BlackListViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\AudioDeviceViewModels\FollowerAudioDeviceViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\AudioDeviceViewModels\MediaPlayerAudioDeviceViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\AudioDeviceViewModels\SoundboardAudioDeviceViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\AudioDeviceViewModels\SubscriberAudioDeviceViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierZeroViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\BlackListTypeViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierZeroViewModelDerivates\CustomCommandViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierTwoViewModelDerivates\LogViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\ChatViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierOneViewModelDerivates\PlayBackTypeViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierZeroViewModelDerivates\PlayListViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\TierZeroViewModelDerivates\ThemeViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModel\ViewModels\Util\TierOneIOViewModel.cs" />
+    <Compile Include="ViewModel\ViewModels\Util\TierTwoIOViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -263,6 +266,7 @@
     <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Source.txt" />
     <Resource Include="Resources\pound.ico" />
     <Resource Include="Resources\irc client.ico" />
     <Content Include="Resources\PastebinAPI.dll" />

@@ -8,7 +8,7 @@ using System;
 
 namespace InsireBot.ViewModel
 {
-	public class BlackListViewModel<T> : BaseViewModel<BlackListItem>
+	public class BlackListViewModel<T> : TierZeroViewModel<BlackListItem>
 	{
 		public BlackListViewModel()
 		{
@@ -113,6 +113,16 @@ namespace InsireBot.ViewModel
 		public override bool Check(BlackListItem par)
 		{
 			return Items.Contains(par);
+		}
+
+		public override void FilterExecute()
+		{
+			if (!String.IsNullOrEmpty(Filter))
+				Items.Where(p => p.Value == Filter | p.Type.ToString() == Filter).ToList().ForEach(item => FilteredItems.Add(item));
+			else
+			{
+				Items.ToList().ForEach(item => FilteredItems.Add(item));
+			}
 		}
 	}
 }

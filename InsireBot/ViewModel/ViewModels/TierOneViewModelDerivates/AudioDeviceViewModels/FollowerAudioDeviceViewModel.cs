@@ -5,9 +5,9 @@ using InsireBot.Util.Services;
 
 namespace InsireBot.ViewModel
 {
-	public class MediaPlayerAudioDeviceViewModel : DefaultBaseViewModel<AudioDevice>, IAudioDeviceInterface
+	public class FollowerAudioDeviceViewModel : TierOneViewModel<AudioDevice>, IAudioDeviceInterface
 	{
-		public MediaPlayerAudioDeviceViewModel()
+		public FollowerAudioDeviceViewModel()
 		{
 			Update();
 			PropertyChanged += AudioDeviceViewModel_PropertyChanged;
@@ -15,7 +15,7 @@ namespace InsireBot.ViewModel
 
 		void AudioDeviceViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
 		{
-			Settings.Instance.VLC_MediaPlayerWaveOutDevice = Items[SelectedIndex].Name;
+			Settings.Instance.VLC_FollowerWaveOutDevice = Items[SelectedIndex].Name;
 		}
 
 		public void Update()
@@ -25,7 +25,7 @@ namespace InsireBot.ViewModel
 
 			foreach (AudioDevice a in Items)
 			{
-				if (a.Name == Settings.Instance.VLC_MediaPlayerWaveOutDevice)
+				if (a.Name == Settings.Instance.VLC_FollowerWaveOutDevice)
 				{
 					SelectedIndex = i;
 				}

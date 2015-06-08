@@ -6,7 +6,7 @@ using System;
 
 namespace InsireBot.ViewModel
 {
-	public class ChatViewModel : DefaultBaseViewModel<ChatItem>
+	public class ChatViewModel : TierOneViewModel<ChatItem>
 	{
 		List<ChatMessage> ReceivedMessages { get; set; }
 		List<ChatMessage> GeneratedMessages { get; set; }
@@ -17,8 +17,6 @@ namespace InsireBot.ViewModel
 		{
 			ReceivedMessages = new List<ChatMessage>();
 			GeneratedMessages = new List<ChatMessage>();
-
-			Name = "Messages";
 
 			if (IsInDesignMode)
 			{

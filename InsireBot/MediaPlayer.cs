@@ -250,27 +250,28 @@ namespace InsireBot
 			_MaxSongDurationTimer.Elapsed += _maxSongDurationTimer_Elapsed;
 			_SkipPreventionTimer.Elapsed += _skipPreventionTimer_Elapsed;
 
-			switch (_Type)
-			{
-				case AudioDeviceType.FollowerAlert:
-					Controller.Instance.Log(new SystemLogItem("FollowerAlert initialized"));
-					break;
+			if (Settings.Instance.DebugMode)
+				switch (_Type)
+				{
+					case AudioDeviceType.FollowerAlert:
+						Controller.Instance.Log(new SystemLogItem("FollowerAlert initialized"));
+						break;
 
-				case AudioDeviceType.MediaPlayer:
-					Controller.Instance.Log(new SystemLogItem("Mediaplayer initialized"));
-					break;
+					case AudioDeviceType.MediaPlayer:
+						Controller.Instance.Log(new SystemLogItem("Mediaplayer initialized"));
+						break;
 
-				case AudioDeviceType.Soundboard:
-					Controller.Instance.Log(new SystemLogItem("Soundboard initialized"));
-					break;
+					case AudioDeviceType.Soundboard:
+						Controller.Instance.Log(new SystemLogItem("Soundboard initialized"));
+						break;
 
-				case AudioDeviceType.SubscriberAlert:
-					Controller.Instance.Log(new SystemLogItem("SubscriberAlert initialized"));
-					break;
+					case AudioDeviceType.SubscriberAlert:
+						Controller.Instance.Log(new SystemLogItem("SubscriberAlert initialized"));
+						break;
 
-				default:
-					throw new NotImplementedException();
-			}
+					default:
+						throw new NotImplementedException();
+				}
 			// voteskip 
 			_VoteSkipCounter = 0;
 		}

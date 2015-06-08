@@ -11,7 +11,5 @@ namespace InsireBot.Objects
 	{
 		public String Response { get; set; }
 		public String Command { get; set; }
-
-		public object Value { get; set; }
 	}
 }

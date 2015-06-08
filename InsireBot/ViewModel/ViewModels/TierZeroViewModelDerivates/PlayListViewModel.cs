@@ -13,8 +13,12 @@ using System.IO;
 
 namespace InsireBot.ViewModel
 {
-	public class PlayListViewModel : BaseViewModel<PlayList>
+	public class PlayListViewModel : TierZeroViewModel<PlayList>
 	{
+		private BlackListViewModel<BlackListItem> _Blacklist;
+
+		#region Properties
+
 		[XmlIgnore]
 		public ICommand CopyURLs { get; set; }
 
@@ -23,8 +27,6 @@ namespace InsireBot.ViewModel
 
 		[XmlIgnore]
 		public ICommand OpenInBrowser { get; set; }
-
-		private BlackListViewModel<BlackListItem> _Blacklist;
 
 		public BlackListViewModel<BlackListItem> Blacklist
 		{
@@ -40,11 +42,41 @@ namespace InsireBot.ViewModel
 			set { _Blacklist = value; }
 		}
 
+		#endregion
+
+		#region Construction
+
 		public PlayListViewModel()
 		{
 			Name = "PlaylistLibrary";
 			Items = new ThreadSafeObservableCollection<PlayList>();
 
+			initialize();
+
+			if (IsInDesignMode)
+			{
+				// Code runs in Blend --> create design time data. 
+				if (!Load())
+				{
+
+					for (int i = 0; i < 5; i++)
+					{
+						PlayList b = new PlayList();
+						b.Add(new PlayListItem(LocalDataBase.GetRandomUrl));
+						if (!Check(b))
+							Items.Add(b);
+					}
+					SelectedIndex = 0;
+				}
+			}
+			else
+			{
+				this.Load();
+			}
+		}
+
+		private void initialize()
+		{
 			this.CopyURLs = new SimpleCommand
 			{
 				ExecuteDelegate = _ =>
@@ -98,27 +130,6 @@ namespace InsireBot.ViewModel
 				},
 				CanExecuteDelegate = _ => true
 			};
-
-			if (IsInDesignMode)
-			{
-				// Code runs in Blend --> create design time data. 
-				if (!Load())
-				{
-
-					for (int i = 0; i < 5; i++)
-					{
-						PlayList b = new PlayList();
-						b.Add(new PlayListItem(LocalDataBase.GetRandomUrl));
-						if (!Check(b))
-							Items.Add(b);
-					}
-					SelectedIndex = 0;
-				}
-			}
-			else
-			{
-				this.Load();
-			}
 		}
 
 		~PlayListViewModel()
@@ -128,6 +139,8 @@ namespace InsireBot.ViewModel
 				this.Save();
 			}
 		}
+
+		#endregion
 
 		public void Add(PlayListItem par)
 		{
@@ -276,6 +289,16 @@ namespace InsireBot.ViewModel
 			if (removed == found) return true;
 			else
 				return false;
+		}
+
+		public override void FilterExecute()
+		{
+			if (!String.IsNullOrEmpty(Filter))
+				Items.Where(p => p.Name == Filter).ToList().ForEach(item => FilteredItems.Add(item));
+			else
+			{
+				Items.ToList().ForEach(item => FilteredItems.Add(item));
+			}
 		}
 	}
 }

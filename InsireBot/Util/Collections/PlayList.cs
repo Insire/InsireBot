@@ -24,9 +24,40 @@ namespace InsireBot.Util.Collections
 		public ICommand OpenInBrowser { get; set; }
 
 		private ThreadSafeObservableCollection<PlayListItem> _Items;
+		private ThreadSafeObservableCollection<PlayListItem> _FilteredItems;
+
+		private String _Filter;
 		private String _Name;
 		private int _SelectedIndex;
+		private int _SelectedIndexFilteredItems;
 		private PlayListItem _SelectedItem;
+		private PlayListItem _SelectedItemFromFilteredItems;
+
+		public PlayListItem SelectedItemFromFilteredItems
+		{
+			get { return _SelectedItemFromFilteredItems; }
+			set
+			{
+				if (value != _SelectedItemFromFilteredItems)
+				{
+					_SelectedItemFromFilteredItems = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		public String Filter
+		{
+			get { return _Filter; }
+			set
+			{
+				if (value != _Filter)
+				{
+					_Filter = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Ammount of Items in the list
@@ -52,6 +83,19 @@ namespace InsireBot.Util.Collections
 				if (value != _Items)
 				{
 					_Items = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		public ThreadSafeObservableCollection<PlayListItem> FilteredItems
+		{
+			get { return _FilteredItems; }
+			set
+			{
+				if (value != _FilteredItems)
+				{
+					_FilteredItems = value;
 					NotifyPropertyChanged();
 				}
 			}
@@ -100,6 +144,23 @@ namespace InsireBot.Util.Collections
 				}
 			}
 		}
+
+		public int SelectedIndexFilteredItems
+		{
+			get { return _SelectedIndexFilteredItems; }
+			set
+			{
+				if (value != _SelectedIndexFilteredItems)
+				{
+					_SelectedIndexFilteredItems = value;
+					NotifyPropertyChanged();
+
+					if (_SelectedIndexFilteredItems >= 0 & Items.Count - 1 >= _SelectedIndexFilteredItems)
+						SelectedItem = Items[_SelectedIndexFilteredItems];
+				}
+			}
+		}
+
 		/// <summary>
 		/// the currently selected/playing Item
 		/// </summary>

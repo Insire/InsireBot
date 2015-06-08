@@ -4,7 +4,7 @@ using System;
 
 namespace InsireBot.ViewModel
 {
-	public class PlayBackTypeViewModel : DefaultBaseViewModel<PlaybackType>
+	public class PlayBackTypeViewModel : TierOneViewModel<PlaybackType>
 	{
 		public PlayBackTypeViewModel()
 		{

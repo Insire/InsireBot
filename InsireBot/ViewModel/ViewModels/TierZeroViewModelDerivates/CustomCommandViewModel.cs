@@ -1,9 +1,11 @@
-﻿using InsireBot.Objects;
+﻿using System;
+using System.Linq;
+using InsireBot.Objects;
 using InsireBot.Util.Services;
 
 namespace InsireBot.ViewModel
 {
-	public class CustomCommandViewModel : BaseViewModel<CustomCommand>
+	public class CustomCommandViewModel : TierZeroViewModel<CustomCommand>
 	{
 		public CustomCommandViewModel()
 		{
@@ -17,7 +19,8 @@ namespace InsireBot.ViewModel
 					for (int i = 0; i < 20; i++)
 					{
 						CustomCommand b = new CustomCommand();
-						b.Value = LocalDataBase.GetRandomArtistName;
+						b.Command = "!" + LocalDataBase.GetRandomArtistName;
+						b.Response = LocalDataBase.GetRandomMessage;
 						if (!Check(b))
 							Items.Add(b);
 					}
@@ -44,6 +47,16 @@ namespace InsireBot.ViewModel
 				if (c.Command == par.Command && c.Response == par.Response) return true;
 			}
 			return false;
+		}
+
+		public override void FilterExecute()
+		{
+			if (!String.IsNullOrEmpty(Filter))
+				Items.Where(p => p.Command == Filter | p.Response == Filter).ToList().ForEach(item => FilteredItems.Add(item));
+			else
+			{
+				Items.ToList().ForEach(item => FilteredItems.Add(item));
+			}
 		}
 	}
 }

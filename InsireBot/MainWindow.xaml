@@ -82,7 +82,7 @@
         <DropShadowEffect />
     </Controls:MetroWindow.Effect>
     <Controls:MetroWindow.RightWindowCommands>
-        <Controls:WindowCommands>
+        <Controls:WindowCommands ShowSeparators="False">
             <Button Command="{Binding SettingsFlyoutCommand, ElementName=window}" >
                 <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
                     <Rectangle.OpacityMask>
@@ -119,6 +119,13 @@
                 <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
                     <Rectangle.OpacityMask>
                         <VisualBrush Visual="{DynamicResource appbar_draw_paintbrush}" Stretch="Uniform" />
+                    </Rectangle.OpacityMask>
+                </Rectangle>
+            </Button>
+            <Button  Command="{Binding PlaylistMessagesFlyoutCommand, ElementName=window}" >
+                <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
+                    <Rectangle.OpacityMask>
+                        <VisualBrush Visual="{DynamicResource appbar_book_list}" Stretch="Uniform" />
                     </Rectangle.OpacityMask>
                 </Rectangle>
             </Button>
@@ -181,7 +188,7 @@
                     </Grid>
                 </StackPanel>
             </Controls:Flyout>
-            <Controls:Flyout  Header="IRC" Position="Right" Theme="Accent" Width="300" >
+            <Controls:Flyout Header="IRC" Position="Right" Theme="Accent" Width="300" >
                 <StackPanel Margin="10,0">
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True" 
                                             Controls:TextBoxHelper.Watermark="Username"
@@ -240,6 +247,29 @@
                     <Label Content="Redirect URI" />
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
                 </StackPanel>
+            </Controls:Flyout>
+            <Controls:Flyout Header="PlaylistLog" Position="Bottom" Theme="Adapt" Height="200">
+                <Grid DataContext="{Binding PlayList}">
+                    <ListView ItemsSource="{Binding Messages, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" BorderThickness="0" ClipToBounds="True">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <TextBlock Text="{Binding Time}" Margin="5,0" />
+                                        <TextBlock Grid.Column="1" Text="{Binding Value}" HorizontalAlignment="Stretch" Margin="5,0" />
+                                    </Grid>
+                                </VirtualizingStackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
             </Controls:Flyout>
             <Controls:Flyout Header="Audio" Position="Bottom" Theme="Accent">
                 <StackPanel Margin="0,10" Orientation="Horizontal">

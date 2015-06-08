@@ -153,6 +153,22 @@ namespace InsireBot
 			}
 		}
 
+		private ICommand _PlaylistMessagesFlyoutCommand;
+
+		public ICommand PlaylistMessagesFlyoutCommand
+		{
+			get
+			{
+				return this._PlaylistMessagesFlyoutCommand ?? (this._PlaylistMessagesFlyoutCommand = new SimpleCommand
+				{
+					CanExecuteDelegate = x => this.Flyouts.Items.Count > 0,
+					ExecuteDelegate = x => this.ToggleFlyout(4)
+				});
+			}
+		}
+
+
+
 		private ICommand _AudioFlyoutCommand;
 
 		public ICommand AudioFlyoutCommand
@@ -162,7 +178,7 @@ namespace InsireBot
 				return this._AudioFlyoutCommand ?? (this._AudioFlyoutCommand = new SimpleCommand
 				{
 					CanExecuteDelegate = x => this.Flyouts.Items.Count > 0,
-					ExecuteDelegate = x => this.ToggleFlyout(4)
+					ExecuteDelegate = x => this.ToggleFlyout(5)
 				});
 			}
 		}

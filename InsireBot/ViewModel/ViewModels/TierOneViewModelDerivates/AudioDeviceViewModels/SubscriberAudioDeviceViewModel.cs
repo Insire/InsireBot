@@ -5,7 +5,7 @@ using InsireBot.Util.Services;
 
 namespace InsireBot.ViewModel
 {
-	public class SubscriberAudioDeviceViewModel : DefaultBaseViewModel<AudioDevice>, IAudioDeviceInterface
+	public class SubscriberAudioDeviceViewModel : TierOneViewModel<AudioDevice>, IAudioDeviceInterface
 	{
 		public SubscriberAudioDeviceViewModel()
 		{

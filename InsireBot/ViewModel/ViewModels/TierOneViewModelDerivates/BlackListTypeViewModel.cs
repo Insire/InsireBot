@@ -4,7 +4,7 @@ using System;
 
 namespace InsireBot.ViewModel
 {
-	public class BlackListTypeViewModel : DefaultBaseViewModel<BlackListItemType>
+	public class BlackListTypeViewModel : TierOneViewModel<BlackListItemType>
 	{
 		public BlackListTypeViewModel()
 		{

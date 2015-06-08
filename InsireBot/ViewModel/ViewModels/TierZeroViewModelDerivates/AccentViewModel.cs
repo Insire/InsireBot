@@ -1,9 +1,11 @@
-﻿using InsireBot.Util;
+﻿using System;
+using System.Linq;
+using InsireBot.Util;
 using MahApps.Metro;
 
 namespace InsireBot.ViewModel
 {
-	public class AccentViewModel : BaseViewModel<Accent>
+	public class AccentViewModel : TierZeroViewModel<Accent>
 	{
 		public AccentViewModel()
 		{
@@ -29,6 +31,16 @@ namespace InsireBot.ViewModel
 				if (Settings.Instance.MetroAccent == at.Name)
 					SelectedIndex = i;
 				i++;
+			}
+		}
+
+		public override void FilterExecute()
+		{
+			if (!String.IsNullOrEmpty(Filter))
+				Items.Where(p => p.Name == Filter).ToList().ForEach(item => FilteredItems.Add(item));
+			else
+			{
+				Items.ToList().ForEach(item => FilteredItems.Add(item));
 			}
 		}
 	}
