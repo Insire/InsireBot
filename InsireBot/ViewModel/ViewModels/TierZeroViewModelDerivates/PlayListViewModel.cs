@@ -1,15 +1,14 @@
-﻿using InsireBot.Objects;
-using InsireBot.Util;
-using InsireBot.Enums;
-using InsireBot.Util.Collections;
-using InsireBot.Util.Services;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
-using System.Collections.Generic;
-using System.IO;
+using InsireBot.Objects;
+using InsireBot.Util;
+using InsireBot.Util.Collections;
+using InsireBot.Util.Services;
 
 namespace InsireBot.ViewModel
 {
@@ -51,7 +50,7 @@ namespace InsireBot.ViewModel
 			Name = "PlaylistLibrary";
 			Items = new ThreadSafeObservableCollection<PlayList>();
 
-			initialize();
+			initializeCommands();
 
 			if (IsInDesignMode)
 			{
@@ -75,7 +74,7 @@ namespace InsireBot.ViewModel
 			}
 		}
 
-		private void initialize()
+		private void initializeCommands()
 		{
 			this.CopyURLs = new SimpleCommand
 			{
@@ -142,9 +141,9 @@ namespace InsireBot.ViewModel
 
 		#endregion
 
-		public void Add(PlayListItem par)
+		public void Add(PlayListItem par, bool parRelayToChat)
 		{
-			if (!Blacklist.Check(par))
+			if (!Blacklist.CheckExtended(par))
 			{
 				if (Items.Count != 0)
 				{
@@ -153,9 +152,9 @@ namespace InsireBot.ViewModel
 					if (!Items[SelectedIndex].Check(par))
 					{
 						if (Items[SelectedIndex].Add(par))
-						{
 							FillMessageCompressor(new CompressedMessage { Value = "{0} was added to the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were added to the Playlist");
-						}
+						else
+							FillMessageCompressor(new CompressedMessage { Value = "{0} is already on the Playlist.", Params = new String[] { par.Title }, RelayToChat = true }, "{0} Items were already on the Playlist");
 					}
 					else
 					{

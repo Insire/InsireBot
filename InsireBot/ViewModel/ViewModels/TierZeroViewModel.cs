@@ -1,8 +1,7 @@
-﻿using GalaSoft.MvvmLight.Command;
+﻿using System;
+using System.Windows.Input;
 using InsireBot.Util;
 using InsireBot.Util.Collections;
-using System.Windows.Input;
-using System;
 
 namespace InsireBot.ViewModel
 {
@@ -13,6 +12,7 @@ namespace InsireBot.ViewModel
 	/// <typeparam name="S">The MessageObject</typeparam>
 	public abstract class TierZeroViewModel<T> : TierOneIOViewModel<T>
 	{
+		#region ICommand Properties
 		public ICommand ClearItems { get; set; }
 
 		public ICommand RemoveItem { get; set; }
@@ -21,15 +21,16 @@ namespace InsireBot.ViewModel
 
 		public ICommand FilterByString { get; set; }
 
-		public String Filter { get; set; }
+		#endregion
 
-		public TierZeroViewModel()
+		#region init ICommands
+		private void initializeCommands()
 		{
 			this.ClearItems = new SimpleCommand
-			{
-				ExecuteDelegate = _ => ClearExecute(),
-				CanExecuteDelegate = _ => true
-			};
+{
+	ExecuteDelegate = _ => ClearExecute(),
+	CanExecuteDelegate = _ => true
+};
 
 			this.RemoveItem = new SimpleCommand
 			{
@@ -49,40 +50,9 @@ namespace InsireBot.ViewModel
 				CanExecuteDelegate = _ => true
 			};
 		}
+		#endregion
 
-		public bool Add(T par)
-		{
-			if (!Check(par))
-			{
-				Items.Add(par);
-				if (SelectedIndex < 0)
-					SelectedIndex = 0;
-				return true;
-			}
-			else
-			{
-				FillMessageCompressor(new BaseMessage { Value = "An equal Item already exists in that Collection and can't be added again." });
-				return false;
-			}
-
-		}
-
-		public virtual bool Check()
-		{
-			if (SelectedIndex > -1)
-				return Check(Items[SelectedIndex]);
-			else
-				return false;
-		}
-
-		/// <summary>
-		/// returns true if par is already in the collection
-		/// </summary>
-		/// <param name="par"></param>
-		/// <returns></returns>
-		public abstract bool Check(T par);
-
-		#region CommandMethods
+		#region CommandExecuteMethods
 
 		private void ClearExecute()
 		{
@@ -111,5 +81,43 @@ namespace InsireBot.ViewModel
 		public abstract void FilterExecute();
 
 		#endregion CommandMethods
+
+		public String Filter { get; set; }
+
+		public TierZeroViewModel()
+		{
+			initializeCommands();
+		}
+
+		public bool Add(T par)
+		{
+			if (!Check(par))
+			{
+				Items.Add(par);
+				if (SelectedIndex < 0)
+					SelectedIndex = 0;
+				return true;
+			}
+			else
+			{
+				FillMessageCompressor(new BaseMessage { Value = "An equal Item already exists in that Collection and can't be added again." });
+				return false;
+			}
+		}
+
+		public virtual bool Check()
+		{
+			if (SelectedIndex > -1)
+				return Check(Items[SelectedIndex]);
+			else
+				return false;
+		}
+
+		/// <summary>
+		/// returns true if par is already in the collection
+		/// </summary>
+		/// <param name="par"></param>
+		/// <returns></returns>
+		public abstract bool Check(T par);
 	}
 }

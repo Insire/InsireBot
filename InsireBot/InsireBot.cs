@@ -1,16 +1,13 @@
-﻿using InsireBot.Enums;
+﻿using System;
+using System.Linq;
+using System.Threading;
+
 using InsireBot.Objects;
 using InsireBot.Util;
-using InsireBot.Util.Collections;
 using InsireBot.Util.Services;
 using InsireBot.ViewModel;
+
 using IrcDotNet;
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Collections.Generic;
 
 namespace InsireBot
 {
@@ -285,7 +282,7 @@ namespace InsireBot
 							// add song 
 							case "!request":
 							case "!requestsong":
-								Controller.Instance.FeedMe(commandvalue, source.Name);
+								Controller.Instance.FeedMe(commandvalue, true, source.Name);
 								break;
 
 							//remove song by title or url
@@ -507,7 +504,8 @@ namespace InsireBot
 
 		private void _ircclient_RawMessageReceived(object sender, IrcRawMessageEventArgs e)
 		{
-			_Log.Items.Add(new SystemLogItem(e.RawContent));
+			if (Settings.Instance.DebugMode)
+				_Log.Items.Add(new SystemLogItem(e.RawContent));
 		}
 
 		internal bool CanDisconnectExecute()

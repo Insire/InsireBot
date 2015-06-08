@@ -6,7 +6,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Xml.Serialization;
-using InsireBot.Objects;
+
 using Google.Apis.YouTube.v3.Data;
 using ServiceUtilities;
 using YoutubeService;

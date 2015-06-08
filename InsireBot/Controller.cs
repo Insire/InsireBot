@@ -34,7 +34,6 @@ namespace InsireBot
 		private bool _Playing = false; // if the vlc player is playing a song
 		private static object _oSyncRoot = new Object();
 		private static volatile Controller _instance = null;
-		private Queue<Uri> _URLs = new Queue<Uri>();
 
 		private MediaPlayer _Player;
 		private MediaPlayer _FollowerAlert;
@@ -100,12 +99,16 @@ namespace InsireBot
 			_Log = v.Log;
 			_Playlist = v.PlayList;
 
-			_Playlist.MessageBufferChanged += _Playlist_MessageBufferChanged;
+			// subscribe to the Messages Collection of the desired Viewmodels to add their intel to the log
+			_Playlist.Messages.CollectionChanged += ViewModel_CollectionChanged;
+			_Playlist.Blacklist.Messages.CollectionChanged += ViewModel_CollectionChanged;
+			_Customcommands.Messages.CollectionChanged += ViewModel_CollectionChanged;
 		}
 
-		void _Playlist_MessageBufferChanged(object sender, MessageBufferChangedEventArgs e)
+		private void ViewModel_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
 		{
-			Console.WriteLine(e.Value);
+			foreach (DefaultMessage x in e.NewItems)
+				SendToChat(x);
 		}
 
 		/// <summary>
@@ -151,43 +154,43 @@ namespace InsireBot
 				Player.setPosition((float)e.NewValue);
 		}
 
-		public void addPlayListItems(List<PlayListItem> list)
+		public void addPlayListItems(List<PlayListItem> list, bool parRelayToChat)
 		{
 			foreach (PlayListItem p in list)
 			{
-				addPlayListItem(p);
+				addPlayListItem(p, parRelayToChat);
 			}
 		}
 
-		public void addPlayListItems(List<String> list)
+		public void addPlayListItems(List<String> list, bool parRelayToChat)
 		{
 			foreach (String p in list)
 			{
-				addPlayListItem(new PlayListItem(p));
+				addPlayListItem(new PlayListItem(p), parRelayToChat);
 			}
 		}
 
-		public void addPlayListItems(List<String> list, String parUser)
+		public void addPlayListItems(List<String> list, String parUser, bool parRelayToChat)
 		{
 			foreach (String p in list)
 			{
-				addPlayListItem(new PlayListItem(p, parUser));
+				addPlayListItem(new PlayListItem(p, parUser), parRelayToChat);
 			}
 		}
 
-		public void addPlayListItem(PlayListItem par)
+		public void addPlayListItem(PlayListItem par, bool parRelayToChat)
 		{
-			_Playlist.Add(par);
+			_Playlist.Add(par, parRelayToChat);
 		}
 
-		public void addPlayListItem(String par)
+		public void addPlayListItem(String par, bool parRelayToChat)
 		{
-			_Playlist.Add(new PlayListItem(par));
+			_Playlist.Add(new PlayListItem(par), parRelayToChat);
 		}
 
-		public void addPlayListItem(String par, String parUser)
+		public void addPlayListItem(String par, String parUser, bool parRelayToChat)
 		{
-			_Playlist.Add(new PlayListItem(par, parUser));
+			_Playlist.Add(new PlayListItem(par, parUser), parRelayToChat);
 		}
 
 		public void addPlayList(PlayList par)
@@ -219,7 +222,7 @@ namespace InsireBot
 		/// parses parURL for valid youtubeurls and calls the fitting add method
 		/// </summary>
 		/// <param name="parURL"></param>
-		public void FeedMe(String parURL, String Username = "")
+		public void FeedMe(String parURL, bool parRelayToChat, String Username = "")
 		{
 			foreach (String s in parURL.Split(' '))
 			{
@@ -249,20 +252,20 @@ namespace InsireBot
 						{
 							case "v":
 								if (String.IsNullOrEmpty(Username))
-									parse(u, UriType.PlaylistItem, Settings.Instance.IRC_Username);
+									parse(u, UriType.PlaylistItem, parRelayToChat, Settings.Instance.IRC_Username);
 								else
-									parse(u, UriType.PlaylistItem, Username);
+									parse(u, UriType.PlaylistItem, parRelayToChat, Username);
 								break;
 
 							case "list":
 								if (String.IsNullOrEmpty(Username))
-									parse(u, UriType.Playlist, Settings.Instance.IRC_Username);
+									parse(u, UriType.Playlist, parRelayToChat, Settings.Instance.IRC_Username);
 								else
 									if (Username.ToLower() == Settings.Instance.IRC_Username.ToLower() | Username == Settings.Instance.IRC_TargetChannel.ToLower().Replace("#", ""))
-										parse(u, UriType.Playlist, Username);
+										parse(u, UriType.Playlist, parRelayToChat, Username);
 									else
 									{
-										SendToChat("Only the Channelowner can request Playlists");
+										SendToChat(new ChatReply("Only the Channelowner can request Playlists"));
 									}
 								break;
 						}
@@ -271,7 +274,7 @@ namespace InsireBot
 			}
 		}
 
-		private void parse(Uri u, UriType type, String Username = "")
+		private void parse(Uri u, UriType type, bool parRelayToChat, String Username = "")
 		{
 			Youtube youtube = new Youtube(Settings.Instance.Youtube_API_JSON);
 			Task t;
@@ -284,7 +287,7 @@ namespace InsireBot
 					t = new Task(() =>
 					{
 						youtube.GetVideoByVideoID(URLParser.GetID(u, "v")).
-							ForEach(video => addPlayListItem(new PlayListItem(video, Username)));
+							ForEach(video => addPlayListItem(new PlayListItem(video, Username), parRelayToChat));
 					});
 					t.Start();
 
@@ -315,13 +318,43 @@ namespace InsireBot
 			}
 		}
 
-		public void SendToChat(String par)
+		/// <summary>
+		/// Send a Message generated by a Viewmodel to the ircclient
+		/// </summary>
+		/// <param name="par"></param>
+		public void SendToChat(DefaultMessage par)
 		{
 			if (_Bot.IsConnected)
-				_Bot.Send(par);
+			{
+				if (par is CompressedMessage)
+				{
+					var msg = (CompressedMessage)par;
+					Log(new SystemLogItem(String.Format(msg.Value, msg.Params)));
+
+					if (msg.RelayToChat)
+						_Bot.Send(String.Format(msg.Value, msg.Params));
+					return;
+				}
+
+				if (par is BaseMessage)
+				{
+					var msg = (BaseMessage)par;
+					Log(new SystemLogItem(msg.Value));
+
+					if (msg.RelayToChat)
+						_Bot.Send(msg.Value);
+					return;
+				}
+
+				throw new NotImplementedException("MessageType isnt implemented.");
+			}
 		}
 
-		public void SendToChat(ChatItem par)
+		/// <summary>
+		/// Send a Message generated by the Controller, MediaPlayer to the ircclient
+		/// </summary>
+		/// <param name="par"></param>
+		public void SendToChat(ChatMessage par)
 		{
 			if (_Bot.IsConnected)
 				_Bot.Send(par.Value);

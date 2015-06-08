@@ -71,6 +71,7 @@ namespace InsireBot
 		}
 
 		#endregion Constructor
+
 		/// <summary>
 		/// initializes the vlc player with parameters, initializes events 
 		/// </summary>
@@ -429,7 +430,7 @@ namespace InsireBot
 						this.play();
 					}
 					else
-						Controller.Instance.SendToChat(new ChatReply("End of PlayList reached. No previous Song available"));
+						Controller.Instance.Log(new SystemLogItem("End of PlayList reached. No previous Song available"));
 				}
 		}
 
@@ -468,7 +469,7 @@ namespace InsireBot
 						this.play();
 					}
 					else
-						Controller.Instance.SendToChat(new ChatReply("End of PlayList reached. No next Song available"));
+						Controller.Instance.Log(new SystemLogItem("End of PlayList reached. No next Song available"));
 				}
 		}
 
@@ -508,7 +509,7 @@ namespace InsireBot
 						this.play();
 					}
 					else
-						Controller.Instance.SendToChat(new ChatReply("Selection of Random Playlistitem failed.(Out of bounds)"));
+						Controller.Instance.Log(new ErrorLogItem("Selection of Random Playlistitem failed.(Out of bounds)"));
 				}
 		}
 
@@ -556,7 +557,7 @@ namespace InsireBot
 						play();
 					}
 					else
-						Controller.Instance.SendToChat(new ChatReply("End of PlayList reached. No next Song available"));
+						Controller.Instance.Log(new SystemLogItem("End of PlayList reached. No next Song available"));
 				}
 		}
 
@@ -586,16 +587,14 @@ namespace InsireBot
 		private void _skipPreventionTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
 			// TODO Option for enabling/disabling this reply apart from debug mode
-			if (Settings.Instance.DebugMode)
-				Controller.Instance.SendToChat(new ChatReply("skip available now"));
+			Controller.Instance.SendToChat(new ChatReply("skip available now"));
 			_SkipPreventionTimer.Stop();
 			_ExcuteSongSkip = true;
 		}
 
 		private void _maxSongDurationTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
 		{
-			if (Settings.Instance.DebugMode)
-				Controller.Instance.SendToChat(new ChatReply("Playing next Song. Requested song was too long."));
+			Controller.Instance.SendToChat(new ChatReply("Playing next Song. Requested song was too long."));
 			_MaxSongDurationTimer.Stop();
 			Next();
 		}
@@ -609,7 +608,7 @@ namespace InsireBot
 			_VoteSkipCounter = 0;
 			if (!_Buffering)
 			{
-				if (Settings.Instance.DebugMode)
+				if (Settings.Instance.DebugMode) //TODO check if this is useful
 					Controller.Instance.SendToChat(new ChatReply(String.Format("End reached: {0}", _NowPlaying)));
 				_NowPlaying = String.Empty;
 				UpdateSettings();
@@ -638,8 +637,8 @@ namespace InsireBot
 				UpdateSettings();
 				// _player is now buffering the song 
 				_NowPlaying = sender.Media.MRL;
-				if (Settings.Instance.DebugMode)
-					Controller.Instance.SendToChat(new ChatReply(String.Format("now playing: {0}", sender.Media.MRL)));
+				//TODO enable this by config
+				Controller.Instance.SendToChat(new ChatReply(String.Format("now playing: {0}", sender.Media.MRL)));
 				_Buffering = true;
 			}
 		}

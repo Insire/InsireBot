@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Timers;
 
 using GalaSoft.MvvmLight;
 
-using InsireBot.Interfaces;
 using InsireBot.Util.Collections;
 using InsireBot.Util.Services;
 

@@ -108,7 +108,13 @@ namespace InsireBot.Objects
 			Message = GetInnerException(exception);
 		}
 
-		private string  GetInnerException(Exception ex)
+		public ErrorLogItem(String exception)
+			: this()
+		{
+			Message = exception;
+		}
+
+		private string GetInnerException(Exception ex)
 		{
 			if (ex.InnerException != null)
 				return GetInnerException(ex.InnerException);

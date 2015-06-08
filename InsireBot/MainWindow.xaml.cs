@@ -1,14 +1,15 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
+
+using InsireBot.Enums;
+using InsireBot.Objects;
+using InsireBot.Util;
 using InsireBot.Util.Collections;
 using InsireBot.ViewModel;
-using InsireBot.Enums;
-using InsireBot.Util;
-using InsireBot.Objects;
+
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
@@ -185,6 +186,12 @@ namespace InsireBot
 
 		#endregion
 
+
+
+		#region Events
+
+		#region Blacklist UI Filter Events
+
 		private void Blacklist_KeywordFilter(object sender, System.Windows.Data.FilterEventArgs e)
 		{
 			BlackListItem t = e.Item as BlackListItem;
@@ -232,8 +239,7 @@ namespace InsireBot
 					e.Accepted = false;
 			}
 		}
-
-		#region Events
+		#endregion
 
 		private void BlacklistFilter_Changed(object sender, RoutedEventArgs e)
 		{
@@ -399,7 +405,7 @@ namespace InsireBot
 						string text = streamReader.ReadToEnd();
 						streamReader.Close();
 
-						Controller.Instance.FeedMe(text);
+						Controller.Instance.FeedMe(text, false);
 					}
 				}
 				else
@@ -422,7 +428,7 @@ namespace InsireBot
 				if (result == null) //user pressed cancel
 					return;
 
-				Controller.Instance.FeedMe(result);
+				Controller.Instance.FeedMe(result, false);
 			}
 
 		}
