@@ -10,12 +10,12 @@ namespace InsireBot
 	{
 		public App()
 		{
-			if (!Settings.Instance.LoadConfig()) this.Shutdown();
+			if (!Options.Instance.LoadConfig()) this.Shutdown();
 		}
 
 		~App()
 		{
-			Settings.Instance.saveConfigFile();
+			Options.Instance.saveConfigFile();
 		}
 	}
 }
