@@ -1,10 +1,10 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+
+using GalaSoft.MvvmLight;
+
 using InsireBot.Enums;
-using InsireBot.Interfaces;
 using InsireBot.Util;
-using InsireBot.Util.Collections;
 using InsireBot.Util.Services;
-using System;
 
 namespace InsireBot.Objects
 {
@@ -43,7 +43,7 @@ namespace InsireBot.Objects
 		public ChatMessage(string Value)
 			: this()
 		{
-			this.User = Settings.Instance.IRC_Username;
+			this.User = Options.Instance.IRC_Username;
 			this.Value = Value;
 		}
 
@@ -80,7 +80,7 @@ namespace InsireBot.Objects
 		public ChatReply()
 			: base()
 		{
-			User = Settings.Instance.IRC_Username;
+			User = Options.Instance.IRC_Username;
 		}
 
 		public ChatReply(String value)

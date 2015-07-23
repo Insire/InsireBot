@@ -23,7 +23,7 @@ namespace InsireBot.ViewModel
 				// Code runs in Blend --> create design time data. 
 				for (int i = 0; i < 5; i++)
 				{
-					ChatItem b = new ChatMessage(Settings.Instance.IRC_Username, LocalDataBase.GetRandomMessage);
+					ChatItem b = new ChatMessage(Options.Instance.IRC_Username, LocalDataBase.GetRandomMessage);
 					if (!Check(b)) Items.Add(b);
 				}
 			}

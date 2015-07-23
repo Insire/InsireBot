@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using InsireBot.Interfaces;
 
 namespace InsireBot.Objects
 {
@@ -76,6 +75,16 @@ namespace InsireBot.Objects
 
 		public AudioDevice()
 		{
+			Name = string.Empty;
+			DriverVersion = 0;
+			Formats = 0;
+			Channels = 0;
+			Support = 0;
+		}
+
+		override public string ToString()
+		{
+			return Name;
 		}
 
 		#region IBaseInterface Members

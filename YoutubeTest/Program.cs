@@ -33,7 +33,8 @@ namespace YoutubeTest
 		static Uri[] restrictedplaylistitems = new Uri[]{
 				new Uri("https://www.youtube.com/watch?v=3N2PHSZTYoM"),
 				new Uri("https://www.youtube.com/watch?v=uFiLbw5wRyU"),
-				new Uri("https://www.youtube.com/watch?v=BIhGIEfzVDM")
+				new Uri("https://www.youtube.com/watch?v=BIhGIEfzVDM"),
+				new Uri("http://www.youtube.com/watch?v=O7fkiaG69bk")
 			};
 
 		static Uri myPlaylist = new Uri("https://www.youtube.com/playlist?list=PL5LmATNaGcQxknuhgb_BkCKKIvcZro7iR");
@@ -135,10 +136,10 @@ namespace YoutubeTest
 			//Console.WriteLine("get Videos " + playlistitems.Length);
 			//Console.WriteLine("------------------------------------------");
 			//printVideoDetails(playlistitems);
-			//Console.WriteLine("------------------------------------------");
-			//Console.WriteLine("get restricted Videos " + restrictedplaylistitems.Length);
-			//Console.WriteLine("------------------------------------------");
-			//printVideoDetails(restrictedplaylistitems);
+			Console.WriteLine("------------------------------------------");
+			Console.WriteLine("get restricted Videos " + restrictedplaylistitems.Length);
+			Console.WriteLine("------------------------------------------");
+			printVideoDetails(restrictedplaylistitems);
 			printVideoDetails(playlistitems);
 		}
 

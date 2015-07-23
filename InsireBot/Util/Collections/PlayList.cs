@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
-
 using Google.Apis.YouTube.v3.Data;
 using ServiceUtilities;
 using YoutubeService;
@@ -22,6 +22,9 @@ namespace InsireBot.Util.Collections
 		public ICommand ClearCommand { get; set; }
 		[XmlIgnore]
 		public ICommand OpenInBrowser { get; set; }
+		[XmlIgnore]
+		public ICommand CopySelectedURLs { get; set; }
+
 
 		private ThreadSafeObservableCollection<PlayListItem> _Items;
 		private ThreadSafeObservableCollection<PlayListItem> _FilteredItems;
@@ -32,6 +35,8 @@ namespace InsireBot.Util.Collections
 		private int _SelectedIndexFilteredItems;
 		private PlayListItem _SelectedItem;
 		private PlayListItem _SelectedItemFromFilteredItems;
+
+		protected IEnumerable<PlayListItem> SelectedItems { get { return Items.Where(x => x.IsSelected); } }
 
 		public PlayListItem SelectedItemFromFilteredItems
 		{
@@ -251,6 +256,22 @@ namespace InsireBot.Util.Collections
 				},
 				CanExecuteDelegate = _ => true
 			};
+
+			this.CopySelectedURLs = new SimpleCommand
+			{
+				ExecuteDelegate = _ =>
+				{
+					if (SelectedItems != null)
+					{
+						String temp = String.Empty;
+						SelectedItems.ToList().ForEach(p => temp += p.Location);
+						Clipboard.Clear();
+						Clipboard.SetText(temp);
+					}
+
+				},
+				CanExecuteDelegate = _ => true
+			};
 		}
 
 		public PlayList(Uri par)
@@ -258,7 +279,7 @@ namespace InsireBot.Util.Collections
 		{
 			Location = par.AbsoluteUri;
 
-			Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
+			Youtube yt = new Youtube(Options.Instance.Youtube_API_JSON);
 			List<Playlist> x = yt.GetPlaylistByID(URLParser.GetID(par, "list"));
 			if (x.Count > -1)
 			{

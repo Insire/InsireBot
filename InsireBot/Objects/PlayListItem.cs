@@ -41,6 +41,8 @@ namespace InsireBot
 			}
 		}
 
+		public bool IsSelected { get; set; }
+
 		// Playtime
 		public double Duration
 		{
@@ -146,7 +148,7 @@ namespace InsireBot
 		#region Construction
 		private PlayListItem()
 		{
-			this.Requester = Settings.Instance.IRC_Username;
+			this.Requester = Options.Instance.IRC_Username;
 			this.ArtistName = LocalDataBase.GetRandomArtistName;
 			this.Title = "XXXXXXXXXXXXXXXXXXX";
 			this.Duration = 0;
@@ -200,7 +202,7 @@ namespace InsireBot
 			this.ArtistName = item.Snippet.ChannelTitle;
 
 			if (String.IsNullOrEmpty(Requester))
-				this.Requester = Settings.Instance.IRC_Username;
+				this.Requester = Options.Instance.IRC_Username;
 			else
 				this.Requester = Requester;
 		}
@@ -213,7 +215,7 @@ namespace InsireBot
 			this.ArtistName = video.Snippet.ChannelTitle;
 
 			if (String.IsNullOrEmpty(Requester))
-				this.Requester = Settings.Instance.IRC_Username;
+				this.Requester = Options.Instance.IRC_Username;
 			else
 				this.Requester = Requester;
 
@@ -224,11 +226,11 @@ namespace InsireBot
 		private void GetMetaData(String Requester = "")
 		{
 			if (String.IsNullOrEmpty(Requester))
-				Requester = Settings.Instance.IRC_Username;
+				Requester = Options.Instance.IRC_Username;
 
 			Task t = new Task(() =>
 			{
-				Youtube yt = new Youtube(Settings.Instance.Youtube_API_JSON);
+				Youtube yt = new Youtube(Options.Instance.Youtube_API_JSON);
 				List<Video> x = yt.GetVideoByVideoID(URLParser.GetID(new Uri(this.Location), "v"));
 
 				if (x != null)

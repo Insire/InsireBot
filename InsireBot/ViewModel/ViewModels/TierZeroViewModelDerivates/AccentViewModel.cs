@@ -28,7 +28,7 @@ namespace InsireBot.ViewModel
 			foreach (Accent at in ThemeManager.Accents)
 			{
 				Items.Add(at);
-				if (Settings.Instance.MetroAccent == at.Name)
+				if (Options.Instance.MetroAccent == at.Name)
 					SelectedIndex = i;
 				i++;
 			}

@@ -16,7 +16,7 @@ namespace InsireBot.ViewModel
 		{
 			if (e.PropertyName == "SelectedIndex")
 			{
-				Settings.Instance.BlacklistFilter = Items[SelectedIndex];
+				Options.Instance.BlacklistFilter = Items[SelectedIndex];
 			}
 		}
 
@@ -26,7 +26,7 @@ namespace InsireBot.ViewModel
 			foreach (BlackListItemType p in Enum.GetValues(typeof(BlackListItemType)))
 			{
 				Items.Add(p);
-				if (Settings.Instance.BlacklistFilter == p)
+				if (Options.Instance.BlacklistFilter == p)
 				{
 					SelectedIndex = i;
 				}

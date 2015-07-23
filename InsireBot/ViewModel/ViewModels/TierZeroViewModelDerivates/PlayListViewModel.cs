@@ -179,40 +179,44 @@ namespace InsireBot.ViewModel
 			// save each playlist to xml
 			Items.ToList().ForEach(p => ObjectSerializer.Save<PlayList>(p.Name, p));
 			// add all playlistnames to the settings.xml
-			Settings.Instance.PlaylistNames.AddRange(Items.Select(p => p.Name));
-			// remove duplicates
-			Settings.Instance.PlaylistNames = Settings.Instance.PlaylistNames.Distinct().ToList();
-
-			// cast to list so that we can iterate it and remove the deleted items from it
-			foreach (String playlistname in Settings.Instance.PlaylistNames.Except(Items.Select(p => p.Name)).ToList())
+			if (Options.Instance.PlaylistNames != null)
 			{
-				// before removing the playlistname, the corresponding playlist xml files should be deleted first
-				if (File.Exists(String.Format("{1}\\{0}.xml", playlistname, Settings.Instance.configFilePath)))
+				Options.Instance.PlaylistNames.AddRange(Items.Select(p => p.Name));
+				// remove duplicates
+				Options.Instance.PlaylistNames = Options.Instance.PlaylistNames.Distinct().ToList();
+
+				// cast to list so that we can iterate it and remove the deleted items from it
+				foreach (String playlistname in Options.Instance.PlaylistNames.Except(Items.Select(p => p.Name)).ToList())
 				{
-					File.Delete(String.Format("{1}\\{0}.xml", playlistname, Settings.Instance.configFilePath));
+					// before removing the playlistname, the corresponding playlist xml files should be deleted first
+					if (File.Exists(String.Format("{1}\\{0}.xml", playlistname, Options.Instance.configFilePath)))
+					{
+						File.Delete(String.Format("{1}\\{0}.xml", playlistname, Options.Instance.configFilePath));
+					}
+					Options.Instance.PlaylistNames.Remove(playlistname);
 				}
-				Settings.Instance.PlaylistNames.Remove(playlistname);
 			}
-			Settings.Instance.saveConfigFile();
+			Options.Instance.saveConfigFile();
 
 		}
 
 		public override bool Load()
 		{
 			int emptyplaylistcounter = 0;
-			foreach (string s in Settings.Instance.PlaylistNames)
-			{
-				if (!Check(s))
+			if (Options.Instance.PlaylistNames != null)
+				foreach (string s in Options.Instance.PlaylistNames)
 				{
-					PlayList temp = ObjectSerializer.Load<PlayList>(s);
-					temp.Name = s;
-					if (emptyplaylistcounter == 0 & temp.Count == 0)
-						Items.Add(temp);
-					else
-						if (temp.Count != 0)
+					if (!Check(s))
+					{
+						PlayList temp = ObjectSerializer.Load<PlayList>(s);
+						temp.Name = s;
+						if (emptyplaylistcounter == 0 & temp.Count == 0)
 							Items.Add(temp);
+						else
+							if (temp.Count != 0)
+								Items.Add(temp);
+					}
 				}
-			}
 			if (Items.Count > 0)
 				return true;
 			else

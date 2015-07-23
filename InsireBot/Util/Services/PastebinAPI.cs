@@ -31,9 +31,9 @@ namespace InsireBot.Util.Services
 
 		private PastebinAPI()
 		{
-			Pastebin.DevKey = Settings.Instance.Pastebin_DevKey;
-			string _name = Settings.Instance.Pastebin_Mail;
-			string _pw = Settings.Instance.Pastebin_Password;
+			Pastebin.DevKey = String.Empty;
+			string _name = String.Empty;
+			string _pw = String.Empty;
 			int c = 0;
 
 			if (String.IsNullOrEmpty(_name)) c++;

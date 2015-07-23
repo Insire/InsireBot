@@ -81,8 +81,8 @@ namespace InsireBot
 			ThemeManager.ChangeAppTheme(this, Theme);
 
 			if (Accent != null)
-				Settings.Instance.MetroAccent = Accent;
-			Settings.Instance.MetroTheme = ThemeManager.DetectAppStyle(this).Item1.Name;
+				Options.Instance.MetroAccent = Accent;
+			Options.Instance.MetroTheme = ThemeManager.DetectAppStyle(this).Item1.Name;
 		}
 		#endregion
 
@@ -440,7 +440,7 @@ namespace InsireBot
 			dialog.Multiselect = false;
 			dialog.ValidateNames = true;
 
-			dialog.InitialDirectory = Settings.Instance.configFilePath;
+			dialog.InitialDirectory = Options.Instance.configFilePath;
 			if (!VistaFileDialog.IsVistaFileDialogSupported)
 			{
 				MessageBox.Show(this, "Because you are not using Windows Vista or later, you have to fill in the path by yourself", "Not Supported");
@@ -453,7 +453,7 @@ namespace InsireBot
 
 		private void bBackup_Click(object sender, RoutedEventArgs e)
 		{
-			Settings.Instance.createBackup();
+			Options.Instance.createBackup();
 		}
 
 		private void tbBackup_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -462,7 +462,7 @@ namespace InsireBot
 			dialog.Description = "Please select a folder.";
 			dialog.UseDescriptionForTitle = true; // This applies to the Vista style dialog only, not the old dialog.
 
-			dialog.SelectedPath = Settings.Instance.configFilePath;
+			dialog.SelectedPath = Options.Instance.configFilePath;
 			if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
 			{
 				MessageBox.Show(this, "Because you are not using Windows Vista or later, you have to fill in the path by yourself", "Not Supported");
@@ -479,7 +479,8 @@ namespace InsireBot
 			dialog.Description = "Please select a folder.";
 			dialog.UseDescriptionForTitle = true; // This applies to the Vista style dialog only, not the old dialog.
 			DirSearch(Directory.GetCurrentDirectory());
-			dialog.SelectedPath = Settings.Instance.VLC_LibVlcDllPath;
+			dialog.SelectedPath = Options.Instance.VLCOptions.LibVlcDllPath;
+
 			if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
 			{
 				MessageBox.Show(this, "Because you are not using Windows Vista or later, you have to fill in the path by yourself", "Not Supported");
@@ -496,7 +497,7 @@ namespace InsireBot
 			dialog.Description = "Please select a folder.";
 			dialog.UseDescriptionForTitle = true; // This applies to the Vista style dialog only, not the old dialog.
 			DirSearch(Directory.GetCurrentDirectory());
-			dialog.SelectedPath = Settings.Instance.VLC_LibVlcDllPath;
+			dialog.SelectedPath = Options.Instance.VLCOptions.LibVlcPluginPath;
 			if (!VistaFolderBrowserDialog.IsVistaFolderDialogSupported)
 			{
 				tbVLCLibDLL.Text = dialog.SelectedPath;
@@ -517,7 +518,7 @@ namespace InsireBot
 					{
 						if (f.Contains("vlc.exe"))
 						{
-							Settings.Instance.VLC_LibVlcDllPath = d;
+							Options.Instance.VLCOptions.LibVlcDllPath = d;
 							return;
 						}
 					}
@@ -532,7 +533,7 @@ namespace InsireBot
 
 		private void cbPlaymode_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
 		{
-			Settings.Instance.VLC_PlayBackType = (PlaybackType)cbPlaymode.SelectedValue;
+			Options.Instance.VLC_PlayBackType = (PlaybackType)cbPlaymode.SelectedValue;
 		}
 
 		private async void bAddPlaylist_Click(object sender, RoutedEventArgs e)

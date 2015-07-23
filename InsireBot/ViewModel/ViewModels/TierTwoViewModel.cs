@@ -1,16 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Timers;
 
 using GalaSoft.MvvmLight;
 
 using InsireBot.Util.Collections;
-using InsireBot.Util.Services;
 
 namespace InsireBot.ViewModel
 {
+	/// <summary>
+	/// Viewmodel reporting changing properties, also somewhat threadsafe
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
 	public class TierTwoViewModel<T> : ViewModelBase, INotifyPropertyChanged
 	{
 		new public event PropertyChangedEventHandler PropertyChanged;
@@ -142,7 +143,7 @@ namespace InsireBot.ViewModel
 
 		public virtual bool Remove()
 		{
-			if (SelectedIndex > -1)
+			if (-1 < SelectedIndex & SelectedIndex < Items.Count)
 				return Remove(Items[SelectedIndex]);
 			else return false;
 		}

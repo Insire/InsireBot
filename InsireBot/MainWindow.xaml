@@ -50,6 +50,7 @@
             <Util:VisibilityConverter x:Key="VisibilityConverter" />
             <Util:DurationConverter x:Key="DurationConverter" />
             <Util:ValidationConverter x:Key="EmailValidatorConverter" />
+            <Util:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <Style TargetType="Rectangle" x:Key="DefaultRectangle">
                 <Setter Property="Width" Value="20" />
                 <Setter Property="Height" Value="20" />
@@ -135,11 +136,11 @@
         <Controls:FlyoutsControl DataContext="{Binding Source={StaticResource Locator}}">
             <Controls:Flyout Header="Options" Position="Right" Theme="Accent" Width="300" >
                 <StackPanel Margin="10,0">
-                    <Controls:ToggleSwitch Header="Debug" IsChecked="{Binding DebugMode, Source={x:Static Util:Settings.Instance}}" />
-                    <Controls:ToggleSwitch Header="AutoConnect" IsChecked="{Binding IRC_AutoConnect, Source={x:Static Util:Settings.Instance}}" />
-                    <Controls:ToggleSwitch Header="Save Chat" IsChecked="{Binding SaveChat, Source={x:Static Util:Settings.Instance}}" />
-                    <Controls:ToggleSwitch Header="Save Log" IsChecked="{Binding SaveLog, Source={x:Static Util:Settings.Instance}}" />
-                    <Controls:ToggleSwitch Header="Reply to chat" IsChecked="{Binding ReplyToChat, Source={x:Static Util:Settings.Instance}}" />
+                    <Controls:ToggleSwitch Header="Debug" IsChecked="{Binding DebugMode, Source={x:Static Util:Options.Instance}}" />
+                    <Controls:ToggleSwitch Header="AutoConnect" IsChecked="{Binding IRC_AutoConnect, Source={x:Static Util:Options.Instance}}" />
+                    <Controls:ToggleSwitch Header="Save Chat" IsChecked="{Binding SaveChat, Source={x:Static Util:Options.Instance}}" />
+                    <Controls:ToggleSwitch Header="Save Log" IsChecked="{Binding SaveLog, Source={x:Static Util:Options.Instance}}" />
+                    <Controls:ToggleSwitch Header="Reply to chat" IsChecked="{Binding ReplyToChat, Source={x:Static Util:Options.Instance}}" />
                 </StackPanel>
             </Controls:Flyout>
             <Controls:Flyout Header="Colors" Position="Left" Theme="Accent" Width="300" >
@@ -192,23 +193,23 @@
                 <StackPanel Margin="10,0">
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True" 
                                             Controls:TextBoxHelper.Watermark="Username"
-                                            Text="{Binding IRC_Username, Source={x:Static Util:Settings.Instance}}" />
+                                            Text="{Binding IRC_Username, Source={x:Static Util:Options.Instance}}" />
 
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True"
                                             Controls:TextBoxHelper.Watermark="Password"
-                                            Text="{Binding IRC_Password, Source={x:Static Util:Settings.Instance}}" />
+                                            Text="{Binding IRC_Password, Source={x:Static Util:Options.Instance}}" />
 
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True"
                                             Controls:TextBoxHelper.Watermark="Server"
-                                            Text="{Binding IRC_Serveradress, Source={x:Static Util:Settings.Instance}}" />
+                                            Text="{Binding IRC_Serveradress, Source={x:Static Util:Options.Instance}}" />
 
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True"
                                             Controls:TextBoxHelper.Watermark="Port"
-                                            Text="{Binding IRC_Serverport, Source={x:Static Util:Settings.Instance}}" />
+                                            Text="{Binding IRC_Serverport, Source={x:Static Util:Options.Instance}}" />
 
                     <TextBox Controls:TextBoxHelper.ClearTextButton="True"
                                             Controls:TextBoxHelper.Watermark="Channel Name"
-                                            Text="{Binding IRC_TargetChannel, Source={x:Static Util:Settings.Instance}}" />
+                                            Text="{Binding IRC_TargetChannel, Source={x:Static Util:Options.Instance}}" />
                     <WrapPanel DataContext="{Binding Controller, Mode=OneWay}">
                         <Button Command="{Binding Connect, Mode=OneWay}">
                             <Rectangle Style="{Binding Source={StaticResource DefaultRectangle}}">
@@ -229,23 +230,14 @@
             </Controls:Flyout>
             <Controls:Flyout Header="Accounts" Position="Right" Theme="Accent" Width="300" >
                 <StackPanel Margin="10,0">
-                    <Label Content="Pastebin Development Key" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_DevKey, Source={x:Static Util:Settings.Instance}}" />
-
-                    <Label Content="Pastebin Mail Address" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_Mail, Source={x:Static Util:Settings.Instance}}" />
-
-                    <Label Content="PasteBin Password" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Pastebin_Password, Source={x:Static Util:Settings.Instance}}" />
-
                     <Label Content="Twitch API Token" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Options.Instance}}" />
 
                     <Label Content="CLientID" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Options.Instance}}" />
 
                     <Label Content="Redirect URI" />
-                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Settings.Instance}}" />
+                    <TextBox Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Twitch_API_Token, Source={x:Static Util:Options.Instance}}" />
                 </StackPanel>
             </Controls:Flyout>
             <Controls:Flyout Header="PlaylistLog" Position="Bottom" Theme="Adapt" Height="200">
@@ -273,7 +265,7 @@
             </Controls:Flyout>
             <Controls:Flyout Header="Audio" Position="Bottom" Theme="Accent">
                 <StackPanel Margin="0,10" Orientation="Horizontal">
-                    <Grid Margin="5,0">
+                    <Grid Margin="5,0" DataContext="{Binding MediaPlayerSoundSettings, Source={x:Static Util:Options.Instance}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -283,7 +275,7 @@
                             <CheckBox x:Name="cbMediaPlayerSilent" 
                                     VerticalAlignment="Center" 
                                     Checked="cbMediaPlayerSilent_Checked"								
-                                    IsChecked="{Binding VLC_MediaPlayerSilent, Source={x:Static Util:Settings.Instance}}"
+                                    IsChecked="{Binding Silent, Converter={StaticResource InverseBooleanConverter}}"
                                     Unchecked="cbMediaPlayerSilent_Unchecked" />
                             <Label Content="Mediaplayer" />
                         </StackPanel>
@@ -300,10 +292,10 @@
                                 SmallChange="1"
                                 Style="{DynamicResource FlatSlider}" 
                                 ValueChanged="slider_Mediaplayer_ValueChanged"
-                                Value="{Binding VLC_MediaPlayerVolume, Source={x:Static Util:Settings.Instance}}" />
+                                Value="{Binding Volume}" />
                         <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Mediaplayer}" />
                     </Grid>
-                    <Grid Margin="5,0">
+                    <Grid Margin="5,0" DataContext="{Binding FollowerSoundSettings, Source={x:Static Util:Options.Instance}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -313,7 +305,7 @@
                             <CheckBox x:Name="cbSilentFollower" 
                                     VerticalAlignment="Center" 
                                     Checked="cbSilentFollower_Checked"
-                                    IsChecked="{Binding VLC_FollowerSilent, Source={x:Static Util:Settings.Instance}}"
+                                    IsChecked="{Binding Silent, Converter={StaticResource InverseBooleanConverter}}"
                                     Unchecked="cbSilentFollower_Unchecked" />
                             <Label Content="Follower" />
                         </StackPanel>
@@ -330,10 +322,10 @@
                                 SmallChange="1"
                                 Style="{DynamicResource FlatSlider}" 
                                 ValueChanged="slider_Follower_ValueChanged"
-                                Value="{Binding VLC_FollowerVolume, Source={x:Static Util:Settings.Instance}}" />
+                                Value="{Binding Volume}" />
                         <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Follower}" />
                     </Grid>
-                    <Grid Margin="5,0">
+                    <Grid Margin="5,0" DataContext="{Binding SubscriberSoundSettings, Source={x:Static Util:Options.Instance}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -343,7 +335,7 @@
                             <CheckBox x:Name="cbSubscriber" 
                                         VerticalAlignment="Center" 
                                         Checked="cbSubscriber_Checked"
-                                        IsChecked="{Binding VLC_SubScriberSilent, Source={x:Static Util:Settings.Instance}}"
+                                        IsChecked="{Binding Silent, Converter={StaticResource InverseBooleanConverter}}"
                                         Unchecked="cbSubscriber_Unchecked" />
                             <Label Content="Subscriber" />
                         </StackPanel>
@@ -360,10 +352,10 @@
                                 SmallChange="1"
                                 Style="{DynamicResource FlatSlider}" 
                                 ValueChanged="slider_Subscriber_ValueChanged"
-                                Value="{Binding VLC_SubScriberVolume, Source={x:Static Util:Settings.Instance}}" />
+                                Value="{Binding Volume}" />
                         <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Subscriber}" />
                     </Grid>
-                    <Grid Margin="5,0">
+                    <Grid Margin="5,0" DataContext="{Binding SoundboardSoundSettings, Source={x:Static Util:Options.Instance}}">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
@@ -373,7 +365,7 @@
                             <CheckBox x:Name="cbSoundboard" 
                                     VerticalAlignment="Center" 
                                     Checked="cbSoundboard_Checked"
-                                    IsChecked="{Binding VLC_SoundboardSilent, Source={x:Static Util:Settings.Instance}}"
+                                    IsChecked="{Binding Silent, Converter={StaticResource InverseBooleanConverter}}"
                                     Unchecked="cbSoundboard_Unchecked" />
                             <Label Content="Soundboard" />
                         </StackPanel>
@@ -390,7 +382,7 @@
                                 SmallChange="1"
                                 Style="{DynamicResource FlatSlider}" 
                                 ValueChanged="slider_Soundboard_ValueChanged"
-                                Value="{Binding VLC_SoundboardVolume, Source={x:Static Util:Settings.Instance}}" />
+                                Value="{Binding Volume}" />
                         <Label Grid.Row="2" HorizontalContentAlignment="Center" Content="{Binding Value, ElementName=slider_Soundboard}" />
                     </Grid>
                 </StackPanel>
@@ -415,11 +407,7 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Grid DataContext="{Binding PlayList}" x:Name="PlaylistGrid">
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <ListView x:Name="Playlists"
+                        <ListView x:Name="Playlists" Grid.IsSharedSizeScope="True" HorizontalContentAlignment="Stretch"
                             ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" 
                             SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True, NotifyOnValidationError=True}"
                             SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}">
@@ -522,14 +510,11 @@
                                     <VirtualizingStackPanel VirtualizingPanel.IsVirtualizing="True">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition MinWidth="150" Width="Auto" />
-                                                <ColumnDefinition Width="40" />
+                                                <ColumnDefinition SharedSizeGroup="Name" MinWidth="75"/>
+                                                <ColumnDefinition SharedSizeGroup="ItemCount"/>
                                             </Grid.ColumnDefinitions>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="Auto" />
-                                            </Grid.RowDefinitions>
-                                            <TextBlock Text="{Binding Name}" Margin="5,0" />
-                                            <TextBlock Grid.Column="1" Text="{Binding Path=Items.Count, Mode=OneWay}" HorizontalAlignment="Stretch" Margin="5,0" />
+                                            <TextBlock Text="{Binding Name}"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Path=Items.Count, Mode=OneWay}" HorizontalAlignment="Right" />
                                         </Grid>
                                     </VirtualizingStackPanel>
                                 </DataTemplate>
@@ -538,7 +523,7 @@
                     </Grid>
                     <GridSplitter Grid.Column="1" HorizontalAlignment="Stretch" Width="5" Grid.RowSpan="2"/>
                     <Grid Grid.Column="2" DataContext="{Binding PlayList.SelectedItem, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" x:Name="PlaylistItemsGrid" >
-                        <ListView x:Name="PlaylistItems"
+                        <ListView x:Name="PlaylistItems" Grid.IsSharedSizeScope="True"
                             Grid.Column="2" ItemsSource="{Binding Items, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}" SelectedIndex="{Binding SelectedIndex}">
                             <ListView.ItemTemplate>
                                 <DataTemplate>
@@ -546,10 +531,10 @@
                                         <Grid>
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="Auto" SharedSizeGroup="Title"/>
+                                                <ColumnDefinition Width="Auto" SharedSizeGroup="Duration"/>
                                                 <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="0.5*" />
-                                                <ColumnDefinition Width="Auto" />
-                                                <ColumnDefinition Width="2*" />
+                                                <ColumnDefinition Width="Auto" SharedSizeGroup="User"/>
                                             </Grid.ColumnDefinitions>
                                             <Rectangle Margin="5,2" Style="{Binding Source={StaticResource DefaultRectangle}}" Tag="{Binding Requester}">
                                                 <Rectangle.OpacityMask>
@@ -584,6 +569,11 @@
                                     </DataTemplate.Triggers>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
+                            <ListView.ItemContainerStyle>
+                                <Style TargetType="ListViewItem" >
+                                    <Setter Property="IsSelected" Value="{Binding IsSelected}"/>
+                                </Style>
+                            </ListView.ItemContainerStyle>
                             <ListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Add">
@@ -844,11 +834,10 @@
                                 <Grid DataContext="{Binding MediaPlayerAudioDevices, Mode=OneWay, NotifyOnTargetUpdated=True}" Grid.Row="3" Grid.Column="1" >
                                     <ComboBox Grid.Row="3" Grid.Column="1" IsReadOnly="True" Name="MediaC"
                                                       ItemsSource="{Binding Items, NotifyOnTargetUpdated=True}" 
-                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}" 
-                                                      SelectedItem="{Binding SelectedItem, NotifyOnTargetUpdated=True}">
+                                                      SelectedIndex="{Binding SelectedIndex, NotifyOnTargetUpdated=True}">
                                         <ComboBox.ItemTemplate>
                                             <DataTemplate>
-                                                <TextBlock Text="{Binding Name}" />
+                                                <TextBlock Text="{Binding Name, Mode=OneWay}" />
                                             </DataTemplate>
                                         </ComboBox.ItemTemplate>
                                     </ComboBox>
@@ -908,9 +897,9 @@
                                 <TextBox Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Follower Soundfile" Style="{DynamicResource SearchMetroTextBox}"/>
                                 <TextBox  Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Subscriber Soundfile" Style="{DynamicResource SearchMetroTextBox}"/>
                                 <TextBox Controls:TextBoxHelper.ClearTextButton="True" Controls:TextBoxHelper.Watermark="Soundboard Directory" Style="{DynamicResource SearchMetroTextBox}"/>
-                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer AutoSkipThreshold in s"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_AutoSkipThreshold, Source={x:Static Util:Settings.Instance}}"/>
-                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer MaxSongDuration in s"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_MaxSongDuration, Source={x:Static Util:Settings.Instance}}"/>
-                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer MaxVoteSkipCounter"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_MaxVoteCounter, Source={x:Static Util:Settings.Instance}}"/>
+                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer AutoSkipThreshold in s"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_AutoSkipThreshold, Source={x:Static Util:Options.Instance}}"/>
+                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer MaxSongDuration in s"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_MaxSongDuration, Source={x:Static Util:Options.Instance}}"/>
+                                <TextBox Controls:TextBoxHelper.Watermark="Mediaplayer MaxVoteSkipCounter"  Controls:TextBoxHelper.ClearTextButton="True" Text="{Binding Media_MaxVoteCounter, Source={x:Static Util:Options.Instance}}"/>
                             </StackPanel>
                         </ScrollViewer>
                     </TabItem>
@@ -930,13 +919,13 @@
                                                         Controls:TextBoxHelper.ClearTextButton="True"
                                                         Delay="500"
                                                         Speedup="true" />
-
+                                <StackPanel DataContext="{Binding VLCOptions, Source={x:Static Util:Options.Instance}}">
                                 <TextBox x:Name="tbVLCLibDLL" 
                                             Controls:TextBoxHelper.ClearTextButton="True" 
                                             Controls:TextBoxHelper.Watermark="Path to vlc.exe" 
                                             IsReadOnly="True"
                                             MouseDoubleClick="tbVLCLibDLL_MouseDoubleClick"
-                                            Text="{Binding VLC_LibVlcDllPath, Source={x:Static Util:Settings.Instance}}"
+                                            Text="{Binding LibVlcDllPath}"
                                             Style="{DynamicResource SearchMetroTextBox}"/>
 
                                 <TextBox x:Name="tbVLCPlugins" 
@@ -944,22 +933,22 @@
                                             Controls:TextBoxHelper.Watermark="Path to VLC Plugins folder" 
                                             IsReadOnly="True"
                                             MouseDoubleClick="tbVLCPlugins_MouseDoubleClick"
-                                            Text="{Binding VLC_LibVlcPluginPath, Source={x:Static Util:Settings.Instance}}"
+                                            Text="{Binding LibVlcPluginPath}"
                                             Style="{DynamicResource SearchMetroTextBox}"/>
-
+                                </StackPanel>
                                 <TextBox x:Name="tbBackup" 
                                             Controls:TextBoxHelper.ClearTextButton="True" 
                                             Controls:TextBoxHelper.Watermark="Bacup Directory" 
                                             IsReadOnly="True"
                                             MouseDoubleClick="tbBackup_MouseDoubleClick"
-                                            Text="{Binding BackupDirectory, Source={x:Static Util:Settings.Instance}}"
+                                            Text="{Binding BackupDirectory, Source={x:Static Util:Options.Instance}}"
                                             Style="{DynamicResource SearchMetroTextBox}"/>
                                 <TextBox x:Name="tbYoutubeClientSecret" 
                                             Controls:TextBoxHelper.ClearTextButton="True" 
                                             Controls:TextBoxHelper.Watermark="Bacup Directory" 
                                             IsReadOnly="True"
                                             MouseDoubleClick="tbYoutubeClientSecret_MouseDoubleClick"
-                                            Text="{Binding Youtube_API_JSON, Source={x:Static Util:Settings.Instance}}"
+                                            Text="{Binding Youtube_API_JSON, Source={x:Static Util:Options.Instance}}"
                                             Style="{DynamicResource SearchMetroTextBox}"/>
                             </StackPanel>
                         </ScrollViewer>

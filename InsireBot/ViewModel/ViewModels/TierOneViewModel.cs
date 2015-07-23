@@ -4,6 +4,8 @@ using System.Timers;
 
 using GalaSoft.MvvmLight;
 
+using InsireBot.Objects;
+using InsireBot.Util;
 using InsireBot.Util.Collections;
 using InsireBot.Util.Services;
 
@@ -182,6 +184,39 @@ namespace InsireBot.ViewModel
 					{
 						Messages.Add(_MessageBuffer.Dequeue());
 					}
+		}
+
+		/// <summary>
+		/// fills Items and sets SelectedIndex to default value
+		/// </summary>
+		/// <param name="Items"></param>
+		/// <param name="settings"></param>
+		/// <returns></returns>
+		public ThreadSafeObservableCollection<AudioDevice> UpdateIndex(ThreadSafeObservableCollection<AudioDevice> myItems, PlayerSettings settings)
+		{
+			myItems = AudioDeviceAPI.getDevices();
+			int i = 0;
+			SelectedIndex = -1;
+
+			foreach (AudioDevice item in myItems)
+			{
+				if (settings != null)
+					if (item.Name == Options.Instance.MediaPlayerSoundSettings.WaveOutDevice)
+					{
+						SelectedIndex = i;
+					}
+				i++;
+			}
+
+			if (SelectedIndex == -1)
+				if (Items.Count > 0)
+				{
+					SelectedIndex = 0;
+					if (Options.Instance.MediaPlayerSoundSettings != null)
+						Options.Instance.MediaPlayerSoundSettings.WaveOutDevice = myItems[SelectedIndex].Name;
+				}
+
+			return myItems;
 		}
 	}
 

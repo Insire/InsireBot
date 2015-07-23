@@ -16,7 +16,7 @@ namespace InsireBot.ViewModel
 		{
 			if (e.PropertyName == "SelectedIndex")
 			{
-				Settings.Instance.VLC_PlayBackType = Items[SelectedIndex];
+				Options.Instance.VLC_PlayBackType = Items[SelectedIndex];
 			}
 		}
 
@@ -26,7 +26,7 @@ namespace InsireBot.ViewModel
 			foreach (PlaybackType p in Enum.GetValues(typeof(PlaybackType)))
 			{
 				Items.Add(p);
-				if (Settings.Instance.VLC_PlayBackType == p)
+				if (Options.Instance.VLC_PlayBackType == p)
 				{
 					SelectedIndex = i;
 				}

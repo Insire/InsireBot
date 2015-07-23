@@ -1,6 +1,5 @@
-﻿using GalaSoft.MvvmLight;
-using InsireBot.Interfaces;
-using System;
+﻿using System;
+using GalaSoft.MvvmLight;
 
 namespace InsireBot.Objects
 {

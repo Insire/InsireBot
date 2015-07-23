@@ -28,7 +28,7 @@ namespace InsireBot.ViewModel
 			foreach (AppTheme at in ThemeManager.AppThemes)
 			{
 				Items.Add(at);
-				if (Settings.Instance.MetroTheme == at.Name)
+				if (Options.Instance.MetroTheme == at.Name)
 					SelectedIndex = i;
 				i++;
 			}

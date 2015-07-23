@@ -57,7 +57,7 @@ namespace InsireBot.Util
 
 		private static String ValidateSubDirectory(String SubDirecotry)
 		{
-			return Path.GetFullPath(Path.Combine(SubDirecotry, Settings.Instance.configFilePath));
+			return Path.GetFullPath(Path.Combine(SubDirecotry, Options.Instance.configFilePath));
 		}
 
 		public static void Save<T>(String FileName, T Items, String SubDirectory = "")

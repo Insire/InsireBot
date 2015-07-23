@@ -5,30 +5,37 @@ using System.Timers;
 using InsireBot.Enums;
 using InsireBot.Objects;
 using InsireBot.Util;
+using InsireBot.Util.Services;
+using InsireBot.Util.Collections;
 using InsireBot.ViewModel;
 
 using Vlc.DotNet.Core;
 using Vlc.DotNet.Core.Medias;
 using Vlc.DotNet.Wpf;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace InsireBot
 {
 	public class MediaPlayer : IDisposable
 	{
+		public PlayerSettings Settings { get; private set; }
+		public VLCSettings VLCOptions { get; private set; }
+
 		internal bool Playable { get; set; }
 		/// <summary>
 		/// indicates if a song can be skipped, according to the SkipPreventionTimer
 		/// </summary>
-		private bool _ExcuteSongSkip { get; set; }
-		private bool _Buffering { get; set; }
+		private bool _ExcuteSongSkip;
+		private bool _Buffering;
 
-		private VlcControl _VlcPlayer { get; set; }
+		private VlcControl _VlcPlayer;
 
-		private AudioDeviceType _Type { get; set; }
+		private AudioDeviceType _Type;
 
 		private String _NowPlaying = String.Empty;
 
-		private int _VoteSkipCounter { get; set; }
+		private int _VoteSkipCounter;
 
 		private Timer _MaxSongDurationTimer = new Timer();
 		private Timer _SkipPreventionTimer = new Timer();
@@ -63,8 +70,7 @@ namespace InsireBot
 
 			_Type = type;
 
-			if (!Settings.Instance.IsDefaultConfig)
-				this.initializeVLC(type);
+			this.initializeVLC(type);
 
 			if (_VlcPlayer == null) return;
 			Playable = true;
@@ -72,138 +78,131 @@ namespace InsireBot
 
 		#endregion Constructor
 
+		private AudioDevice selectAudioDevice(TierOneViewModel<AudioDevice> audioDeviceViewModel)
+		{
+			AudioDevice _audioDevice = new AudioDevice();
+			SystemLogItem _ErrorDeviceListMessage = new SystemLogItem("Devicelist empty, Mediaplayer not initialized");
+			if (audioDeviceViewModel == null)
+			{
+				Controller.Instance.Log(_ErrorDeviceListMessage);
+				return _audioDevice;
+			}
+
+			if (audioDeviceViewModel.Count() > 0)
+				if (audioDeviceViewModel.SelectedIndex == -1)
+					_audioDevice = audioDeviceViewModel[0];
+				else
+					_audioDevice = audioDeviceViewModel[audioDeviceViewModel.SelectedIndex];
+			else
+			{
+
+				Controller.Instance.Log(_ErrorDeviceListMessage);
+			}
+
+			return _audioDevice;
+		}
+
 		/// <summary>
 		/// initializes the vlc player with parameters, initializes events 
 		/// </summary>
 		private void initializeVLC(AudioDeviceType type)
 		{
+			// https://github.com/ZeBobo5/Vlc.DotNet/blob/master/src/Samples/Vlc.DotNet.Wpf.Samples/MainWindow.xaml.cs
+			//var currentAssembly = Assembly.GetEntryAssembly();
+			//var currentDirectory = new FileInfo(currentAssembly.Location).DirectoryName;
+			//if (currentDirectory == null)
+			//	return;
+			//if (AssemblyName.GetAssemblyName(currentAssembly.Location).ProcessorArchitecture == ProcessorArchitecture.X86)
+			//	e.VlcLibDirectory = new DirectoryInfo(Path.Combine(currentDirectory, @"..\..\..\lib\x86\"));
+			//else
+			//	e.VlcLibDirectory = new DirectoryInfo(Path.Combine(currentDirectory, @"..\..\..\lib\x64\"));
+
+			if (Options.Instance.VLCOptions == null)
+			{
+				Options.Instance.VLCOptions = new VLCSettings
+				{
+					LibVlcDllPath = @"VlcPortable\",
+					LibVlcPluginPath = @"VlcPortable\plugins\",
+					Silent = false
+				};
+			}
+			this.VLCOptions = Options.Instance.VLCOptions;
+
 			//init
-			VlcContext.LibVlcDllsPath = Settings.Instance.VLC_LibVlcDllPath;
-			VlcContext.LibVlcPluginsPath = Settings.Instance.VLC_LibVlcPluginPath;
+			VlcContext.LibVlcDllsPath = this.VLCOptions.LibVlcDllPath;
+			VlcContext.LibVlcPluginsPath = this.VLCOptions.LibVlcPluginPath;
 
-			SystemLogItem _ErrorDeviceListMessage = new SystemLogItem("Devicelist empty, Mediaplayer not initialized");
-			String _audioDevice = String.Empty;
-
-			// Get default Audiodevice if Settings not filled or kill if nothing is working 
 			switch (_Type)
 			{
 				case AudioDeviceType.FollowerAlert:
 
-					#region AudioDeviceType.FollowerAlert
-
-					if (_FollowerAudioDevices == null)
+					if (Options.Instance.FollowerSoundSettings == null)
 					{
-						Controller.Instance.Log(_ErrorDeviceListMessage);
-						return;
-					}
-
-					if (Settings.Instance.VLC_MediaPlayerWaveOutDevice == String.Empty)
-					{
-						if (_FollowerAudioDevices.Count() > -1)
-							if (_FollowerAudioDevices.SelectedIndex == -1)
-								_audioDevice = _FollowerAudioDevices[0].Name;
-							else
-								_audioDevice = _FollowerAudioDevices[_FollowerAudioDevices.SelectedIndex].ToString();
-						else
+						Options.Instance.FollowerSoundSettings = new PlayerSettings
 						{
-							Controller.Instance.Log(_ErrorDeviceListMessage);
-							return;
-						}
+							Silent = false,
+							Volume = 50,
+							WaveOutDevice = selectAudioDevice(_FollowerAudioDevices).ToString()
+						};
 					}
 					else
-						_audioDevice = Settings.Instance.VLC_FollowerWaveOutDevice;
+					{
+						this.Settings = Options.Instance.FollowerSoundSettings;
+						_FollowerAudioDevices.UpdateIndex(_FollowerAudioDevices.Items, this.Settings);
+					}
 					break;
-
-					#endregion AudioDeviceType.FollowerAlert
 
 				case AudioDeviceType.MediaPlayer:
-
-					#region AudioDeviceType.MediaPlayer
-
-					if (_MediaPlayerAudioDevices == null)
+					if (Options.Instance.MediaPlayerSoundSettings == null)
 					{
-						Controller.Instance.Log(_ErrorDeviceListMessage);
-						return;
-					}
-
-					if (Settings.Instance.VLC_MediaPlayerWaveOutDevice == String.Empty)
-					{
-						if (_MediaPlayerAudioDevices.Count() > -1)
-							if (_MediaPlayerAudioDevices.SelectedIndex == -1)
-								_audioDevice = _MediaPlayerAudioDevices[0].Name;
-							else
-								_audioDevice = _MediaPlayerAudioDevices[_MediaPlayerAudioDevices.SelectedIndex].ToString();
-						else
+						Options.Instance.MediaPlayerSoundSettings = new PlayerSettings
 						{
-							Controller.Instance.Log(_ErrorDeviceListMessage);
-							return;
-						}
+							Silent = false,
+							Volume = 50,
+							WaveOutDevice = selectAudioDevice(_MediaPlayerAudioDevices).ToString()
+						};
 					}
 					else
-						_audioDevice = Settings.Instance.VLC_MediaPlayerWaveOutDevice;
-					break;
+					{
+						this.Settings = Options.Instance.MediaPlayerSoundSettings;
+						_MediaPlayerAudioDevices.UpdateIndex(_MediaPlayerAudioDevices.Items, this.Settings);
+					}
 
-					#endregion AudioDeviceType.MediaPlayer
+					break;
 
 				case AudioDeviceType.Soundboard:
-
-					#region AudioDeviceType.Soundboard
-
-					SoundboardAudioDeviceViewModel _SoundBoardAudioDevices = new SoundboardAudioDeviceViewModel();
-					if (_SoundBoardAudioDevices == null)
+					if (Options.Instance.SoundboardSoundSettings == null)
 					{
-						Controller.Instance.Log(_ErrorDeviceListMessage);
-						return;
-					}
-
-					if (Settings.Instance.VLC_MediaPlayerWaveOutDevice == String.Empty)
-					{
-						if (_SoundBoardAudioDevices.Count() > -1)
-							if (_SoundBoardAudioDevices.SelectedIndex == -1)
-								_audioDevice = _SoundBoardAudioDevices[0].Name;
-							else
-								_audioDevice = _SoundBoardAudioDevices[_SoundBoardAudioDevices.SelectedIndex].ToString();
-						else
+						Options.Instance.SoundboardSoundSettings = new PlayerSettings
 						{
-							Controller.Instance.Log(_ErrorDeviceListMessage);
-							return;
-						}
+							Silent = false,
+							Volume = 50,
+							WaveOutDevice = selectAudioDevice(_SoundBoardAudioDevices).ToString()
+						};
 					}
 					else
-						_audioDevice = Settings.Instance.VLC_SoundboardWaveOutDevice;
+					{
+						this.Settings = Options.Instance.SoundboardSoundSettings;
+						_SoundBoardAudioDevices.UpdateIndex(_SoundBoardAudioDevices.Items, this.Settings);
+					}
 					break;
-
-					#endregion AudioDeviceType.Soundboard
 
 				case AudioDeviceType.SubscriberAlert:
-
-					#region AudioDeviceType.Soundboard
-
-					SubscriberAudioDeviceViewModel _SubscriberAudioDevices = new SubscriberAudioDeviceViewModel();
-					if (_SubscriberAudioDevices == null)
+					if (Options.Instance.SubscriberSoundSettings == null)
 					{
-						Controller.Instance.Log(_ErrorDeviceListMessage);
-						return;
-					}
-
-					if (Settings.Instance.VLC_MediaPlayerWaveOutDevice == String.Empty)
-					{
-						if (_SubscriberAudioDevices.Count() > -1)
-							if (_SubscriberAudioDevices.SelectedIndex == -1)
-								_audioDevice = _SubscriberAudioDevices[0].Name;
-							else
-								_audioDevice = _SubscriberAudioDevices[_SubscriberAudioDevices.SelectedIndex].ToString();
-						else
+						Options.Instance.SubscriberSoundSettings = new PlayerSettings
 						{
-							Controller.Instance.Log(_ErrorDeviceListMessage);
-							return;
-						}
+							Silent = false,
+							Volume = 50,
+							WaveOutDevice = selectAudioDevice(_SubscriberAudioDevices).ToString()
+						};
 					}
 					else
-						_audioDevice = Settings.Instance.VLC_SubScriberWaveOutDevice;
+					{
+						this.Settings = Options.Instance.SubscriberSoundSettings;
+						_SubscriberAudioDevices.UpdateIndex(_SubscriberAudioDevices.Items, this.Settings);
+					}
 					break;
-
-					#endregion AudioDeviceType.Soundboard
 
 				default:
 					throw new NotImplementedException();
@@ -213,7 +212,7 @@ namespace InsireBot
 
 			///settings
 			//Ignore the VLC configuration file
-			//VlcContext.StartupOptions.IgnoreConfig = true;
+
 
 			//log settings
 			//VlcContext.StartupOptions.LogOptions.LogInFile = true;
@@ -221,10 +220,10 @@ namespace InsireBot
 			//VlcContext.StartupOptions.LogOptions.Verbosity = VlcLogVerbosities.Debug;
 
 			#endregion config settings
-
+			VlcContext.StartupOptions.IgnoreConfig = true;
 			//audio settings
 			VlcContext.StartupOptions.AddOption("--aout=waveout");
-			VlcContext.StartupOptions.AddOption("--waveout-audio-device=" + _audioDevice);
+			VlcContext.StartupOptions.AddOption("--waveout-audio-device=" + this.Settings.WaveOutDevice);
 			VlcContext.StartupOptions.AddOption("--ffmpeg-hw");
 			VlcContext.StartupOptions.AddOption("--no-video");
 
@@ -244,14 +243,14 @@ namespace InsireBot
 			_VlcPlayer.EncounteredError += _vlcplayer_EncounteredError;
 
 			// setup Timer 
-			_MaxSongDurationTimer.Interval = Settings.Instance.Media_MaxSongDuration * 1000;
-			_SkipPreventionTimer.Interval = Settings.Instance.Media_AutoSkipThreshold * 1000;
+			_MaxSongDurationTimer.Interval = Options.Instance.Media_MaxSongDuration * 1000;
+			_SkipPreventionTimer.Interval = Options.Instance.Media_AutoSkipThreshold * 1000;
 
 			// add Timer events 
 			_MaxSongDurationTimer.Elapsed += _maxSongDurationTimer_Elapsed;
 			_SkipPreventionTimer.Elapsed += _skipPreventionTimer_Elapsed;
 
-			if (Settings.Instance.DebugMode)
+			if (Options.Instance.DebugMode)
 				switch (_Type)
 				{
 					case AudioDeviceType.FollowerAlert:
@@ -309,7 +308,7 @@ namespace InsireBot
 		/// <returns>true if it might be able to play something from objectmodel viewpoint</returns>
 		public bool play()
 		{
-			return play(_Playlist.SelectedIndex);
+			return play(_Playlist[_Playlist.SelectedIndex].SelectedIndex);
 		}
 
 		public bool play(int i)
@@ -317,17 +316,15 @@ namespace InsireBot
 			setDefaultSong();
 
 			if (this.Playable)
-				if (i > -1)
-				{
-					if (_Playlist.SelectedIndex >= 0)
-						if (_Playlist[_Playlist.SelectedIndex].SelectedIndex >= 0)
-						{
-							_Playlist[_Playlist.SelectedIndex].Items[_Playlist[_Playlist.SelectedIndex].SelectedIndex].PlayCount++;
-							this.play(_Playlist[_Playlist.SelectedIndex].Items[_Playlist[_Playlist.SelectedIndex].SelectedIndex].Location);
-							return true;
-						}
-
-				}
+				if (_Playlist.SelectedIndex > -1 & _Playlist.SelectedIndex <= (_Playlist.Count() - 1))
+					if (i > -1 & i < _Playlist[_Playlist.SelectedIndex].Items.Count - 1)
+					{
+						_Playlist[_Playlist.SelectedIndex].Items[i].PlayCount++;
+						this.play(_Playlist[_Playlist.SelectedIndex].Items[i].Location);
+						_Playlist[_Playlist.SelectedIndex].Items[i].IsSelected = true;
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						return true;
+					}
 			return false;
 		}
 
@@ -343,11 +340,11 @@ namespace InsireBot
 		public void Previous()
 		{
 			setDefaultSong();
-			int i = _Playlist.SelectedIndex;
+			int i = _Playlist.Items[_Playlist.SelectedIndex].SelectedIndex;
 
 			if (this.Playable)
 			{
-				switch (Settings.Instance.VLC_PlayBackType)
+				switch (Options.Instance.VLC_PlayBackType)
 				{
 					case PlaybackType.PlayAll: selectByPreviousSongOptionPlayAll(i);
 						break;
@@ -372,11 +369,11 @@ namespace InsireBot
 		public void Next()
 		{
 			setDefaultSong();
-			int i = _Playlist.SelectedIndex;
+			int i = _Playlist.Items[_Playlist.SelectedIndex].SelectedIndex;
 
 			if (this.Playable)
 			{
-				switch (Settings.Instance.VLC_PlayBackType)
+				switch (Options.Instance.VLC_PlayBackType)
 				{
 					case PlaybackType.PlayAll: selectByNextSongOptionPlayAll(i);
 						break;
@@ -406,7 +403,7 @@ namespace InsireBot
 			if (vote)
 			{
 				_VoteSkipCounter++;
-				if (_VoteSkipCounter >= Settings.Instance.Media_MaxVoteCounter)
+				if (_VoteSkipCounter >= Options.Instance.Media_MaxVoteCounter)
 					Next();
 			}
 			else
@@ -424,10 +421,10 @@ namespace InsireBot
 			if (this.Playable)
 				if (i > -1)
 				{
-					if (i <= _Playlist.Items.Count)
+					if (i <= _Playlist[_Playlist.SelectedIndex].Items.Count)
 					{
-						_Playlist.SelectedIndex = i;
-						this.play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						this.play(i);
 					}
 					else
 						Controller.Instance.Log(new SystemLogItem("End of PlayList reached. No previous Song available"));
@@ -440,16 +437,16 @@ namespace InsireBot
 			if (this.Playable)
 				if (i > -1)
 				{
-					if (i <= _Playlist.Items.Count)
+					if (i <= _Playlist[_Playlist.SelectedIndex].Items.Count)
 					{
-						_Playlist.SelectedIndex = i;
-						this.play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						this.play(i);
 					}
 					else
 					{
 						i = 0;
-						_Playlist.SelectedIndex = i;
-						this.play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						this.play(i);
 					}
 				}
 		}
@@ -464,9 +461,9 @@ namespace InsireBot
 			if (this.Playable)
 				if (i > -1)
 				{
-					if (i <= _Playlist.Items.Count)
+					if (i <= _Playlist[_Playlist.SelectedIndex].Items.Count)
 					{
-						this.play();
+						this.play(i);
 					}
 					else
 						Controller.Instance.Log(new SystemLogItem("End of PlayList reached. No next Song available"));
@@ -479,16 +476,16 @@ namespace InsireBot
 			if (this.Playable)
 				if (i > -1)
 				{
-					if (i < _Playlist.Items.Count)
+					if (i < _Playlist[_Playlist.SelectedIndex].Items.Count)
 					{
-						_Playlist.SelectedIndex = i;
-						this.play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						this.play(i);
 					}
 					else
 					{
 						i = 0;
-						_Playlist.SelectedIndex = i;
-						this.play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						this.play(i);
 					}
 				}
 		}
@@ -503,10 +500,10 @@ namespace InsireBot
 			if (this.Playable)
 				if (i > -1)
 				{
-					if (i <= _Playlist.Items.Count)
+					if (i <= _Playlist[_Playlist.SelectedIndex].Items.Count)
 					{
-						_Playlist.SelectedIndex = i;
-						this.play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						this.play(i);
 					}
 					else
 						Controller.Instance.Log(new ErrorLogItem("Selection of Random Playlistitem failed.(Out of bounds)"));
@@ -518,13 +515,13 @@ namespace InsireBot
 			int min = int.MaxValue;
 			// get the number of minimum plays 
 
-			foreach (PlayListItem p in _Playlist.Items[_Playlist.SelectedIndex])
+			foreach (PlayListItem p in _Playlist[_Playlist.SelectedIndex])
 				if (min > p.PlayCount)
 					min = p.PlayCount;
 
 			// get all songs played the least 
 			List<PlayListItem> list = new List<PlayListItem>();
-			foreach (PlayListItem p in _Playlist.Items[_Playlist.SelectedIndex])
+			foreach (PlayListItem p in _Playlist[_Playlist.SelectedIndex])
 			{
 				if (min == p.PlayCount)
 					list.Add(p);
@@ -532,14 +529,14 @@ namespace InsireBot
 			System.Random r = new System.Random();
 
 			// pick a random song out of the least played songs and return its index 
-			return _Playlist.Items[_Playlist.SelectedIndex].IndexOf(list[r.Next(list.Count)]);
+			return _Playlist[_Playlist.SelectedIndex].IndexOf(list[r.Next(list.Count)]);
 		}
 
 		private int selectRandom()
 		{
 			System.Random r = new System.Random();
 
-			return r.Next(_Playlist.Items.Count);
+			return r.Next(0, _Playlist[_Playlist.SelectedIndex].Items.Count - 1);
 		}
 
 		public void Random()
@@ -551,10 +548,10 @@ namespace InsireBot
 			if (this.Playable)
 				if (i > -1)
 				{
-					if (i <= _Playlist.Items.Count)
+					if (i <= _Playlist[_Playlist.SelectedIndex].Items.Count)
 					{
-						_Playlist.SelectedIndex = i;
-						play();
+						_Playlist[_Playlist.SelectedIndex].SelectedIndex = i;
+						play(i);
 					}
 					else
 						Controller.Instance.Log(new SystemLogItem("End of PlayList reached. No next Song available"));
@@ -608,7 +605,7 @@ namespace InsireBot
 			_VoteSkipCounter = 0;
 			if (!_Buffering)
 			{
-				if (Settings.Instance.DebugMode) //TODO check if this is useful
+				if (Options.Instance.DebugMode) //TODO check if this is useful
 					Controller.Instance.SendToChat(new ChatReply(String.Format("End reached: {0}", _NowPlaying)));
 				_NowPlaying = String.Empty;
 				UpdateSettings();
@@ -664,29 +661,29 @@ namespace InsireBot
 
 		private void UpdateSettings()
 		{
-			_MaxSongDurationTimer.Interval = Settings.Instance.Media_MaxSongDuration * 1000;
-			_SkipPreventionTimer.Interval = Settings.Instance.Media_AutoSkipThreshold * 1000;
+			_MaxSongDurationTimer.Interval = Options.Instance.Media_MaxSongDuration * 1000;
+			_SkipPreventionTimer.Interval = Options.Instance.Media_AutoSkipThreshold * 1000;
 
 			switch (_Type)
 			{
 				case AudioDeviceType.FollowerAlert:
-					_VlcPlayer.AudioProperties.IsMute = !Settings.Instance.VLC_FollowerSilent;
-					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Settings.Instance.VLC_FollowerVolume);
+					_VlcPlayer.AudioProperties.IsMute = !Options.Instance.FollowerSoundSettings.Silent;
+					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Options.Instance.FollowerSoundSettings.Volume);
 					break;
 
 				case AudioDeviceType.MediaPlayer:
-					_VlcPlayer.AudioProperties.IsMute = !Settings.Instance.VLC_MediaPlayerSilent;
-					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Settings.Instance.VLC_MediaPlayerVolume);
+					_VlcPlayer.AudioProperties.IsMute = !Options.Instance.MediaPlayerSoundSettings.Silent;
+					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Options.Instance.MediaPlayerSoundSettings.Volume);
 					break;
 
 				case AudioDeviceType.Soundboard:
-					_VlcPlayer.AudioProperties.IsMute = !Settings.Instance.VLC_SoundboardSilent;
-					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Settings.Instance.VLC_SoundboardVolume);
+					_VlcPlayer.AudioProperties.IsMute = !Options.Instance.SoundboardSoundSettings.Silent;
+					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Options.Instance.SoundboardSoundSettings.Volume);
 					break;
 
 				case AudioDeviceType.SubscriberAlert:
-					_VlcPlayer.AudioProperties.IsMute = !Settings.Instance.VLC_SubScriberSilent;
-					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Settings.Instance.VLC_SubScriberVolume);
+					_VlcPlayer.AudioProperties.IsMute = !Options.Instance.SubscriberSoundSettings.Silent;
+					_VlcPlayer.AudioProperties.Volume = Convert.ToInt32(Options.Instance.SubscriberSoundSettings.Volume);
 					break;
 
 				default:
@@ -716,5 +713,136 @@ namespace InsireBot
 		}
 
 		#endregion IDisposable Members
+	}
+
+	public class VLCSettings
+	{
+		public event PropertyChangedEventHandler PropertyChanged;
+		private string _LibVlcDllPath;
+		private string _LibVlcPluginPath;
+		private bool _Silent;
+
+		#region Properties
+		public string LibVlcDllPath
+		{
+			get { return _LibVlcDllPath; }
+			set
+			{
+				if (value != _LibVlcDllPath)
+				{
+					_LibVlcDllPath = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		public string LibVlcPluginPath
+		{
+			get { return _LibVlcPluginPath; }
+			set
+			{
+				if (value != _LibVlcPluginPath)
+				{
+					_LibVlcPluginPath = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		public bool Silent
+		{
+			get { return _Silent; }
+			set
+			{
+				if (value != _Silent)
+				{
+					_Silent = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+		#endregion
+
+		#region Events
+		// This method is called by the Set accessor of each property. The CallerMemberName
+		// attribute that is applied to the optional propertyName parameter causes the property name
+		// of the caller to be substituted as an argument.
+		public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		#endregion
+	}
+
+	public class PlayerSettings : INotifyPropertyChanged
+	{
+		public event PropertyChangedEventHandler PropertyChanged;
+		private bool _Silent;
+		private double _Volume;
+		private string _WaveOutDevice;
+
+		#region Properties
+
+		public string WaveOutDevice
+		{
+			get { return _WaveOutDevice; }
+			set
+			{
+				if (value != _WaveOutDevice)
+				{
+					_WaveOutDevice = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		public double Volume
+		{
+			get { return _Volume; }
+			set
+			{
+				if (value != _Volume)
+				{
+					_Volume = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		/// <summary>
+		/// true = Playback enabled, false = Playback disabled 
+		/// </summary>
+		public bool Silent
+		{
+			get { return _Silent; }
+			set
+			{
+				if (value != _Silent)
+				{
+					_Silent = value;
+					NotifyPropertyChanged();
+				}
+			}
+		}
+
+		#endregion
+
+		#region Events
+		// This method is called by the Set accessor of each property. The CallerMemberName
+		// attribute that is applied to the optional propertyName parameter causes the property name
+		// of the caller to be substituted as an argument.
+		public void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+		{
+			if (PropertyChanged != null)
+			{
+				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+
+		#endregion
 	}
 }

@@ -252,16 +252,16 @@ namespace InsireBot
 						{
 							case "v":
 								if (String.IsNullOrEmpty(Username))
-									parse(u, UriType.PlaylistItem, parRelayToChat, Settings.Instance.IRC_Username);
+									parse(u, UriType.PlaylistItem, parRelayToChat, Options.Instance.IRC_Username);
 								else
 									parse(u, UriType.PlaylistItem, parRelayToChat, Username);
 								break;
 
 							case "list":
 								if (String.IsNullOrEmpty(Username))
-									parse(u, UriType.Playlist, parRelayToChat, Settings.Instance.IRC_Username);
+									parse(u, UriType.Playlist, parRelayToChat, Options.Instance.IRC_Username);
 								else
-									if (Username.ToLower() == Settings.Instance.IRC_Username.ToLower() | Username == Settings.Instance.IRC_TargetChannel.ToLower().Replace("#", ""))
+									if (Username.ToLower() == Options.Instance.IRC_Username.ToLower() | Username == Options.Instance.IRC_TargetChannel.ToLower().Replace("#", ""))
 										parse(u, UriType.Playlist, parRelayToChat, Username);
 									else
 									{
@@ -276,13 +276,13 @@ namespace InsireBot
 
 		private void parse(Uri u, UriType type, bool parRelayToChat, String Username = "")
 		{
-			Youtube youtube = new Youtube(Settings.Instance.Youtube_API_JSON);
+			Youtube youtube = new Youtube(Options.Instance.Youtube_API_JSON);
 			Task t;
 			switch (type)
 			{
 				case UriType.PlaylistItem:
 					if (String.IsNullOrEmpty(Username))
-						Username = Settings.Instance.IRC_Username;
+						Username = Options.Instance.IRC_Username;
 
 					t = new Task(() =>
 					{
@@ -294,24 +294,32 @@ namespace InsireBot
 					break;
 				case UriType.Playlist:
 					if (String.IsNullOrEmpty(Username))
-						Username = Settings.Instance.IRC_Username;
+						Username = Options.Instance.IRC_Username;
 
 					t = new Task(() =>
 					{
-						youtube.GetPlaylistByID(URLParser.GetID(u, "list")).
-							ForEach(playlist =>
-							{
-								PlayList local = new PlayList();
-								local.Name = playlist.Snippet.Title;
-								local.Location = u.OriginalString;
-								local.ID = playlist.Id;
-								local.Location = u.OriginalString;
+						try
+						{
+							youtube.GetPlaylistByID(URLParser.GetID(u, "list")).
+														ForEach(playlist =>
+														{
+															PlayList local = new PlayList();
+															local.Name = playlist.Snippet.Title;
+															local.Location = u.OriginalString;
+															local.ID = playlist.Id;
+															local.Location = u.OriginalString;
 
-								youtube.GetPlayListItemByPlaylistID(playlist.Id).
-									ForEach(item => youtube.GetVideoByVideoID(item.Snippet.ResourceId.VideoId).
-										ForEach(video => local.Add(new PlayListItem(video, Username))));
-								addPlayList(local);
-							});
+															youtube.GetPlayListItemByPlaylistID(playlist.Id).
+																ForEach(item => youtube.GetVideoByVideoID(item.Snippet.ResourceId.VideoId).
+																	ForEach(video => local.Add(new PlayListItem(video, Username))));
+															addPlayList(local);
+														});
+						}
+						catch (AggregateException ex)
+						{
+							Log(new ErrorLogItem(ex));
+						}
+
 					});
 					t.Start();
 					break;

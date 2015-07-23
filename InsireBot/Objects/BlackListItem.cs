@@ -1,7 +1,8 @@
-﻿using GalaSoft.MvvmLight;
+﻿using System;
+
+using GalaSoft.MvvmLight;
+
 using InsireBot.Enums;
-using InsireBot.Interfaces;
-using System;
 
 namespace InsireBot.Objects
 {
