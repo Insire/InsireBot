@@ -1,3 +1,5 @@
+![picture alt](http://abload.de/img/unbenannt8ukt1.png "GUI Screenshot")
+
 # Features
 
 - select the audiodevice to play requests on
